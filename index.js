@@ -31,13 +31,15 @@ fastify.get('/hub/', async (request, reply) => {
 
   services.forEach(s => {
     html += `
-      <a href="${s.path}" class="card-link contrast">
-        <article class="card">
-          <img src="${s.icon}" alt="${s.name}">
-          <h3>${s.name}</h3>
-          <p>${s.description}</p>
-        </article>
-      </a>
+      <div>
+        <a href="${s.path}" class="card-link contrast">
+          <article class="card">
+            <img src="${s.icon}" alt="${s.name}">
+            <h3>${s.name}</h3>
+            <p>${s.description}</p>
+          </article>
+        </a>
+      </div>
     `;
   });
 
