@@ -1,14 +1,5 @@
 const fastify = require('fastify')({ logger: true });
-
-// List of services
-const services = [
-  { name: 'Zorg', path: '/', description: 'Internal services', icon: 'https://img.icons8.com/color/96/000000/server.png' },
-  { name: 'Grafana', path: '/grafana/', description: 'Monitoring dashboards', icon: 'https://img.icons8.com/color/96/000000/grafana.png' },
-  { name: 'Grafana New', path: '/grafana-new/', description: 'New dashboards', icon: 'https://img.icons8.com/color/96/000000/grafana.png' },
-  { name: 'Prometheus', path: '/prometheus/', description: 'Metrics collection', icon: 'https://raw.githubusercontent.com/prometheus/prometheus/main/documentation/images/prometheus-logo.svg'},
-  { name: 'Sky Cam', path: '/sky-cam/', description: 'Live camera feed', icon: 'https://img.icons8.com/color/96/000000/camera.png' },
-  { name: 'Observatory API', path: '/observatory-safety-api/', description: 'Sensor data & endpoints', icon: 'https://img.icons8.com/color/96/000000/api.png' },
-];
+const services = require('./services.json');
 
 // Route for /hub
 fastify.get('/hub', async (request, reply) => {
@@ -23,6 +14,14 @@ fastify.get('/hub', async (request, reply) => {
       main { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; padding: 2rem; }
       .card { width: 200px; text-align: center; }
       .card img { width: 50px; height: 50px; margin-bottom: 0.5rem; }
+      .card-link,
+      .card-link:visited,
+      .card-link:hover,
+      .card-link:active {
+        text-decoration: none;
+        color: inherit;
+      }
+
     </style>
   </head>
   <body>
@@ -31,12 +30,13 @@ fastify.get('/hub', async (request, reply) => {
 
   services.forEach(s => {
     html += `
-      <article class="card">
-        <img src="${s.icon}" alt="${s.name}">
-        <h3>${s.name}</h3>
-        <p>${s.description}</p>
-        <a href="${s.path}" class="contrast">Open</a>
-      </article>
+      <a href="${s.path}" class="card-link contrast">
+        <article class="card">
+          <img src="${s.icon}" alt="${s.name}">
+          <h3>${s.name}</h3>
+          <p>${s.description}</p>
+        </article>
+      </a>
     `;
   });
 

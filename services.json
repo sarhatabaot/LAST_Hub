@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Zorg",
+    "path": "/",
+    "description": "Internal services",
+    "icon": "https://img.icons8.com/color/96/000000/server.png"
+  },
+  {
+    "name": "Grafana",
+    "path": "/grafana/",
+    "description": "Monitoring dashboards",
+    "icon": "https://img.icons8.com/color/96/000000/grafana.png"
+  },
+  {
+    "name": "Grafana New",
+    "path": "/grafana-new/",
+    "description": "New dashboards",
+    "icon": "https://img.icons8.com/color/96/000000/grafana.png"
+  },
+  {
+    "name": "Prometheus",
+    "path": "/prometheus/",
+    "description": "Metrics collection",
+    "icon": "https://raw.githubusercontent.com/prometheus/prometheus/main/documentation/images/prometheus-logo.svg"
+  },
+  {
+    "name": "Sky Cam",
+    "path": "/sky-cam/",
+    "description": "Skycam",
+    "icon": "https://img.icons8.com/color/96/000000/camera.png"
+  },
+  {
+    "name": "Observatory API",
+    "path": "/observatory-safety-api/",
+    "description": "Sensor data & endpoints",
+    "icon": "https://img.icons8.com/color/96/000000/api.png"
+  }
+]
