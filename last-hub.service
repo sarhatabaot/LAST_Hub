@@ -1,12 +1,12 @@
 [Unit]
-Description=LAST Hub - Fastify Service
+Description=LAST Hub
 After=network.target
 
 [Service]
 Type=simple
 User=ocs
-WorkingDirectory=%h/last-hub
-ExecStart=/usr/bin/node %h/last-hub/index.js
+WorkingDirectory=/home/ocs/python/LAST-hub
+ExecStart=/usr/bin/node /home/ocs/python/LAST-hub/index.js
 Restart=on-failure
 Environment=http_proxy=http://bcproxy.weizmann.ac.il:8080
 Environment=https_proxy=http://bcproxy.weizmann.ac.il:8080
