@@ -26,6 +26,7 @@ fastify.get('/hub/', async (request, reply) => {
   </head>
   <body>
     <main>
+      <div class="grid">
   `;
 
   services.forEach(s => {
@@ -40,7 +41,7 @@ fastify.get('/hub/', async (request, reply) => {
     `;
   });
 
-  html += `</main></body></html>`;
+  html += `</div></main></body></html>`;
   return reply.type('text/html').send(html);
 });
 
