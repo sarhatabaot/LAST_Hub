@@ -12,20 +12,14 @@
     "icon": "https://img.icons8.com/color/96/000000/grafana.png"
   },
   {
-    "name": "Grafana New",
+    "name": "Grafana New (WIP)",
     "path": "/grafana-new/",
     "description": "New dashboards",
     "icon": "https://img.icons8.com/color/96/000000/grafana.png"
   },
   {
-    "name": "Prometheus",
-    "path": "/prometheus/",
-    "description": "Metrics collection",
-    "icon": "https://raw.githubusercontent.com/prometheus/prometheus/main/documentation/images/prometheus-logo.svg"
-  },
-  {
     "name": "Sky Cam",
-    "path": "/sky-cam/",
+    "path": "http://10.23.1.33/public.php",
     "description": "Skycam",
     "icon": "https://img.icons8.com/color/96/000000/camera.png"
   },
@@ -37,7 +31,8 @@
   },
   {
     "name": "CAST",
-    "path": "http://132.77.38.251",
-    "description": "CAST"
+    "path": "http://ap-ag-ofek-pc/CAST",
+    "description": "CAST",
+    "icon": "http://ap-ag-ofek-pc/static/tom_common/img/logo-color-cropped.png"
   }
 ]
