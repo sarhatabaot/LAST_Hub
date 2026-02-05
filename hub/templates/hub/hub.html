@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Our Services{% endblock %}
+
+{% block sidebar %}
+  {% include "partials/sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<main>
+  {% for section_name, services in services.items %}
+    <section class="section">
+      <h2>{{ section_name }}</h2>
+
+      <div class="grid">
+        {% for s in services %}
+          <div>
+            <a href="{{ s.path }}" class="card-link contrast">
+              <article class="card">
+                {% if s.icon %}
+                  <img src="{{ s.icon }}" alt="{{ s.name }}">
+                {% endif %}
+                <h3>{{ s.name }}</h3>
+                <p>{{ s.description }}</p>
+              </article>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endfor %}
+</main>
+{% endblock %}
+

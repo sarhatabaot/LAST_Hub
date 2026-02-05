@@ -1,0 +1,109 @@
+{
+  "Hardware & Drivers": [
+    {
+      "name": "LAST_QHYccd",
+      "path": "https://github.com/EastEriq/LAST_QHYccd",
+      "description": "QHY camera driver for the LAST project.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    },
+    {
+      "name": "LAST_CelestronFocusMotor",
+      "path": "https://github.com/EastEriq/LAST_CelestronFocusMotor",
+      "description": "Celestron focus motor control for LAST.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    },
+    {
+      "name": "LAST_USBserial",
+      "path": "https://github.com/EastEriq/LAST_USBserial",
+      "description": "USB serial communication utilities for LAST.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    },
+    {
+      "name": "LAST_tinycontrolIPpowerSocket",
+      "path": "https://github.com/EastEriq/LAST_tinycontrolIPpowerSocket",
+      "description": "IP power socket control module for LAST.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    }
+  ],
+
+  "Safety": [
+    {
+      "name": "observatory-safety",
+      "path": "https://github.com/sarhatabaot/observatory-safety",
+      "description": "Observatory safety monitoring and automation.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    },
+    {
+      "name": "WAO_Safety",
+      "path": "https://github.com/blumzi/WAO_Safety",
+      "description": "Weather and safety monitoring for observatories.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    }
+  ],
+
+  "Deployment": [
+    {
+      "name": "LAST_Ansible",
+      "path": "https://github.com/sarhatabaot/LAST_Ansible",
+      "description": "Ansible playbooks for deploying and managing LAST systems.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    },
+    {
+      "name": "LAST_Tools",
+      "path": "https://github.com/blumzi/LAST_Tools",
+      "description": "Utility tools and helpers for the LAST ecosystem.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    }
+  ],
+
+  "General": [
+    {
+      "name": "LAST_Handle",
+      "path": "https://github.com/EastEriq/LAST_Handle",
+      "description": "Core handle and base utilities for LAST modules.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    },
+    {
+      "name": "LAST_Messaging",
+      "path": "https://github.com/EastEriq/LAST_Messaging",
+      "description": "Messaging and communication framework for LAST.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    },
+    {
+      "name": "LAST_config",
+      "path": "https://github.com/EranOfek/LAST_config",
+      "description": "Configuration management for the LAST system.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    },
+    {
+      "name": "LAST_SuperunitMonitoring",
+      "path": "https://github.com/EastEriq/LAST_SuperunitMonitoring",
+      "description": "Monitoring tools for LAST superunits.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    },
+    {
+      "name": "LAST_EnclosureControl",
+      "path": "https://github.com/EastEriq/LAST_EnclosureControl",
+      "description": "Control software for LAST observatory enclosures.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    },
+    {
+      "name": "LAST_Hub",
+      "path": "https://github.com/sarhatabaot/LAST_Hub",
+      "description": "Web-based hub for LAST services and tools.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    },
+    {
+      "name": "AstroPack",
+      "path": "https://github.com/EranOfek/AstroPack",
+      "description": "Astronomy and astrophysics software toolbox.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    },
+    {
+      "name": "LAST_issues",
+      "path": "https://github.com/EranOfek/LAST_issues",
+      "description": "Centralized issue tracking for the LAST project.",
+      "icon": "https://img.icons8.com/ios-glyphs/96/github.png"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+<aside class="sidebar">
+  <nav>
+    <ul>
+      <li><strong>Observations</strong></li>
+      <li>
+        <a
+          href="{% url 'forecast' %}"
+          class="{% if request.resolver_match and request.resolver_match.url_name == 'forecast' %} contrast{% else %} secondary{% endif %}"
+        >
+          Forecast
+        </a>
+      </li>
+      <li><a href="https://zoom.earth/maps/precipitation/#view=31.7364,36.2071,7z/model=icon" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Zoom Earth</a></li>
+      <li><a href="http://10.23.1.25/" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Zorg</a></li>
+      <li><a href="http://10.23.2.33/allsky/" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Allsky</a></li>
+      <li><a href="http://10.23.1.25/grafana" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Grafana</a></li>
+      <li><a href="http://10.23.1.25/grafana-new" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Grafana New</a></li>
+      <li><a href="http://ap-ag-ofek-pc/" class="secondary icon-link" target="_blank" rel="noopener noreferrer">CAST</a></li>
+      <li><strong>Docs (WIP)</strong></li>
+      <li><strong>API</strong></li>
+      <li><a href="http://10.23.1.25/observatory/safety/api/docs" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Observatory Safety API</a></li>
+      <li><a href="http://10.23.1.25/observatory/data/api/docs" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Observatory Data API</a></li>
+      <li><strong>Experimental Marshals</strong></li>
+      <li><a href="http://socsrv:5000" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Skyportal</a></li>
+      <li><a href="http://socsrv/tom" class="secondary icon-link" target="_blank" rel="noopener noreferrer">TOM (WIP)</a></li>
+      <li><strong>Development</strong></li>
+      <li>
+        <a
+          href="{% url 'hub' %}"
+          class="{% if request.resolver_match and request.resolver_match.url_name == 'hub' %} contrast{% else %} secondary {% endif %}"
+        >
+          Repositories
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer class="sidebar-footer">
+    <form role="search">
+        <label>
+            <input
+              type="search"
+              placeholder="Search (WIP)…"
+              disabled
+            />
+        </label>
+    </form>
+
+    <div>v{{ PROJECT_VERSION }}</div>
+    <div>
+       <a href="{{ PROJECT_SOURCE_URL }}" target="_blank" class="secondary">
+          Source Code
+       </a>
+    </div>
+  </footer>
+</aside>
