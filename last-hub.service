@@ -7,7 +7,7 @@ Wants=network.target
 Type=simple
 User=ocs
 Group=ocs
-WorkingDirectory=/home/ocs/python/last-hub
+WorkingDirectory=/home/ocs/python/LAST_Hub
 Environment=PATH=/snap/bin:/usr/local/bin:/usr/bin:/bin
 
 ExecStart=/snap/bin/uv run python manage.py runserver 0.0.0.0:8085
