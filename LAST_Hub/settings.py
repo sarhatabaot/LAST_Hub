@@ -121,7 +121,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = '/static/hub/'
+STATIC_URL = '/hub/static/'
 
 FORECAST_URL = "http://10.23.1.16/forecast"
 
