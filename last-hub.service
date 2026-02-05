@@ -1,0 +1,24 @@
+[Unit]
+Description=LAST Hub Web Interface
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=ocs
+Group=ocs
+WorkingDirectory=/home/ocs/python/last-hub
+Environment=PATH=/snap/bin:/usr/local/bin:/usr/bin:/bin
+
+ExecStart=/snap/bin/uv run python manage.py runserver 0.0.0.0:8085
+
+Restart=always
+RestartSec=5
+
+# Proxy settings (optional but safe)
+Environment="http_proxy=http://bcproxy.weizmann.ac.il:8080"
+Environment="https_proxy=http://bcproxy.weizmann.ac.il:8080"
+Environment="no_proxy=localhost,127.0.0.1"
+
+[Install]
+WantedBy=multi-user.target
