@@ -121,7 +121,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/hub/static/'
 
 FORECAST_URL = "http://10.23.1.16/forecast"
 
@@ -129,3 +129,4 @@ PROJECT_VERSION = "0.1.0"
 PROJECT_SOURCE_URL = "https://github.com/sarhabaot/LAST_Hub"
 
 USE_X_FORWARDED_HOST = True
+FORCE_SCRIPT_NAME = "/hub"
