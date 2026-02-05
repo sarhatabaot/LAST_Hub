@@ -1,0 +1,147 @@
+.layout {
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 16rem;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 1rem 0.75rem;
+
+  background-color: var(--pico-card-sectioning-background-color);
+  border-right: 1px solid var(--pico-muted-border-color);
+}
+
+.sidebar nav {
+  flex: 1;
+}
+
+.sidebar ul {
+  margin: 0;
+}
+
+.sidebar li {
+  margin-bottom: 0.25rem;
+}
+
+.sidebar li strong {
+  display: block;
+  margin-top: 0.75rem;
+  margin-bottom: 0.35rem;
+
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pico-muted-color);
+}
+
+.sidebar a {
+  display: block;
+  padding: 0.35rem 0.5rem;
+
+  font-size: 0.85rem;
+  line-height: 1.2;
+  border-radius: 0.25rem;
+
+}
+
+.sidebar a:hover {
+  background-color: var(--pico-dropdown-hover-background-color);
+}
+
+.sidebar .secondary.is-active {
+  font-weight: 600;
+  color: var(--pico-primary);
+  background-color: var(--pico-primary-focus);
+}
+
+.sidebar-footer {
+  padding: 0.75rem 0.75rem 0;
+  border-top: 1px solid var(--pico-muted-border-color);
+}
+
+.sidebar-footer form {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-footer input[type="search"] {
+  font-size: 0.8rem;
+}
+
+.sidebar-footer small {
+  display: block;
+  color: var(--pico-muted-color);
+  line-height: 1.4;
+  font-size: 0.75rem;
+}
+
+.content {
+  margin-left: 16rem;
+  padding: 2rem 2rem 0 2rem;
+  margin-bottom: 1rem;
+
+  background-color: var(--pico-background-color);
+  min-height: 100vh;
+}
+
+.section {
+  margin-bottom: 3rem;
+}
+
+.section h2 {
+  margin-bottom: 1.5rem;
+  text-transform: capitalize;
+}
+
+.grid {
+  gap: 1rem;
+}
+
+.card {
+  text-align: center;
+}
+
+.card img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 0.5rem;
+}
+
+.card-link,
+.card-link:visited,
+.card-link:hover,
+.card-link:active {
+  text-decoration: none;
+  color: inherit;
+}
+
+.icon-link {
+  position: relative;
+}
+
+.icon-link::after {
+  content: "";
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-left: 0.35rem;
+
+  background-color: currentColor;
+
+  -webkit-mask: url("/static/icons/link.svg") no-repeat center;
+  mask: url("/static/icons/link.svg") no-repeat center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+
+  opacity: 0.6;
+}
+
+.icon-link:hover::after {
+  opacity: 1;
+}

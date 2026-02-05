@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Forecast Viewer{% endblock %}
+
+{% block extra_head %}
+  <link rel="icon" type="image/svg+xml" href="{% static 'forecast/icons/favicon.svg' %}">
+  <link rel="stylesheet" href="{% static 'forecast/css/style.css' %}">
+{% endblock %}
+
+{% block sidebar %}
+  {% include "partials/sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <div class="page-header-text">
+    <h1 id="pageTitle">IMS232 Forecast</h1>
+    <p id="pageSubtitle" aria-busy="true">Loading range…</p>
+  </div>
+</header>
+
+<div id="chartGrid" class="chart-grid"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-scale-timestack/dist/chartjs-scale-timestack.min.js"></script>
+<script type="module" src="{% static 'forecast/js/main.js' %}"></script>
+{% endblock %}
