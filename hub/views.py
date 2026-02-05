@@ -17,6 +17,9 @@ BASE_DIR = Path(__file__).resolve().parent
 def forecast_view(request):
     return render(request, "forecast/forecast.html")
 
+def home_view(request):
+    return render(request, "home/home.html")
+
 def hub_view(request):
     services_path = BASE_DIR / "data" / "services.json"
 

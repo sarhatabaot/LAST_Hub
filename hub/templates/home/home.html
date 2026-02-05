@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block sidebar %}
+  {% include "partials/sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<main class="home">
+
+  <section class="section">
+    <h2>LAST Project Hub</h2>
+
+    <p>
+      This site serves as a centralized index of software projects used across
+      the LAST ecosystem.
+    </p>
+
+    <p>
+      The goal is to provide a clear, organized overview of the various tools,
+      drivers, services, and infrastructure components that make up the system,
+      and to offer direct access to their source repositories.
+    </p>
+  </section>
+
+  <section class="section">
+    <h4>How to use this site</h4>
+
+    <p>
+      Use the navigation or the Services page to browse projects by category.
+      Each card links directly to the corresponding GitHub repository, where
+      documentation, source code, and issue tracking are maintained.
+    </p>
+
+    <p>
+      This site does not duplicate documentation — it is intended to act as a
+      stable entry point and overview as the ecosystem evolves. We may eventually add
+      additional documentation pages.
+    </p>
+  </section>
+
+</main>
+{% endblock %}
