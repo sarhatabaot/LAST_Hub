@@ -149,7 +149,7 @@ function initThemeToggle() {
 }
 
 async function loadForecast() {
-  const response = await fetch("./api/");
+  const response = await fetch("./forecast/api/");
   if (!response.ok) {
     throw new Error(`Failed to load forecast: ${response.status}`);
   }
