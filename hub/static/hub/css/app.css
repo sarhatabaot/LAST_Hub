@@ -134,8 +134,8 @@
 
   background-color: currentColor;
 
-  -webkit-mask: url("/static/icons/link.svg") no-repeat center;
-  mask: url("/static/icons/link.svg") no-repeat center;
+  -webkit-mask: url("/hub/static/icons/link.svg") no-repeat center;
+  mask: url("/hub/static/icons/link.svg") no-repeat center;
   -webkit-mask-size: contain;
   mask-size: contain;
 
