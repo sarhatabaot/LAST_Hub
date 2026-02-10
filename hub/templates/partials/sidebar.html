@@ -5,7 +5,7 @@
         <a
           href="{% url 'safety_status' %}"
           role="button"
-          class="safety-button {% if safety_sidebar.error %}pico-background-slate-50 pico-color-slate-700{% elif safety_sidebar.safe %}pico-background-green-50 pico-color-green-700{% else %}pico-background-red-50 pico-color-red-700{% endif %}"
+          class="safety-button {% if safety_sidebar.error %}pico-background-slate-50{% elif safety_sidebar.safe %}pico-background-green-50{% else %}pico-background-red-50{% endif %}"
         >
           Safety: {{ safety_sidebar.label }}
         </a>

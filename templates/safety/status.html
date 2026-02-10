@@ -10,7 +10,7 @@
 <section class="container">
   <header>
     <article class="safety-card {% if safe %}pico-background-green-50{% elif safe == False %}pico-background-red-50{% else %}pico-background-slate-50{% endif %}">
-      <h1 class="safety-status-title {% if safe %}pico-color-green-700{% elif safe == False %}pico-color-red-700{% else %}pico-color-slate-700{% endif %}">
+      <h1 class="safety-status-title">
         {% if safe %}SAFE{% elif safe == False %}UNSAFE{% else %}UNKNOWN{% endif %}
       </h1>
     </article>
