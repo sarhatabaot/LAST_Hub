@@ -22,5 +22,5 @@ from hub import views as hub_views
 urlpatterns = [
     path("hub/", include("hub.urls")),
     path('hub/admin/', admin.site.urls),
-    path("safety/", hub_views.safety_status, name="safety_status"),
+    path("hub/safety/", hub_views.safety_status, name="safety_status"),
 ]
