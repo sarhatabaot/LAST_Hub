@@ -66,6 +66,32 @@ function normalizeForecast(raw) {
   return [];
 }
 
+function buildCloudCoverDatasets(seriesMap) {
+  const totalKeys = new Set(["total"]);
+
+  const datasets = [];
+
+  for (const [series, data] of seriesMap.entries()) {
+    const isTotal = totalKeys.has(series);
+    datasets.push({
+      label: series.replace(/_/g, " "),
+      data,
+      stack: isTotal ? "total" : "components"
+    });
+  }
+
+  if (datasets.length > 1) {
+    datasets.sort((a, b) => {
+      if (a.stack === b.stack) {
+        return a.label.localeCompare(b.label);
+      }
+      return a.stack === "components" ? -1 : 1;
+    });
+  }
+
+  return datasets;
+}
+
 function getMillis(time) {
   if (typeof time === "number") {
     return time;
@@ -221,15 +247,22 @@ async function init() {
     card.appendChild(canvas);
     container.appendChild(card);
 
-    const datasets = Array.from(seriesMap.entries()).map(
-      ([series, data]) => ({
-        label: series.replace(/_/g, " "),
-        data
-      })
-    );
+    const datasets = groupKey === "cloud_cover"
+      ? buildCloudCoverDatasets(seriesMap)
+      : Array.from(seriesMap.entries()).map(
+        ([series, data]) => ({
+          label: series.replace(/_/g, " "),
+          data
+        })
+      );
 
     charts.push(
-      createSeriesChart(canvas, datasets, unit || undefined)
+      createSeriesChart(
+        canvas,
+        datasets,
+        unit || undefined,
+        groupKey === "cloud_cover"
+      )
     );
   }
 }

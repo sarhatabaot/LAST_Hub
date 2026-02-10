@@ -7,6 +7,7 @@ import {
   Tooltip,
   Legend
 } from "https://cdn.jsdelivr.net/npm/chart.js@4.5.1/+esm";
+import { DateTime } from "https://cdn.jsdelivr.net/npm/luxon@3.7.2/+esm";
 
 Chart.register(
   BarController,
@@ -83,7 +84,7 @@ function applyThemeToChart(chart) {
   chart.update();
 }
 
-export function createSeriesChart(canvas, datasets, yLabel) {
+export function createSeriesChart(canvas, datasets, yLabel, isCloudGroup = false) {
 
   const toMillis = (value) =>
     typeof value === "number" ? value : Date.parse(value);
@@ -111,7 +112,8 @@ export function createSeriesChart(canvas, datasets, yLabel) {
           borderColor: color,
           backgroundColor: color + "66",
           borderWidth: 1,
-          barThickness: isCloud ? 4 : undefined
+          barThickness: isCloud ? 4 : undefined,
+          stack: dataset.stack ?? (isCloudGroup ? "cloud" : undefined)
         };
       })
     },
@@ -127,12 +129,28 @@ export function createSeriesChart(canvas, datasets, yLabel) {
           display: datasets.length > 1,
           position: "bottom"
         },
+        tooltip: {
+          callbacks: {
+            title: (items) => {
+              if (!items.length) {
+                return "";
+              }
+              const value = items[0].parsed.x;
+              return DateTime.fromMillis(value).toFormat("LLL dd, HH:mm");
+            },
+            label: (item) => {
+              const unit = yLabel ? ` ${yLabel}` : "";
+              return `${item.dataset.label}: ${item.parsed.y}${unit}`;
+            }
+          }
+        },
         title: {
           display: false
         }
       },
       scales: {
         y: {
+          stacked: isCloudGroup,
           title: {
             display: true,
             text: yLabel ?? "Value"
@@ -145,9 +163,22 @@ export function createSeriesChart(canvas, datasets, yLabel) {
           }
         },
         x: {
+          stacked: isCloudGroup,
           type: "linear",
           ticks: {
-            color: axisColor
+            color: axisColor,
+            maxRotation: 0,
+            stepSize: 60 * 60 * 1000,
+            callback: (value, index, ticks) => {
+              const current = DateTime.fromMillis(value);
+              if (index === 0) {
+                return current.toFormat("HH");
+              }
+              const previous = DateTime.fromMillis(ticks[index - 1].value);
+              return current.hasSame(previous, "day")
+                ? current.toFormat("HH")
+                : current.toFormat("LLL dd");
+            }
           },
           title: {
             display: false,
