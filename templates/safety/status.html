@@ -9,9 +9,11 @@
 {% block content %}
 <section class="container">
   <header>
-    <h1 class="safety-status {% if safe %}safety-status-safe{% else %}safety-status-unsafe{% endif %}">
-      {% if safe %}SAFE{% else %}UNSAFE{% endif %}
-    </h1>
+    <article class="safety-card {% if safe %}safety-card-safe{% elif safe == False %}safety-card-unsafe{% else %}safety-card-unknown{% endif %}">
+      <h1 class="safety-status-title">
+        {% if safe %}SAFE{% elif safe == False %}UNSAFE{% else %}UNKNOWN{% endif %}
+      </h1>
+    </article>
     {% if evaluated_at %}
       <p><strong>Evaluated at:</strong> {{ evaluated_at }}</p>
     {% endif %}

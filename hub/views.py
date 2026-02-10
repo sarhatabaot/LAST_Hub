@@ -5,8 +5,8 @@ import requests
 from django.http import HttpResponse, HttpResponseServerError
 from django.shortcuts import render
 
-from LAST_Hub import settings
 from LAST_Hub.settings import BASE_DIR
+from hub.safety import fetch_safety_status
 
 
 # Create your views here.
@@ -63,39 +63,5 @@ def forecast_api(request):
 
 
 def safety_status(request):
-    safe = False
-    passed_reasons = []
-    failed_reasons = []
-    stale_sensors = []
-    evaluated_at = ""
-    error = ""
-
-    try:
-        base_url = settings.OBS_SAFETY_API_BASE_URL.rstrip("/")
-        response = requests.get(
-            f"{base_url}/safety/status",
-            timeout=3,
-        )
-        response.raise_for_status()
-        payload = response.json()
-
-        safe = bool(payload.get("safe"))
-        reasons = payload.get("reasons") or {}
-        passed_reasons = reasons.get("passed") or []
-        failed_reasons = reasons.get("failed") or []
-        stale_sensors = payload.get("stale_sensors") or []
-        evaluated_at = payload.get("evaluated_at") or ""
-        error = ""
-    except (requests.RequestException, ValueError) as exc:
-        error = f"Failed to load safety status: {exc}"
-
-    context = {
-        "safe": safe,
-        "passed_reasons": passed_reasons,
-        "failed_reasons": failed_reasons,
-        "stale_sensors": stale_sensors,
-        "evaluated_at": evaluated_at,
-        "error": error,
-    }
-
+    context = fetch_safety_status(timeout=3)
     return render(request, "safety/status.html", context)

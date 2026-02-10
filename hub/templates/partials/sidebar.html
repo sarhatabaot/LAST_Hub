@@ -23,6 +23,14 @@
       <li>
         <a
           href="{% url 'safety_status' %}"
+          class="safety-pill {% if safety_sidebar.error %}safety-pill-unknown{% elif safety_sidebar.safe %}safety-pill-safe{% else %}safety-pill-unsafe{% endif %}"
+        >
+          Safety: {{ safety_sidebar.label }}
+        </a>
+      </li>
+      <li>
+        <a
+          href="{% url 'safety_status' %}"
           class="{% if request.resolver_match and request.resolver_match.url_name == 'safety_status' %} contrast{% else %} secondary{% endif %}"
         >
           Safety Status

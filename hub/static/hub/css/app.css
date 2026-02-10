@@ -129,17 +129,68 @@
   color: inherit;
 }
 
-.safety-status {
+.safety-card {
   text-align: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
-.safety-status-safe {
+.safety-status-title {
+  margin: 0;
+}
+
+.safety-card-safe {
+  background-color: var(--pico-color-green-50);
   color: var(--pico-color-green-500);
 }
 
-.safety-status-unsafe {
+.safety-card-unsafe {
+  background-color: var(--pico-color-red-50);
   color: var(--pico-color-red-500);
+}
+
+.safety-card-unknown {
+  background-color: var(--pico-color-slate-50);
+  color: var(--pico-color-slate-500);
+}
+
+.safety-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.safety-pill-safe {
+  background-color: var(--pico-color-green-50);
+  color: var(--pico-color-green-700);
+}
+
+.safety-pill-unsafe {
+  background-color: var(--pico-color-red-50);
+  color: var(--pico-color-red-700);
+}
+
+.safety-pill-unknown {
+  background-color: var(--pico-color-slate-50);
+  color: var(--pico-color-slate-700);
+}
+
+.sidebar a.safety-pill-safe:hover {
+  background-color: var(--pico-color-green-100);
+}
+
+.sidebar a.safety-pill-unsafe:hover {
+  background-color: var(--pico-color-red-100);
+}
+
+.sidebar a.safety-pill-unknown:hover {
+  background-color: var(--pico-color-slate-100);
 }
 
 .icon-link {
