@@ -129,6 +129,19 @@
   color: inherit;
 }
 
+.safety-status {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.safety-status-safe {
+  color: var(--pico-color-green-500);
+}
+
+.safety-status-unsafe {
+  color: var(--pico-color-red-500);
+}
+
 .icon-link {
   position: relative;
 }

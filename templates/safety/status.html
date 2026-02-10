@@ -2,10 +2,16 @@
 
 {% block title %}Safety Status{% endblock %}
 
+{% block sidebar %}
+  {% include "partials/sidebar.html" %}
+{% endblock %}
+
 {% block content %}
 <section class="container">
   <header>
-    <h1>{% if safe %}SAFE{% else %}UNSAFE{% endif %}</h1>
+    <h1 class="safety-status {% if safe %}safety-status-safe{% else %}safety-status-unsafe{% endif %}">
+      {% if safe %}SAFE{% else %}UNSAFE{% endif %}
+    </h1>
     {% if evaluated_at %}
       <p><strong>Evaluated at:</strong> {{ evaluated_at }}</p>
     {% endif %}
