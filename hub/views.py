@@ -71,8 +71,9 @@ def safety_status(request):
     error = ""
 
     try:
+        base_url = settings.OBS_SAFETY_API_BASE_URL.rstrip("/")
         response = requests.get(
-            f"{settings.OBS_SAFETY_API_BASE_URL}/safety/status",
+            f"{base_url}/safety/status",
             timeout=3,
         )
         response.raise_for_status()
