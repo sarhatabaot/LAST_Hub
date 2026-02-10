@@ -93,6 +93,21 @@
   min-height: 100vh;
 }
 
+@media (max-width: 900px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--pico-muted-border-color);
+  }
+
+  .content {
+    margin-left: 0;
+    padding: 1.5rem 1rem 0 1rem;
+  }
+}
+
 .section {
   margin-bottom: 3rem;
 }
