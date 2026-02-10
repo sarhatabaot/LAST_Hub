@@ -1,6 +1,15 @@
 <aside class="sidebar">
   <nav>
     <ul>
+      <li class="sidebar-status">
+        <a
+          href="{% url 'safety_status' %}"
+          role="button"
+          class="safety-button {% if safety_sidebar.error %}pico-background-slate-50 pico-color-slate-700{% elif safety_sidebar.safe %}pico-background-green-50 pico-color-green-700{% else %}pico-background-red-50 pico-color-red-700{% endif %}"
+        >
+          Safety: {{ safety_sidebar.label }}
+        </a>
+      </li>
       <li class="sidebar-toggle" data-sidebar-toggle>
         <div role="group">
           <button type="button" class="secondary is-active" data-sidebar-filter="observers">
@@ -18,14 +27,6 @@
           class="{% if request.resolver_match and request.resolver_match.url_name == 'forecast' %} contrast{% else %} secondary{% endif %}"
         >
           Forecast
-        </a>
-      </li>
-      <li>
-        <a
-          href="{% url 'safety_status' %}"
-          class="safety-pill {% if safety_sidebar.error %}safety-pill-unknown{% elif safety_sidebar.safe %}safety-pill-safe{% else %}safety-pill-unsafe{% endif %}"
-        >
-          Safety: {{ safety_sidebar.label }}
         </a>
       </li>
       <li>
