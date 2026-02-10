@@ -1,6 +1,16 @@
 <aside class="sidebar">
   <nav>
     <ul>
+      <li class="sidebar-toggle" data-sidebar-toggle>
+        <div role="group">
+          <button type="button" class="secondary is-active" data-sidebar-filter="observers">
+            Observers
+          </button>
+          <button type="button" class="secondary" data-sidebar-filter="all">
+            All
+          </button>
+        </div>
+      </li>
       <li><strong>Observations</strong></li>
       <li>
         <a
@@ -17,14 +27,14 @@
       <li><a href="http://10.23.1.25/grafana-new" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Grafana New</a></li>
       <li><a href="http://ap-ag-ofek-pc/" class="secondary icon-link" target="_blank" rel="noopener noreferrer">CAST</a></li>
       <li><strong>Docs (WIP)</strong></li>
-      <li><strong>API</strong></li>
-      <li><a href="http://10.23.1.25/observatory/safety/api/docs" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Observatory Safety API</a></li>
-      <li><a href="http://10.23.1.25/observatory/data/api/docs" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Observatory Data API</a></li>
+      <li class="sidebar-all"><strong>API</strong></li>
+      <li class="sidebar-all"><a href="http://10.23.1.25/observatory/safety/api/docs" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Observatory Safety API</a></li>
+      <li class="sidebar-all"><a href="http://10.23.1.25/observatory/data/api/docs" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Observatory Data API</a></li>
       <li><strong>Experimental Marshals</strong></li>
       <li><a href="http://socsrv:5000" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Skyportal</a></li>
-      <li><a href="http://socsrv/tom" class="secondary icon-link" target="_blank" rel="noopener noreferrer">TOM (WIP)</a></li>
-      <li><strong>Development</strong></li>
-      <li>
+      <li><a href="http://socsrv:6000" class="secondary icon-link" target="_blank" rel="noopener noreferrer">TOM (WIP)</a></li>
+      <li class="sidebar-all"><strong>Development</strong></li>
+      <li class="sidebar-all">
         <a
           href="{% url 'hub' %}"
           class="{% if request.resolver_match and request.resolver_match.url_name == 'hub' %} contrast{% else %} secondary {% endif %}"

@@ -29,6 +29,14 @@
   margin-bottom: 0.25rem;
 }
 
+.sidebar-toggle {
+  margin-bottom: 0.75rem;
+}
+
+.sidebar-toggle [role="group"] {
+  width: 100%;
+}
+
 .sidebar li strong {
   display: block;
   margin-top: 0.75rem;

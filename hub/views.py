@@ -60,3 +60,41 @@ def forecast_api(request):
             '{"error": "Failed to load forecast"}',
             content_type="application/json",
         )
+
+
+def safety_status(request):
+    safe = False
+    passed_reasons = []
+    failed_reasons = []
+    stale_sensors = []
+    evaluated_at = ""
+    error = ""
+
+    try:
+        response = requests.get(
+            f"{settings.OBS_SAFETY_API_BASE_URL}/safety/status",
+            timeout=3,
+        )
+        response.raise_for_status()
+        payload = response.json()
+
+        safe = bool(payload.get("safe"))
+        reasons = payload.get("reasons") or {}
+        passed_reasons = reasons.get("passed") or []
+        failed_reasons = reasons.get("failed") or []
+        stale_sensors = payload.get("stale_sensors") or []
+        evaluated_at = payload.get("evaluated_at") or ""
+        error = ""
+    except (requests.RequestException, ValueError) as exc:
+        error = f"Failed to load safety status: {exc}"
+
+    context = {
+        "safe": safe,
+        "passed_reasons": passed_reasons,
+        "failed_reasons": failed_reasons,
+        "stale_sensors": stale_sensors,
+        "evaluated_at": evaluated_at,
+        "error": error,
+    }
+
+    return render(request, "safety/status.html", context)

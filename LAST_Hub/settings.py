@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -124,6 +125,10 @@ USE_TZ = True
 STATIC_URL = '/hub/static/'
 
 FORECAST_URL = "http://10.23.1.16/forecast"
+OBS_SAFETY_API_BASE_URL = os.environ.get(
+    "OBS_SAFETY_API_BASE_URL",
+    "http://localhost:9101/observatory/safety/api",
+)
 
 PROJECT_VERSION = "0.1.0"
 PROJECT_SOURCE_URL = "https://github.com/sarhabaot/LAST_Hub"

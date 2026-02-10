@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Safety Status{% endblock %}
+
+{% block content %}
+<section class="container">
+  <header>
+    <h1>{% if safe %}SAFE{% else %}UNSAFE{% endif %}</h1>
+    {% if evaluated_at %}
+      <p><strong>Evaluated at:</strong> {{ evaluated_at }}</p>
+    {% endif %}
+  </header>
+
+  {% if error %}
+    <article>
+      <p><strong>Error:</strong> {{ error }}</p>
+    </article>
+  {% endif %}
+
+  <article>
+    <h2>Failed Reasons</h2>
+    {% if failed_reasons %}
+      <ul>
+        {% for reason in failed_reasons %}
+          <li>{{ reason }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>None.</p>
+    {% endif %}
+  </article>
+
+  <article>
+    <h2>Passed Reasons</h2>
+    {% if passed_reasons %}
+      <ul>
+        {% for reason in passed_reasons %}
+          <li>{{ reason }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>None.</p>
+    {% endif %}
+  </article>
+
+  <article>
+    <h2>Stale Sensors</h2>
+    {% if stale_sensors %}
+      <ul>
+        {% for sensor in stale_sensors %}
+          <li>{{ sensor }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>None.</p>
+    {% endif %}
+  </article>
+</section>
+{% endblock %}
