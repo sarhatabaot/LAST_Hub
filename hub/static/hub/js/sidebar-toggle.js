@@ -20,7 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     buttons.forEach((button) => {
-      button.classList.toggle("is-active", button.dataset.sidebarFilter === filter);
+      const isActive = button.dataset.sidebarFilter === filter;
+      button.classList.toggle("is-active", isActive);
+      button.classList.toggle("outline", !isActive);
     });
   };
 
