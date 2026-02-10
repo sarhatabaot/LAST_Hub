@@ -20,69 +20,64 @@
           </button>
         </div>
       </li>
+      <li><a href="/hub" class="secondary">How to use this website</a></li>
       <li><strong>Observations</strong></li>
       <li class="icon-group">
-        <div class="icon-toolbar" role="group" aria-label="Observation links">
-          <a
-            href="{% url 'forecast' %}"
-            role="button"
-            class="secondary outline icon-button"
-            data-tooltip="Forecast"
-            aria-label="Forecast"
-          >
-            <i class="iconoir-sun-light" aria-hidden="true"></i>
-          </a>
-          <a
-            href="https://zoom.earth/maps/precipitation/#view=31.7364,36.2071,7z/model=icon"
-            role="button"
-            class="secondary outline icon-button"
-            target="_blank"
-            rel="noopener noreferrer"
-            data-tooltip="Zoom Earth"
-            aria-label="Zoom Earth"
-          >
-            <i class="iconoir-globe" aria-hidden="true"></i>
-          </a>
-          <a
-            href="{% url 'allsky' %}"
-            role="button"
-            class="secondary outline icon-button"
-            data-tooltip="AllSky"
-            aria-label="AllSky"
-          >
-            <i class="iconoir-camera" aria-hidden="true"></i>
-          </a>
-          <a
-            href="http://10.23.1.25/grafana-new"
-            role="button"
-            class="secondary outline icon-button"
-            target="_blank"
-            rel="noopener noreferrer"
-            data-tooltip="Grafana"
-            aria-label="Grafana"
-          >
-            <img src="https://cdn.simpleicons.org/grafana" alt="" aria-hidden="true">
-          </a>
-          <a
-            href="{% url 'zorg' %}"
-            role="button"
-            class="secondary outline icon-button"
-            data-tooltip="Zorg"
-            aria-label="Zorg"
-          >
-            Zorg
-          </a>
-          <a
-            href="http://ap-ag-ofek-pc/"
-            role="button"
-            class="secondary outline icon-button"
-            target="_blank"
-            rel="noopener noreferrer"
-            data-tooltip="CAST"
-            aria-label="CAST"
-          >
-            CAST
-          </a>
+        <div class="sidebar-button-groups" aria-label="Observation links">
+          <div class="sidebar-button-group" role="group">
+            <a
+              href="{% url 'forecast' %}"
+              role="button"
+              class="secondary outline"
+            >
+              Forecast
+            </a>
+            <a
+              href="https://zoom.earth/maps/precipitation/#view=31.7364,36.2071,7z/model=icon"
+              role="button"
+              class="secondary outline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Zoom Earth
+            </a>
+            <a
+              href="{% url 'allsky' %}"
+              role="button"
+              class="secondary outline"
+            >
+              AllSky
+            </a>
+          </div>
+          <div class="sidebar-button-group" role="group">
+            <a
+              href="http://10.23.1.25/grafana-new"
+              role="button"
+              class="secondary outline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Grafana
+            </a>
+            <a
+              href="http://10.23.1.25/"
+              role="button"
+              class="secondary outline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Zorg
+            </a>
+            <a
+              href="http://ap-ag-ofek-pc/"
+              role="button"
+              class="secondary outline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              CAST
+            </a>
+          </div>
         </div>
       </li>
       <li><strong>Docs (WIP)</strong></li>
