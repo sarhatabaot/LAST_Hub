@@ -15,7 +15,11 @@
       </h1>
     </article>
     {% if evaluated_at %}
-      <p><strong>Evaluated at:</strong> {{ evaluated_at }}</p>
+      <p>
+        <strong>Evaluated at:</strong>
+        <span id="evaluatedAtUtc" data-evaluated-at="{{ evaluated_at }}">{{ evaluated_at }}</span>
+        <small id="evaluatedAtLocal"><em></em></small>
+      </p>
     {% endif %}
   </header>
 
@@ -70,4 +74,53 @@
     {% endif %}
   </details>
 </section>
+
+{% if evaluated_at %}
+  <script>
+    (() => {
+      const utcNode = document.getElementById("evaluatedAtUtc");
+      const localNode = document.getElementById("evaluatedAtLocal");
+
+      if (!utcNode || !localNode) {
+        return;
+      }
+
+      const raw = utcNode.dataset.evaluatedAt;
+      const parsed = Date.parse(raw);
+
+      if (Number.isNaN(parsed)) {
+        return;
+      }
+
+      const formatRelative = (seconds) => {
+        if (seconds < 10) {
+          return "just now";
+        }
+        if (seconds < 60) {
+          return `${seconds} seconds ago`;
+        }
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) {
+          return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+        }
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) {
+          return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+        }
+        const days = Math.floor(hours / 24);
+        return `${days} day${days === 1 ? "" : "s"} ago`;
+      };
+
+      const update = () => {
+        const localTime = new Date(parsed).toLocaleString();
+        const diffSeconds = Math.max(0, Math.round((Date.now() - parsed) / 1000));
+        localNode.firstElementChild.textContent =
+          ` Local: ${localTime} (${formatRelative(diffSeconds)})`;
+      };
+
+      update();
+      setInterval(update, 10000);
+    })();
+  </script>
+{% endif %}
 {% endblock %}
