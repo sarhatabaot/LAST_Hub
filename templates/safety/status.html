@@ -25,8 +25,10 @@
     </article>
   {% endif %}
 
-  <article>
-    <h2>Failed Reasons</h2>
+  <details class="accordion">
+    <summary role="button" class="pico-background-red-400 pico-color-white">
+      Failed Reasons ({{ failed_reasons|length }})
+    </summary>
     {% if failed_reasons %}
       <ul>
         {% for reason in failed_reasons %}
@@ -36,10 +38,12 @@
     {% else %}
       <p>None.</p>
     {% endif %}
-  </article>
+  </details>
 
-  <article>
-    <h2>Passed Reasons</h2>
+  <details class="accordion">
+    <summary role="button" class="pico-background-green-400 pico-color-white">
+      Passed Reasons ({{ passed_reasons|length }})
+    </summary>
     {% if passed_reasons %}
       <ul>
         {% for reason in passed_reasons %}
@@ -49,10 +53,12 @@
     {% else %}
       <p>None.</p>
     {% endif %}
-  </article>
+  </details>
 
-  <article>
-    <h2>Stale Sensors</h2>
+  <details class="accordion">
+    <summary role="button" class="pico-background-slate-200 pico-color-slate-900">
+      Stale Sensors ({{ stale_sensors|length }})
+    </summary>
     {% if stale_sensors %}
       <ul>
         {% for sensor in stale_sensors %}
@@ -62,6 +68,6 @@
     {% else %}
       <p>None.</p>
     {% endif %}
-  </article>
+  </details>
 </section>
 {% endblock %}
