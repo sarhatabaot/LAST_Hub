@@ -95,7 +95,7 @@
 
 .embedded-iframe {
   width: 100%;
-  min-height: 70vh;
+  min-height: 80vh;
   border: 1px solid var(--pico-muted-border-color);
   border-radius: 0.5rem;
   background-color: var(--pico-card-sectioning-background-color);
