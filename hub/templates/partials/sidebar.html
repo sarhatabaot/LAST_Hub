@@ -21,28 +21,70 @@
         </div>
       </li>
       <li><strong>Observations</strong></li>
-      <li>
-        <a
-          href="{% url 'forecast' %}"
-          class="{% if request.resolver_match and request.resolver_match.url_name == 'forecast' %} contrast{% else %} secondary{% endif %}"
-        >
-          Forecast
-        </a>
+      <li class="icon-group">
+        <div class="icon-toolbar" role="group" aria-label="Observation links">
+          <a
+            href="{% url 'forecast' %}"
+            role="button"
+            class="secondary outline icon-button"
+            title="Forecast"
+            aria-label="Forecast"
+          >
+            <i class="iconoir-sun-light" aria-hidden="true"></i>
+          </a>
+          <a
+            href="https://zoom.earth/maps/precipitation/#view=31.7364,36.2071,7z/model=icon"
+            role="button"
+            class="secondary outline icon-button"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Zoom Earth"
+            aria-label="Zoom Earth"
+          >
+            <i class="iconoir-globe" aria-hidden="true"></i>
+          </a>
+          <a
+            href="{% url 'allsky' %}"
+            role="button"
+            class="secondary outline icon-button"
+            title="AllSky"
+            aria-label="AllSky"
+          >
+            <i class="iconoir-camera" aria-hidden="true"></i>
+          </a>
+          <a
+            href="http://10.23.1.25/grafana-new"
+            role="button"
+            class="secondary outline icon-button"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Grafana"
+            aria-label="Grafana"
+          >
+            <img src="https://cdn.simpleicons.org/grafana" alt="" aria-hidden="true">
+          </a>
+          <a
+            href="{% url 'zorg' %}"
+            role="button"
+            class="secondary outline icon-button"
+            title="Zorg"
+            aria-label="Zorg"
+          >
+            Zorg
+          </a>
+          <a
+            href="http://ap-ag-ofek-pc/"
+            role="button"
+            class="secondary outline icon-button"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="CAST"
+            aria-label="CAST"
+          >
+            CAST
+          </a>
+        </div>
       </li>
-      <li>
-        <a
-          href="{% url 'safety_status' %}"
-          class="{% if request.resolver_match and request.resolver_match.url_name == 'safety_status' %} contrast{% else %} secondary{% endif %}"
-        >
-          Safety Status
-        </a>
-      </li>
-      <li><a href="https://zoom.earth/maps/precipitation/#view=31.7364,36.2071,7z/model=icon" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Zoom Earth</a></li>
-      <li><a href="http://10.23.1.25/" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Zorg</a></li>
-      <li><a href="http://10.23.2.33/allsky/" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Allsky</a></li>
-      <li><a href="http://10.23.1.25/grafana" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Grafana</a></li>
-      <li><a href="http://10.23.1.25/grafana-new" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Grafana New</a></li>
-      <li><a href="http://ap-ag-ofek-pc/" class="secondary icon-link" target="_blank" rel="noopener noreferrer">CAST</a></li>
       <li><strong>Docs (WIP)</strong></li>
       <li class="sidebar-all"><strong>API</strong></li>
       <li class="sidebar-all"><a href="http://10.23.1.25/observatory/safety/api/docs" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Observatory Safety API</a></li>

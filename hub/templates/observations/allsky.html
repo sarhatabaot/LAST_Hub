@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}AllSky{% endblock %}
+
+{% block sidebar %}
+  {% include "partials/sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="embedded-page">
+  <header class="embedded-header">
+    <h1>AllSky</h1>
+    <a href="{{ external_url }}" class="secondary" target="_blank" rel="noopener noreferrer">
+      Open original
+    </a>
+  </header>
+
+  <iframe
+    title="AllSky"
+    src="{{ external_url }}"
+    class="embedded-iframe"
+    loading="lazy"
+  ></iframe>
+</section>
+{% endblock %}
