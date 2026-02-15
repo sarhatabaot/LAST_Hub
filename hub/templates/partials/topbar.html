@@ -1,0 +1,46 @@
+<header class="hub-header" data-hub-header>
+  <div class="hub-header-left">
+    {% block header_left %}
+      <a
+        href="{% url 'safety_status' %}"
+        role="button"
+        class="safety-button {% if safety_sidebar.error %}pico-background-slate-50{% elif safety_sidebar.safe %}pico-background-green-500 pico-color-white{% else %}pico-background-red-500 pico-color-white{% endif %}"
+      >
+        Safety: {{ safety_sidebar.label }}
+      </a>
+    {% endblock %}
+  </div>
+  <div class="hub-header-right">
+    <form role="search" class="hub-search">
+      <label>
+        <input
+          type="search"
+          placeholder="Search all hubs…"
+          data-sidebar-search
+        />
+      </label>
+    </form>
+    <div class="hub-mode-toggle hub-mode-switch" data-hub-mode-toggle>
+      <input
+        type="checkbox"
+        id="hubModeSwitch"
+        class="hub-mode-switch-input"
+        role="switch"
+        aria-label="Toggle Development mode"
+        data-hub-mode-switch
+      >
+      <label for="hubModeSwitch" class="hub-mode-switch-label">
+        <span class="hub-mode-switch-option hub-mode-switch-option-left">Observation</span>
+        <span class="hub-mode-switch-option hub-mode-switch-option-right">Development</span>
+      </label>
+    </div>
+    <div class="hub-auth">
+      {% if request.user.is_authenticated %}
+        <small>Signed in as {{ request.user.get_username }}</small>
+        <a href="{% url 'logout' %}" class="secondary">Log out</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="secondary">Log in</a>
+      {% endif %}
+    </div>
+  </div>
+</header>

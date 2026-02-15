@@ -28,7 +28,7 @@
   {% block extra_head %}{% endblock %}
 </head>
 
-<body>
+<body data-hub-page="{{ request.resolver_match.url_name|default:'' }}">
 
 <div class="layout">
   {% block sidebar %}
@@ -36,7 +36,10 @@
   {% endblock %}
 
   <main class="content">
-    {% block content %}{% endblock %}
+    {% include "partials/topbar.html" %}
+    <div class="content-body">
+      {% block content %}{% endblock %}
+    </div>
   </main>
 </div>
 
