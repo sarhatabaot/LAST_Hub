@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const pageModeMap = {
     home: "observer",
     hub: "developer",
+    manual_index: "developer",
+    manual_detail: "developer",
     operations: "observer",
     forecast: "observer",
     allsky: "observer",

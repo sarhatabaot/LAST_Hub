@@ -17,7 +17,6 @@
     <details class="sidebar-section" data-hub-section="observer" open>
       <summary>Observation</summary>
       <ul>
-        <li><strong>Operations</strong></li>
         <li data-search-item>
           <a
             href="{% url 'operations' %}"
@@ -90,6 +89,35 @@
       <summary>Development</summary>
       <ul>
         <li><strong>Docs (WIP)</strong></li>
+        <li>
+          <details
+            class="sidebar-subsection"
+            {% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' %}open{% endif %}
+            {% if request.resolver_match and request.resolver_match.url_name == 'manual_index' %}open{% endif %}
+          >
+            <summary>Manual</summary>
+            <ul>
+              <li data-search-item>
+                <a
+                  href="{% url 'manual_index' %}"
+                  class="{% if request.resolver_match and request.resolver_match.url_name == 'manual_index' %} contrast{% else %} secondary {% endif %}"
+                >
+                  Overview
+                </a>
+              </li>
+              {% for manual in manual_pages %}
+                <li data-search-item>
+                  <a
+                    href="{% url 'manual_detail' manual.slug %}"
+                    class="{% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' and request.resolver_match.kwargs.slug == manual.slug %} contrast{% else %} secondary {% endif %}"
+                  >
+                    {{ manual.title }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          </details>
+        </li>
         <li data-search-item>
           <a
             href="http://10.23.1.25/observatory/safety/api/docs"

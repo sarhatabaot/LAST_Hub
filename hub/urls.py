@@ -4,6 +4,9 @@ from . import views
 urlpatterns = [
     path("", views.home_view, name="home"),
     path("hub/", views.hub_view, name="hub"),
+    path("docs/manual/", views.manual_index, name="manual_index"),
+    path("docs/manual/<slug:slug>/", views.manual_detail, name="manual_detail"),
+    path("markdownx/", include("markdownx.urls")),
     path("forecast/", views.forecast_view, name="forecast"),
     path("forecast/api/", views.forecast_api, name="forecast_api"),
     path("observations/allsky/", views.allsky_view, name="allsky"),

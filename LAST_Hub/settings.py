@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'markdownx',
     'hub',
     'controller',
 ]
@@ -71,6 +72,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'hub.context_processor.project_info',
                 'hub.context_processor.safety_status',
+                'hub.context_processor.manual_pages',
             ],
         },
     },
@@ -125,6 +127,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/hub/static/'
+MEDIA_URL = "/hub/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+MARKDOWNX_URLS_PATH = "/hub/markdownx/markdownify/"
+MARKDOWNX_UPLOAD_URLS_PATH = "/hub/markdownx/upload/"
 
 FORECAST_URL = "http://10.23.1.16/forecast"
 OBS_SAFETY_API_BASE_URL = os.environ.get(

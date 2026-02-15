@@ -6,16 +6,17 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
 from django.http import HttpResponse, HttpResponseServerError
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
+from markdownx.utils import markdownify
 
 from LAST_Hub import settings
 from LAST_Hub.settings import BASE_DIR
 from controller import client as controller_client
 from hub import operations
 from hub.forms import AccountRequestForm
-from hub.models import OperationalChecklistState
+from hub.models import ManualPage, OperationalChecklistState
 from hub.safety import fetch_safety_status
 
 
@@ -44,6 +45,23 @@ def hub_view(request):
     }
 
     return render(request, "hub/hub.html", context)
+
+def manual_index(request):
+    context = {
+        "page": None,
+        "content_html": "",
+    }
+    return render(request, "docs/manual.html", context)
+
+
+def manual_detail(request, slug):
+    page = get_object_or_404(ManualPage, slug=slug)
+    content_html = markdownify(page.content)
+    context = {
+        "page": page,
+        "content_html": content_html,
+    }
+    return render(request, "docs/manual.html", context)
 
 def forecast_api(request):
     if request.method != "GET":

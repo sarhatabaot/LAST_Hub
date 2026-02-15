@@ -1,5 +1,7 @@
 from django.conf import settings
+from django.db.utils import OperationalError, ProgrammingError
 
+from hub.models import ManualPage
 from hub.safety import fetch_safety_status
 
 
@@ -25,4 +27,14 @@ def safety_status(request):
             "label": label,
             "error": status["error"],
         }
+    }
+
+
+def manual_pages(request):
+    try:
+        pages = list(ManualPage.objects.order_by("title"))
+    except (OperationalError, ProgrammingError):
+        pages = []
+    return {
+        "manual_pages": pages,
     }

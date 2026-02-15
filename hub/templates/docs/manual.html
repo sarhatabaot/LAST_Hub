@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Manual{% endblock %}
+
+{% block sidebar %}
+  {% include "partials/sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  <header class="embedded-header">
+    <h2>{{ page.title|default:"Manual" }}</h2>
+  </header>
+
+  {% if manual_pages %}
+    <div class="manual-index">
+      <strong>Pages</strong>
+      <ul>
+        {% for manual in manual_pages %}
+          <li>
+            <a
+              href="{% url 'manual_detail' manual.slug %}"
+              class="{% if page and page.slug == manual.slug %} contrast{% else %} secondary {% endif %}"
+            >
+              {{ manual.title }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if page %}
+    <div class="manual-content">
+      {{ content_html|safe }}
+    </div>
+  {% else %}
+    <p class="operations-meta">
+      Select a manual page from the list or create one in the admin.
+    </p>
+  {% endif %}
+</section>
+{% endblock %}
