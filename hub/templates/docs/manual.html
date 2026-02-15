@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Manual{% endblock %}
 
@@ -6,29 +7,15 @@
   {% include "partials/sidebar.html" %}
 {% endblock %}
 
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'hub/css/pygments.css' %}">
+{% endblock %}
+
 {% block content %}
 <section class="section">
   <header class="embedded-header">
     <h2>{{ page.title|default:"Manual" }}</h2>
   </header>
-
-  {% if manual_pages %}
-    <div class="manual-index">
-      <strong>Pages</strong>
-      <ul>
-        {% for manual in manual_pages %}
-          <li>
-            <a
-              href="{% url 'manual_detail' manual.slug %}"
-              class="{% if page and page.slug == manual.slug %} contrast{% else %} secondary {% endif %}"
-            >
-              {{ manual.title }}
-            </a>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
 
   {% if page %}
     <div class="manual-content">

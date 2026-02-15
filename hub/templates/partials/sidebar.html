@@ -93,18 +93,9 @@
           <details
             class="sidebar-subsection"
             {% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' %}open{% endif %}
-            {% if request.resolver_match and request.resolver_match.url_name == 'manual_index' %}open{% endif %}
           >
             <summary>Manual</summary>
             <ul>
-              <li data-search-item>
-                <a
-                  href="{% url 'manual_index' %}"
-                  class="{% if request.resolver_match and request.resolver_match.url_name == 'manual_index' %} contrast{% else %} secondary {% endif %}"
-                >
-                  Overview
-                </a>
-              </li>
               {% for manual in manual_pages %}
                 <li data-search-item>
                   <a

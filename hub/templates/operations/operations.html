@@ -50,60 +50,7 @@
   </article>
 </section>
 
-<section class="section">
-  <h3>Operational Checklist</h3>
-  <div class="checklist">
-    {% for item in checklist_items %}
-      <form method="post" action="{% url 'operations_toggle' %}" class="checklist-item" data-checklist-form>
-        {% csrf_token %}
-        <input type="hidden" name="item_key" value="{{ item.key }}">
-        <label>
-          <input type="checkbox" name="checked" {% if item.checked %}checked{% endif %} data-checklist-input>
-          <span>{{ item.label }}</span>
-        </label>
-        {% if item.help %}
-          <small>{{ item.help }}</small>
-        {% endif %}
-        <noscript>
-          <button type="submit" class="secondary outline">Update</button>
-        </noscript>
-      </form>
-    {% endfor %}
-  </div>
-</section>
-
-<section class="section">
-  <h3>Actions</h3>
-  <div class="operations-actions">
-    <form method="post" action="{% url 'operations_open' %}">
-      {% csrf_token %}
-      <button type="submit" {% if not all_checked %}disabled{% endif %}>Open observatory</button>
-    </form>
-    <form method="post" action="{% url 'operations_close' %}">
-      {% csrf_token %}
-      <button type="submit" class="secondary">Close observatory</button>
-    </form>
-  </div>
-  {% if not all_checked %}
-    <div class="operations-note">Complete the checklist to enable opening.</div>
-  {% endif %}
-  {% if not controller_configured %}
-    <div class="operations-note">Controller API is not configured. Actions will be recorded locally only.</div>
-  {% endif %}
-</section>
-
-<script>
-  (function () {
-    var forms = document.querySelectorAll("[data-checklist-form]");
-    forms.forEach(function (form) {
-      var checkbox = form.querySelector("[data-checklist-input]");
-      if (!checkbox) {
-        return;
-      }
-      checkbox.addEventListener("change", function () {
-        form.submit();
-      });
-    });
-  })();
-</script>
+<div id="operations-dynamic">
+  {% include "operations/_checklist.html" %}
+</div>
 {% endblock %}

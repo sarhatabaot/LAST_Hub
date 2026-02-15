@@ -123,11 +123,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const storedMode =
     window.localStorage && window.localStorage.getItem(STORAGE_KEY);
   const pageMode = detectModeFromPage();
-  const initialMode = pageMode || storedMode || "observer";
+  const initialMode = storedMode || pageMode || "observer";
   if (pageMode) {
     openSectionForMode(pageMode);
   }
-  setMode(initialMode, { persist: Boolean(pageMode || !storedMode) });
+  setMode(initialMode, { persist: !storedMode });
 
   if (modeButtons.length > 0) {
     modeButtons.forEach((button) => {

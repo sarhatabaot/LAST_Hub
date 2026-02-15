@@ -1,0 +1,83 @@
+.manual-content pre {
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  border: 1px solid var(--pico-muted-border-color);
+  background: #f6f8fa;
+  color: #24292f;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.manual-content code {
+  font-family: ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.manual-content .codehilite .c,
+.manual-content .codehilite .cm,
+.manual-content .codehilite .c1,
+.manual-content .codehilite .cs {
+  color: #6a737d;
+  font-style: italic;
+}
+
+.manual-content .codehilite .k,
+.manual-content .codehilite .kc,
+.manual-content .codehilite .kd,
+.manual-content .codehilite .kn,
+.manual-content .codehilite .kp,
+.manual-content .codehilite .kr,
+.manual-content .codehilite .kt {
+  color: #d73a49;
+}
+
+.manual-content .codehilite .o,
+.manual-content .codehilite .ow {
+  color: #d73a49;
+}
+
+.manual-content .codehilite .s,
+.manual-content .codehilite .sb,
+.manual-content .codehilite .sc,
+.manual-content .codehilite .sd,
+.manual-content .codehilite .s2,
+.manual-content .codehilite .se,
+.manual-content .codehilite .sh,
+.manual-content .codehilite .si,
+.manual-content .codehilite .sx,
+.manual-content .codehilite .sr,
+.manual-content .codehilite .s1,
+.manual-content .codehilite .ss {
+  color: #032f62;
+}
+
+.manual-content .codehilite .nf,
+.manual-content .codehilite .nc,
+.manual-content .codehilite .nn,
+.manual-content .codehilite .na {
+  color: #6f42c1;
+}
+
+.manual-content .codehilite .m,
+.manual-content .codehilite .mf,
+.manual-content .codehilite .mh,
+.manual-content .codehilite .mi,
+.manual-content .codehilite .mo,
+.manual-content .codehilite .il {
+  color: #005cc5;
+}
+
+.manual-content .codehilite .bp,
+.manual-content .codehilite .nb,
+.manual-content .codehilite .no,
+.manual-content .codehilite .nv,
+.manual-content .codehilite .vc,
+.manual-content .codehilite .vg,
+.manual-content .codehilite .vi {
+  color: #24292f;
+}
+
+.manual-content .codehilite .err {
+  color: #b31d28;
+  background-color: #ffeef0;
+}

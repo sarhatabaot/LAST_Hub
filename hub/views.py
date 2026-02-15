@@ -47,6 +47,9 @@ def hub_view(request):
     return render(request, "hub/hub.html", context)
 
 def manual_index(request):
+    first_page = ManualPage.objects.order_by("title").first()
+    if first_page:
+        return redirect("manual_detail", slug=first_page.slug)
     context = {
         "page": None,
         "content_html": "",
@@ -199,6 +202,17 @@ def checklist_toggle(request):
         state.updated_by = request.user
         state.save(update_fields=["items", "updated_by", "updated_at"])
 
+    if request.headers.get("HX-Request"):
+        state = _get_or_create_state()
+        checklist_items, _ = operations.build_checklist_items(state.items)
+        all_checked = all(item["checked"] for item in checklist_items)
+        context = {
+            "checklist_items": checklist_items,
+            "all_checked": all_checked,
+            "controller_configured": bool(settings.CONTROLLER_API_BASE_URL),
+        }
+        return render(request, "operations/_checklist.html", context)
+
     return redirect("operations")
 
 
@@ -288,11 +302,13 @@ def close_observatory(request):
                 action_status = OperationalChecklistState.ACTION_STATUS_FAILED
                 messages.error(request, message)
 
+        state.items = operations.default_checklist_state()
         _record_action(state, OperationalChecklistState.ACTION_CLOSE, action_status, message, request.user)
         state.updated_by = request.user
         state.save(
             update_fields=[
                 "observatory_state",
+                "items",
                 "last_action",
                 "last_action_status",
                 "last_action_message",
@@ -302,5 +318,16 @@ def close_observatory(request):
                 "updated_at",
             ]
         )
+
+    if request.headers.get("HX-Request"):
+        state = _get_or_create_state()
+        checklist_items, _ = operations.build_checklist_items(state.items)
+        all_checked = all(item["checked"] for item in checklist_items)
+        context = {
+            "checklist_items": checklist_items,
+            "all_checked": all_checked,
+            "controller_configured": bool(settings.CONTROLLER_API_BASE_URL),
+        }
+        return render(request, "operations/_checklist.html", context)
 
     return redirect("operations")

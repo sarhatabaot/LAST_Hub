@@ -11,6 +11,21 @@ services:
       sh -c "uv sync && uv run python manage.py migrate"
     restart: "no"
 
+  collectstatic:
+    image: ghcr.io/astral-sh/uv:python3.13-trixie-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - ./db.sqlite3:/app/db.sqlite3
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: >
+      sh -c "uv sync && uv run python manage.py collectstatic --noinput"
+    restart: "no"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
   web:
     image: ghcr.io/astral-sh/uv:python3.13-trixie-slim
     working_dir: /app
@@ -25,4 +40,6 @@ services:
       sh -c "uv sync && uv run python manage.py runserver 0.0.0.0:8000"
     depends_on:
       migrate:
+        condition: service_completed_successfully
+      collectstatic:
         condition: service_completed_successfully

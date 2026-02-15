@@ -127,10 +127,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/hub/static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/hub/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 MARKDOWNX_URLS_PATH = "/hub/markdownx/markdownify/"
 MARKDOWNX_UPLOAD_URLS_PATH = "/hub/markdownx/upload/"
+MARKDOWNX_MARKDOWN_EXTENSIONS = [
+    "fenced_code",
+    "codehilite",
+]
 
 FORECAST_URL = "http://10.23.1.16/forecast"
 OBS_SAFETY_API_BASE_URL = os.environ.get(
