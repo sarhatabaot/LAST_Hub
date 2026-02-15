@@ -20,6 +20,15 @@
           </button>
         </div>
       </li>
+      <li><strong>Operations</strong></li>
+      <li>
+        <a
+          href="{% url 'operations' %}"
+          class="{% if request.resolver_match and request.resolver_match.url_name == 'operations' %} contrast{% else %} secondary {% endif %}"
+        >
+          Checklist
+        </a>
+      </li>
       <li><a href="/hub" class="secondary">How to use this website</a></li>
       <li><strong>Observations</strong></li>
       <li class="icon-group">
@@ -115,6 +124,14 @@
        <a href="{{ PROJECT_SOURCE_URL }}" target="_blank" class="secondary">
           Source Code
        </a>
+    </div>
+    <div class="sidebar-auth">
+      {% if request.user.is_authenticated %}
+        <small>Signed in as {{ request.user.get_username }}</small>
+        <a href="{% url 'logout' %}" class="secondary">Log out</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="secondary">Log in</a>
+      {% endif %}
     </div>
   </footer>
 </aside>

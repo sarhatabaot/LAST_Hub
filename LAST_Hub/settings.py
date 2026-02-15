@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'hub'
+    'hub',
+    'controller',
 ]
 
 MIDDLEWARE = [
@@ -130,8 +131,16 @@ OBS_SAFETY_API_BASE_URL = os.environ.get(
     "OBS_SAFETY_API_BASE_URL",
     "http://10.23.1.25/observatory/safety/api/",
 )
+CONTROLLER_API_BASE_URL = os.environ.get(
+    "CONTROLLER_API_BASE_URL",
+    "",
+)
 
 PROJECT_VERSION = "0.1.0"
 PROJECT_SOURCE_URL = "https://github.com/sarhabaot/LAST_Hub"
 
 USE_X_FORWARDED_HOST = True
+
+LOGIN_URL = "/hub/accounts/login/"
+LOGIN_REDIRECT_URL = "/hub/operations/"
+LOGOUT_REDIRECT_URL = "/hub/"

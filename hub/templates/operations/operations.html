@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Operations{% endblock %}
+
+{% block sidebar %}
+  {% include "partials/sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="operations-header">
+    <div>
+      <h2>Observatory Operations</h2>
+      <p class="operations-meta">
+        Checklist state is shared across all signed-in users.
+      </p>
+    </div>
+    <div class="operations-meta">
+      <div>Signed in as {{ request.user.get_username }}</div>
+      <a href="{% url 'logout' %}" class="secondary">Log out</a>
+    </div>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <article class="operations-card">{{ message }}</article>
+    {% endfor %}
+  {% endif %}
+
+  <article class="operations-card">
+    <strong>Observatory state:</strong> {{ state_label }}
+    <div class="operations-meta">
+      {% if state.last_action %}
+        Last action: {{ state.action_label }} ({{ state.action_status_label }})
+        {% if state.last_action_at %} · {{ state.last_action_at|date:"Y-m-d H:i" }}{% endif %}
+        {% if state.last_action_by %} by {{ state.last_action_by.get_username }}{% endif %}
+      {% else %}
+        No actions recorded yet.
+      {% endif %}
+    </div>
+    {% if state.last_action_message %}
+      <div class="operations-meta">{{ state.last_action_message }}</div>
+    {% endif %}
+    {% if state.updated_at %}
+      <div class="operations-meta">
+        Checklist updated {{ state.updated_at|date:"Y-m-d H:i" }}
+        {% if state.updated_by %}by {{ state.updated_by.get_username }}{% endif %}
+      </div>
+    {% endif %}
+  </article>
+</section>
+
+<section class="section">
+  <h3>Operational Checklist</h3>
+  <div class="checklist">
+    {% for item in checklist_items %}
+      <form method="post" action="{% url 'operations_toggle' %}" class="checklist-item" data-checklist-form>
+        {% csrf_token %}
+        <input type="hidden" name="item_key" value="{{ item.key }}">
+        <label>
+          <input type="checkbox" name="checked" {% if item.checked %}checked{% endif %} data-checklist-input>
+          <span>{{ item.label }}</span>
+        </label>
+        {% if item.help %}
+          <small>{{ item.help }}</small>
+        {% endif %}
+        <noscript>
+          <button type="submit" class="secondary outline">Update</button>
+        </noscript>
+      </form>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <h3>Actions</h3>
+  <div class="operations-actions">
+    <form method="post" action="{% url 'operations_open' %}">
+      {% csrf_token %}
+      <button type="submit" {% if not all_checked %}disabled{% endif %}>Open observatory</button>
+    </form>
+    <form method="post" action="{% url 'operations_close' %}">
+      {% csrf_token %}
+      <button type="submit" class="secondary">Close observatory</button>
+    </form>
+  </div>
+  {% if not all_checked %}
+    <div class="operations-note">Complete the checklist to enable opening.</div>
+  {% endif %}
+  {% if not controller_configured %}
+    <div class="operations-note">Controller API is not configured. Actions will be recorded locally only.</div>
+  {% endif %}
+</section>
+
+<script>
+  (function () {
+    var forms = document.querySelectorAll("[data-checklist-form]");
+    forms.forEach(function (form) {
+      var checkbox = form.querySelector("[data-checklist-input]");
+      if (!checkbox) {
+        return;
+      }
+      checkbox.addEventListener("change", function () {
+        form.submit();
+      });
+    });
+  })();
+</script>
+{% endblock %}

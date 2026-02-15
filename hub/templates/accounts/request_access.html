@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Request Access{% endblock %}
+
+{% block sidebar %}
+  {% include "partials/sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  <h2>Request Access</h2>
+  <p class="operations-meta">
+    Submit this form to request a user account. Requests are reviewed manually.
+  </p>
+
+  {% if messages %}
+    {% for message in messages %}
+      <article class="operations-card">{{ message }}</article>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post" class="operations-card">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <article class="operations-card">{{ form.non_field_errors }}</article>
+    {% endif %}
+
+    <label>
+      Full name
+      {{ form.name }}
+    </label>
+    {% if form.name.errors %}
+      <small>{{ form.name.errors }}</small>
+    {% endif %}
+
+    <label>
+      Email
+      {{ form.email }}
+    </label>
+    {% if form.email.errors %}
+      <small>{{ form.email.errors }}</small>
+    {% endif %}
+
+    <label>
+      Organization (optional)
+      {{ form.organization }}
+    </label>
+    {% if form.organization.errors %}
+      <small>{{ form.organization.errors }}</small>
+    {% endif %}
+
+    <label>
+      Justification (optional)
+      {{ form.justification }}
+    </label>
+    {% if form.justification.errors %}
+      <small>{{ form.justification.errors }}</small>
+    {% endif %}
+
+    <button type="submit">Submit request</button>
+  </form>
+
+  <p class="operations-note">
+    Already have an account? <a href="{% url 'login' %}">Sign in</a>.
+  </p>
+</section>
+{% endblock %}

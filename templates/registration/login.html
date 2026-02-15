@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block sidebar %}
+  {% include "partials/sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  <h2>Sign in</h2>
+  <p class="operations-meta">Use your observatory account to continue.</p>
+
+  {% if form.errors %}
+    <article class="operations-card">Invalid username or password.</article>
+  {% endif %}
+
+  {% if messages %}
+    {% for message in messages %}
+      <article class="operations-card">{{ message }}</article>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post" class="operations-card">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <label>
+      Username
+      {{ form.username }}
+    </label>
+
+    <label>
+      Password
+      {{ form.password }}
+    </label>
+
+    <button type="submit">Log in</button>
+  </form>
+
+  <p class="operations-note">
+    Need an account? <a href="{% url 'account_request' %}">Request access</a>.
+  </p>
+</section>
+{% endblock %}
