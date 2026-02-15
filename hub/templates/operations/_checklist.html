@@ -32,7 +32,13 @@
 <section class="section">
   <h3>Actions</h3>
   <div class="operations-actions">
-    <form method="post" action="{% url 'operations_open' %}">
+    <form
+      method="post"
+      action="{% url 'operations_open' %}"
+      hx-post="{% url 'operations_open' %}"
+      hx-target="#operations-dynamic"
+      hx-swap="innerHTML"
+    >
       {% csrf_token %}
       <button type="submit" {% if not all_checked %}disabled{% endif %}>Open observatory</button>
     </form>

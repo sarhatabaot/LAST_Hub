@@ -280,6 +280,17 @@ def open_observatory(request):
             ]
         )
 
+    if request.headers.get("HX-Request"):
+        state = _get_or_create_state()
+        checklist_items, _ = operations.build_checklist_items(state.items)
+        all_checked = all(item["checked"] for item in checklist_items)
+        context = {
+            "checklist_items": checklist_items,
+            "all_checked": all_checked,
+            "controller_configured": bool(settings.CONTROLLER_API_BASE_URL),
+        }
+        return render(request, "operations/_checklist.html", context)
+
     return redirect("operations")
 
 
