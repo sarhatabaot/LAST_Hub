@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Manual{% endblock %}
+
+{% block sidebar %}
+  {% include "partials/sidebar.html" %}
+{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'hub/css/pygments.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  <header class="embedded-header">
+    <h2>{{ page.title|default:"Manual" }}</h2>
+  </header>
+
+  {% if page %}
+    <div class="manual-content">
+      {{ content_html|safe }}
+    </div>
+  {% else %}
+    <p class="operations-meta">
+      Select a manual page from the list or create one in the admin.
+    </p>
+  {% endif %}
+</section>
+{% endblock %}

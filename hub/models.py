@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from markdownx.models import MarkdownxField
 
 
 class OperationalChecklistState(models.Model):
@@ -97,3 +98,14 @@ class AccountRequest(models.Model):
 
     def __str__(self):
         return f"{self.name} <{self.email}>"
+
+
+class ManualPage(models.Model):
+    slug = models.SlugField(max_length=120, unique=True, default="manual")
+    title = models.CharField(max_length=200, default="Manual")
+    content = MarkdownxField(blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

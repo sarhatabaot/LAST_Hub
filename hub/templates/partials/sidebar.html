@@ -1,137 +1,159 @@
-<aside class="sidebar">
-  <nav>
-    <ul>
-      <li class="sidebar-status">
-        <a
-          href="{% url 'safety_status' %}"
-          role="button"
-          class="safety-button {% if safety_sidebar.error %}pico-background-slate-50{% elif safety_sidebar.safe %}pico-background-green-500 pico-color-white{% else %}pico-background-red-500 pico-color-white{% endif %}"
-        >
-          Safety: {{ safety_sidebar.label }}
-        </a>
-      </li>
-      <li class="sidebar-toggle" data-sidebar-toggle>
-        <div role="group">
-          <button type="button" class="secondary outline" data-sidebar-filter="observers">
-            Observers
-          </button>
-          <button type="button" class="secondary outline" data-sidebar-filter="all">
-            All
-          </button>
-        </div>
-      </li>
-      <li><strong>Operations</strong></li>
-      <li>
-        <a
-          href="{% url 'operations' %}"
-          class="{% if request.resolver_match and request.resolver_match.url_name == 'operations' %} contrast{% else %} secondary {% endif %}"
-        >
-          Checklist
-        </a>
-      </li>
-      <li><a href="/hub" class="secondary">How to use this website</a></li>
-      <li><strong>Observations</strong></li>
-      <li class="icon-group">
-        <div class="sidebar-button-groups" aria-label="Observation links">
-          <div class="sidebar-button-group" role="group">
-            <a
-              href="{% url 'forecast' %}"
-              role="button"
-              class="secondary outline"
-            >
-              Forecast
-            </a>
-            <a
-              href="https://zoom.earth/maps/precipitation/#view=31.7364,36.2071,7z/model=icon"
-              role="button"
-              class="secondary outline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Zoom Earth
-            </a>
-            <a
-              href="{% url 'allsky' %}"
-              role="button"
-              class="secondary outline"
-            >
-              AllSky
-            </a>
-          </div>
-          <div class="sidebar-button-group" role="group">
-            <a
-              href="http://10.23.1.25/grafana-new"
-              role="button"
-              class="secondary outline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Grafana
-            </a>
-            <a
-              href="http://10.23.1.25/"
-              role="button"
-              class="secondary outline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Zorg
-            </a>
-            <a
-              href="http://ap-ag-ofek-pc/"
-              role="button"
-              class="secondary outline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              CAST
-            </a>
-          </div>
-        </div>
-      </li>
-      <li><strong>Docs (WIP)</strong></li>
-      <li class="sidebar-all"><strong>API</strong></li>
-      <li class="sidebar-all"><a href="http://10.23.1.25/observatory/safety/api/docs" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Observatory Safety API</a></li>
-      <li class="sidebar-all"><a href="http://10.23.1.25/observatory/data/api/docs" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Observatory Data API</a></li>
-      <li><strong>Experimental Marshals</strong></li>
-      <li><a href="http://socsrv:5000" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Skyportal</a></li>
-      <li><a href="http://socsrv:6000" class="secondary icon-link" target="_blank" rel="noopener noreferrer">TOM (WIP)</a></li>
-      <li class="sidebar-all"><strong>Development</strong></li>
-      <li class="sidebar-all">
-        <a
-          href="{% url 'hub' %}"
-          class="{% if request.resolver_match and request.resolver_match.url_name == 'hub' %} contrast{% else %} secondary {% endif %}"
-        >
-          Repositories
-        </a>
-      </li>
-    </ul>
+<aside class="sidebar" data-hub-sidebar>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section sidebar-shared" data-hub-section="shared">
+      <div class="sidebar-section-title">Shared Resources</div>
+      <ul>
+        <li data-search-item>
+          <a
+            href="{% url 'home' %}"
+            class="{% if request.resolver_match and request.resolver_match.url_name == 'home' %} contrast{% else %} secondary {% endif %}"
+          >
+            How to use this website
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <details class="sidebar-section" data-hub-section="observer" open>
+      <summary>Observation</summary>
+      <ul>
+        <li data-search-item>
+          <a
+            href="{% url 'operations' %}"
+            class="{% if request.resolver_match and request.resolver_match.url_name == 'operations' %} contrast{% else %} secondary {% endif %}"
+          >
+            Checklist
+          </a>
+        </li>
+        <li><strong>Observations</strong></li>
+        <li data-search-item>
+          <a
+            href="{% url 'forecast' %}"
+            class="secondary"
+          >
+            Forecast
+          </a>
+        </li>
+        <li data-search-item>
+          <a
+            href="https://zoom.earth/maps/precipitation/#view=31.7364,36.2071,7z/model=icon"
+            class="secondary icon-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Zoom Earth
+          </a>
+        </li>
+        <li data-search-item>
+          <a
+            href="{% url 'allsky' %}"
+            class="secondary"
+          >
+            AllSky
+          </a>
+        </li>
+        <li data-search-item>
+          <a
+            href="http://10.23.1.25/grafana-new"
+            class="secondary icon-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Grafana
+          </a>
+        </li>
+        <li data-search-item>
+          <a
+            href="http://10.23.1.25/"
+            class="secondary icon-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Zorg
+          </a>
+        </li>
+        <li data-search-item>
+          <a
+            href="http://ap-ag-ofek-pc/"
+            class="secondary icon-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            CAST
+          </a>
+        </li>
+      </ul>
+    </details>
+
+    <details class="sidebar-section" data-hub-section="developer">
+      <summary>Development</summary>
+      <ul>
+        <li><strong>Docs (WIP)</strong></li>
+        <li>
+          <details
+            class="sidebar-subsection"
+            {% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' %}open{% endif %}
+          >
+            <summary>Manual</summary>
+            <ul>
+              {% for manual in manual_pages %}
+                <li data-search-item>
+                  <a
+                    href="{% url 'manual_detail' manual.slug %}"
+                    class="{% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' and request.resolver_match.kwargs.slug == manual.slug %} contrast{% else %} secondary {% endif %}"
+                  >
+                    {{ manual.title }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          </details>
+        </li>
+        <li data-search-item>
+          <a
+            href="http://10.23.1.25/observatory/safety/api/docs"
+            class="secondary icon-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Observatory Safety API
+          </a>
+        </li>
+        <li data-search-item>
+          <a
+            href="http://10.23.1.25/observatory/data/api/docs"
+            class="secondary icon-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Observatory Data API
+          </a>
+        </li>
+        <li><strong>Experimental Marshals</strong></li>
+        <li data-search-item>
+          <a href="http://socsrv:5000" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Skyportal</a>
+        </li>
+        <li data-search-item>
+          <a href="http://socsrv:6000" class="secondary icon-link" target="_blank" rel="noopener noreferrer">TOM (WIP)</a>
+        </li>
+        <li><strong>Development</strong></li>
+        <li data-search-item>
+          <a
+            href="{% url 'hub' %}"
+            class="{% if request.resolver_match and request.resolver_match.url_name == 'hub' %} contrast{% else %} secondary {% endif %}"
+          >
+            Repositories
+          </a>
+        </li>
+      </ul>
+    </details>
   </nav>
 
   <footer class="sidebar-footer">
-    <form role="search">
-        <label>
-            <input
-              type="search"
-              placeholder="Search (WIP)…"
-              disabled
-            />
-        </label>
-    </form>
-
-    <div>v{{ PROJECT_VERSION }}</div>
     <div>
-       <a href="{{ PROJECT_SOURCE_URL }}" target="_blank" class="secondary">
-          Source Code
-       </a>
-    </div>
-    <div class="sidebar-auth">
-      {% if request.user.is_authenticated %}
-        <small>Signed in as {{ request.user.get_username }}</small>
-        <a href="{% url 'logout' %}" class="secondary">Log out</a>
-      {% else %}
-        <a href="{% url 'login' %}" class="secondary">Log in</a>
-      {% endif %}
+      <a href="{{ PROJECT_SOURCE_URL }}" target="_blank" class="secondary">
+        v{{ PROJECT_VERSION }}
+      </a>
     </div>
   </footer>
 </aside>

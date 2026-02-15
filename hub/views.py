@@ -1,21 +1,25 @@
 import json
+import math
+from datetime import datetime, timezone as dt_timezone
 from pathlib import Path
 
+import ephem
 import requests
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
 from django.http import HttpResponse, HttpResponseServerError
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
+from markdownx.utils import markdownify
 
 from LAST_Hub import settings
 from LAST_Hub.settings import BASE_DIR
 from controller import client as controller_client
 from hub import operations
 from hub.forms import AccountRequestForm
-from hub.models import OperationalChecklistState
+from hub.models import ManualPage, OperationalChecklistState
 from hub.safety import fetch_safety_status
 
 
@@ -45,6 +49,26 @@ def hub_view(request):
 
     return render(request, "hub/hub.html", context)
 
+def manual_index(request):
+    first_page = ManualPage.objects.order_by("title").first()
+    if first_page:
+        return redirect("manual_detail", slug=first_page.slug)
+    context = {
+        "page": None,
+        "content_html": "",
+    }
+    return render(request, "docs/manual.html", context)
+
+
+def manual_detail(request, slug):
+    page = get_object_or_404(ManualPage, slug=slug)
+    content_html = markdownify(page.content)
+    context = {
+        "page": page,
+        "content_html": content_html,
+    }
+    return render(request, "docs/manual.html", context)
+
 def forecast_api(request):
     if request.method != "GET":
         return HttpResponse(status=405)
@@ -70,6 +94,31 @@ def forecast_api(request):
             '{"error": "Failed to load forecast"}',
             content_type="application/json",
         )
+
+
+@require_GET
+def sky_status(request):
+    observer = ephem.Observer()
+    observer.lat = str(settings.OBS_LATITUDE)
+    observer.lon = str(settings.OBS_LONGITUDE)
+    now = datetime.now(dt_timezone.utc)
+    observer.date = now
+
+    sun = ephem.Sun(observer)
+    moon = ephem.Moon(observer)
+
+    sun_alt = math.degrees(float(sun.alt))
+    moon_alt = math.degrees(float(moon.alt))
+    lst = observer.sidereal_time()
+    lst_deg = math.degrees(float(lst))
+    lst_hours = ephem.hours(lst)
+
+    utc_label = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
+    text = (
+        f"{utc_label} - LST: {lst_hours} ({lst_deg:.3f}°) - "
+        f"Local Sun Altitude: {sun_alt:.2f}° Moon Altitude: {moon_alt:.2f}°"
+    )
+    return HttpResponse(text, content_type="text/plain")
 
 
 def safety_status(request):
@@ -181,6 +230,17 @@ def checklist_toggle(request):
         state.updated_by = request.user
         state.save(update_fields=["items", "updated_by", "updated_at"])
 
+    if request.headers.get("HX-Request"):
+        state = _get_or_create_state()
+        checklist_items, _ = operations.build_checklist_items(state.items)
+        all_checked = all(item["checked"] for item in checklist_items)
+        context = {
+            "checklist_items": checklist_items,
+            "all_checked": all_checked,
+            "controller_configured": bool(settings.CONTROLLER_API_BASE_URL),
+        }
+        return render(request, "operations/_checklist.html", context)
+
     return redirect("operations")
 
 
@@ -248,6 +308,17 @@ def open_observatory(request):
             ]
         )
 
+    if request.headers.get("HX-Request"):
+        state = _get_or_create_state()
+        checklist_items, _ = operations.build_checklist_items(state.items)
+        all_checked = all(item["checked"] for item in checklist_items)
+        context = {
+            "checklist_items": checklist_items,
+            "all_checked": all_checked,
+            "controller_configured": bool(settings.CONTROLLER_API_BASE_URL),
+        }
+        return render(request, "operations/_checklist.html", context)
+
     return redirect("operations")
 
 
@@ -270,11 +341,13 @@ def close_observatory(request):
                 action_status = OperationalChecklistState.ACTION_STATUS_FAILED
                 messages.error(request, message)
 
+        state.items = operations.default_checklist_state()
         _record_action(state, OperationalChecklistState.ACTION_CLOSE, action_status, message, request.user)
         state.updated_by = request.user
         state.save(
             update_fields=[
                 "observatory_state",
+                "items",
                 "last_action",
                 "last_action_status",
                 "last_action_message",
@@ -284,5 +357,16 @@ def close_observatory(request):
                 "updated_at",
             ]
         )
+
+    if request.headers.get("HX-Request"):
+        state = _get_or_create_state()
+        checklist_items, _ = operations.build_checklist_items(state.items)
+        all_checked = all(item["checked"] for item in checklist_items)
+        context = {
+            "checklist_items": checklist_items,
+            "all_checked": all_checked,
+            "controller_configured": bool(settings.CONTROLLER_API_BASE_URL),
+        }
+        return render(request, "operations/_checklist.html", context)
 
     return redirect("operations")
