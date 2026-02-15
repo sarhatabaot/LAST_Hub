@@ -1,6 +1,9 @@
 import json
+import math
+from datetime import datetime, timezone as dt_timezone
 from pathlib import Path
 
+import ephem
 import requests
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -8,7 +11,7 @@ from django.db import IntegrityError, transaction
 from django.http import HttpResponse, HttpResponseServerError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 from markdownx.utils import markdownify
 
 from LAST_Hub import settings
@@ -91,6 +94,31 @@ def forecast_api(request):
             '{"error": "Failed to load forecast"}',
             content_type="application/json",
         )
+
+
+@require_GET
+def sky_status(request):
+    observer = ephem.Observer()
+    observer.lat = str(settings.OBS_LATITUDE)
+    observer.lon = str(settings.OBS_LONGITUDE)
+    now = datetime.now(dt_timezone.utc)
+    observer.date = now
+
+    sun = ephem.Sun(observer)
+    moon = ephem.Moon(observer)
+
+    sun_alt = math.degrees(float(sun.alt))
+    moon_alt = math.degrees(float(moon.alt))
+    lst = observer.sidereal_time()
+    lst_deg = math.degrees(float(lst))
+    lst_hours = ephem.hours(lst)
+
+    utc_label = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
+    text = (
+        f"{utc_label} - LST: {lst_hours} ({lst_deg:.3f}°) - "
+        f"Local Sun Altitude: {sun_alt:.2f}° Moon Altitude: {moon_alt:.2f}°"
+    )
+    return HttpResponse(text, content_type="text/plain")
 
 
 def safety_status(request):

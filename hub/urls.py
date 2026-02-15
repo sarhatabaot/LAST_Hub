@@ -9,6 +9,7 @@ urlpatterns = [
     path("markdownx/", include("markdownx.urls")),
     path("forecast/", views.forecast_view, name="forecast"),
     path("forecast/api/", views.forecast_api, name="forecast_api"),
+    path("sky/", views.sky_status, name="sky_status"),
     path("observations/allsky/", views.allsky_view, name="allsky"),
     path("observations/zorg/", views.zorg_view, name="zorg"),
     path("operations/", views.operations_view, name="operations"),

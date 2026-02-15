@@ -116,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Jerusalem'
 
 USE_I18N = True
 
@@ -146,6 +146,9 @@ CONTROLLER_API_BASE_URL = os.environ.get(
     "CONTROLLER_API_BASE_URL",
     "",
 )
+
+OBS_LATITUDE = 30.0529838
+OBS_LONGITUDE = 35.0407331
 
 PROJECT_VERSION = "0.1.0"
 PROJECT_SOURCE_URL = "https://github.com/sarhabaot/LAST_Hub"

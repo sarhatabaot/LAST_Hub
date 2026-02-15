@@ -10,6 +10,16 @@
       </a>
     {% endblock %}
   </div>
+  <div class="hub-header-center">
+    <div
+      class="hub-skybox"
+      hx-get="{% url 'sky_status' %}"
+      hx-trigger="load, every 5s"
+      hx-swap="innerHTML"
+    >
+      Loading sky data…
+    </div>
+  </div>
   <div class="hub-header-right">
     <form role="search" class="hub-search">
       <label>
