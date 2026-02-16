@@ -14,6 +14,7 @@ Monitor weather stations through Grafana via the browser on any computer in the 
 * **Secondary:** [http://10.23.1.25:3000/grafana](http://10.23.1.25:3000/grafana)
 * **Fallback:** [http://127.0.0.1:3000/grafana](http://127.0.0.1:3000/grafana)
 * **VPN Access:** [http://10.23.1.25/grafana](http://10.23.1.25/grafana) (Does not require NoMachine)
+* **New:** [http://10.23.1.25/grafana-new](http://10.23.1.25/grafana-new) (username: ocs, password: physics)
 
 **Troubleshooting:**
 
