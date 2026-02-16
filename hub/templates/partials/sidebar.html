@@ -25,6 +25,52 @@
             Checklist
           </a>
         </li>
+        <li>
+          <details
+            class="sidebar-subsection"
+            {% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' %}open{% endif %}
+          >
+            <summary>Manual</summary>
+            <ul>
+              {% if manual_sections %}
+                {% for section in manual_sections %}
+                  {% if section.key %}
+                    <li>
+                      <details class="sidebar-subsection-group" {% if section.is_active %}open{% endif %}>
+                        <summary>{{ section.label }}</summary>
+                        <ul>
+                          {% for manual in section.pages %}
+                            <li data-search-item>
+                              <a
+                                href="{% url 'manual_detail' manual.slug %}"
+                                class="{% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' and request.resolver_match.kwargs.slug == manual.slug %} contrast{% else %} secondary {% endif %}"
+                              >
+                                {{ manual.title }}
+                              </a>
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      </details>
+                    </li>
+                  {% else %}
+                    {% for manual in section.pages %}
+                      <li data-search-item>
+                        <a
+                          href="{% url 'manual_detail' manual.slug %}"
+                          class="{% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' and request.resolver_match.kwargs.slug == manual.slug %} contrast{% else %} secondary {% endif %}"
+                        >
+                          {{ manual.title }}
+                        </a>
+                      </li>
+                    {% endfor %}
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                <li class="operations-meta">No manual pages yet.</li>
+              {% endif %}
+            </ul>
+          </details>
+        </li>
         <li><strong>Observations</strong></li>
         <li data-search-item>
           <a
@@ -89,52 +135,6 @@
       <summary>Development</summary>
       <ul>
         <li><strong>Docs (WIP)</strong></li>
-        <li>
-          <details
-            class="sidebar-subsection"
-            {% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' %}open{% endif %}
-          >
-            <summary>Manual</summary>
-            <ul>
-              {% if manual_sections %}
-                {% for section in manual_sections %}
-                  {% if section.key %}
-                    <li>
-                      <details class="sidebar-subsection-group" {% if section.is_active %}open{% endif %}>
-                        <summary>{{ section.label }}</summary>
-                        <ul>
-                          {% for manual in section.pages %}
-                            <li data-search-item>
-                              <a
-                                href="{% url 'manual_detail' manual.slug %}"
-                                class="{% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' and request.resolver_match.kwargs.slug == manual.slug %} contrast{% else %} secondary {% endif %}"
-                              >
-                                {{ manual.title }}
-                              </a>
-                            </li>
-                          {% endfor %}
-                        </ul>
-                      </details>
-                    </li>
-                  {% else %}
-                    {% for manual in section.pages %}
-                      <li data-search-item>
-                        <a
-                          href="{% url 'manual_detail' manual.slug %}"
-                          class="{% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' and request.resolver_match.kwargs.slug == manual.slug %} contrast{% else %} secondary {% endif %}"
-                        >
-                          {{ manual.title }}
-                        </a>
-                      </li>
-                    {% endfor %}
-                  {% endif %}
-                {% endfor %}
-              {% else %}
-                <li class="operations-meta">No manual pages yet.</li>
-              {% endif %}
-            </ul>
-          </details>
-        </li>
         <li data-search-item>
           <a
             href="http://10.23.1.25/observatory/safety/api/docs"
