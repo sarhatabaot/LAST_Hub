@@ -4,6 +4,48 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  const addCopyButtons = () => {
+    const blocks = Array.from(container.querySelectorAll("pre"));
+    blocks.forEach((pre) => {
+      if (pre.querySelector(".manual-copy-button")) {
+        return;
+      }
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "manual-copy-button";
+      button.textContent = "⧉";
+      button.setAttribute("aria-label", "Copy code");
+      button.setAttribute("title", "Copy code");
+
+      button.addEventListener("click", async () => {
+        const code = pre.querySelector("code") || pre;
+        const text = code.innerText;
+        try {
+          await navigator.clipboard.writeText(text);
+          button.textContent = "✓";
+        } catch (err) {
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          textarea.setAttribute("readonly", "readonly");
+          textarea.style.position = "absolute";
+          textarea.style.left = "-9999px";
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textarea);
+          button.textContent = "✓";
+        }
+        button.classList.add("is-copied");
+        window.setTimeout(() => {
+          button.classList.remove("is-copied");
+          button.textContent = "⧉";
+        }, 1200);
+      });
+
+      pre.appendChild(button);
+    });
+  };
+
   const closeLightbox = (overlay) => {
     if (overlay && overlay.parentNode) {
       overlay.parentNode.removeChild(overlay);
@@ -50,4 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
       openLightbox(target);
     }
   });
+
+  addCopyButtons();
 });

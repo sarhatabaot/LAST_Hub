@@ -305,6 +305,43 @@ details.sidebar-subsection-group ul a {
   transition: transform 0.2s ease;
 }
 
+.manual-content pre {
+  position: relative;
+}
+
+.manual-copy-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.35rem;
+  border: 1px solid var(--pico-muted-border-color);
+  background: #b8b8b8;
+  color: #ffffff;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.manual-content pre:hover .manual-copy-button {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.manual-copy-button:hover {
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+.manual-copy-button.is-copied {
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
 .manual-lightbox {
   position: fixed;
   inset: 0;
