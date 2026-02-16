@@ -103,6 +103,7 @@ class AccountRequest(models.Model):
 class ManualPage(models.Model):
     slug = models.SlugField(max_length=120, unique=True, default="manual")
     title = models.CharField(max_length=200, default="Manual")
+    section = models.CharField(max_length=200, blank=True, default="")
     content = MarkdownxField(blank=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)

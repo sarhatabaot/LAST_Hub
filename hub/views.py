@@ -47,7 +47,7 @@ def hub_view(request):
     return render(request, "hub/hub.html", context)
 
 def manual_index(request):
-    first_page = ManualPage.objects.order_by("title").first()
+    first_page = ManualPage.objects.order_by("section", "slug").first()
     if first_page:
         return redirect("manual_detail", slug=first_page.slug)
     context = {

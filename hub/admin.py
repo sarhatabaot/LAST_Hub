@@ -29,7 +29,7 @@ class AccountRequestAdmin(admin.ModelAdmin):
 
 @admin.register(ManualPage)
 class ManualPageAdmin(MarkdownxModelAdmin):
-    list_display = ("title", "slug", "updated_at")
-    search_fields = ("title", "slug")
+    list_display = ("title", "section", "slug", "updated_at")
+    search_fields = ("title", "section", "slug")
     prepopulated_fields = {"slug": ("title",)}
     readonly_fields = ("created_at", "updated_at")

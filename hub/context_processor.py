@@ -1,3 +1,4 @@
+import re
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -33,11 +34,41 @@ def safety_status(request):
 
 def manual_pages(request):
     try:
-        pages = list(ManualPage.objects.order_by("title"))
+        pages = list(ManualPage.objects.order_by("section", "slug"))
     except (OperationalError, ProgrammingError):
         pages = []
+
+    current_slug = ""
+    if (
+        request.resolver_match
+        and request.resolver_match.url_name == "manual_detail"
+        and request.resolver_match.kwargs.get("slug")
+    ):
+        current_slug = request.resolver_match.kwargs.get("slug")
+
+    sections = []
+    def strip_order_prefix(value):
+        return re.sub(r"^\s*\d+\s*[-._]\s*", "", value or "").strip()
+
+    for page in pages:
+        key = page.section or ""
+        if not sections or sections[-1]["key"] != key:
+            label_source = key.split("/")[-1] if key else ""
+            sections.append(
+                {
+                    "key": key,
+                    "label": strip_order_prefix(label_source).replace("-", " ").replace("_", " ").title()
+                    or "General",
+                    "pages": [],
+                    "is_active": False,
+                }
+            )
+        sections[-1]["pages"].append(page)
+        if current_slug and page.slug == current_slug:
+            sections[-1]["is_active"] = True
+
     return {
-        "manual_pages": pages,
+        "manual_sections": sections,
     }
 
 

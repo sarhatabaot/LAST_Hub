@@ -65,6 +65,23 @@ details.sidebar-subsection ul a {
   padding-left: 1.35rem;
 }
 
+details.sidebar-subsection-group {
+  margin: 0.2rem 0;
+}
+
+details.sidebar-subsection-group summary {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pico-muted-color);
+  padding-left: 0.85rem;
+}
+
+details.sidebar-subsection-group ul a {
+  padding-left: 1.9rem;
+}
+
 .sidebar-section {
   margin: 0;
 }
