@@ -9,6 +9,9 @@ services:
       - ./media:/app/media
     environment:
       - PYTHONUNBUFFERED=1
+      - HTTP_PROXY
+      - HTTPS_PROXY
+      - NO_PROXY
       - UV_CACHE_DIR=/tmp/uv-cache
       - UV_PROJECT_ENVIRONMENT=/tmp/uv-venv
       - XDG_CACHE_HOME=/tmp
@@ -27,6 +30,9 @@ services:
       - ./media:/app/media
     environment:
       - PYTHONUNBUFFERED=1
+      - HTTP_PROXY
+      - HTTPS_PROXY
+      - NO_PROXY
       - UV_CACHE_DIR=/tmp/uv-cache
       - UV_PROJECT_ENVIRONMENT=/tmp/uv-venv
       - XDG_CACHE_HOME=/tmp
@@ -48,6 +54,9 @@ services:
       - ./media:/app/media
     environment:
       - PYTHONUNBUFFERED=1
+      - HTTP_PROXY
+      - HTTPS_PROXY
+      - NO_PROXY
       - UV_CACHE_DIR=/tmp/uv-cache
       - UV_PROJECT_ENVIRONMENT=/tmp/uv-venv
       - XDG_CACHE_HOME=/tmp
@@ -69,6 +78,9 @@ services:
       - ./media:/app/media
     environment:
       - PYTHONUNBUFFERED=1
+      - HTTP_PROXY
+      - HTTPS_PROXY
+      - NO_PROXY
       - UV_CACHE_DIR=/tmp/uv-cache
       - UV_PROJECT_ENVIRONMENT=/tmp/uv-venv
       - XDG_CACHE_HOME=/tmp
