@@ -9,10 +9,16 @@ export UV_PROJECT_ENVIRONMENT="${UV_PROJECT_ENVIRONMENT:-/tmp/uv-venv}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-/tmp}"
 export STATIC_ROOT="${STATIC_ROOT:-/tmp/staticfiles}"
 
+echo "== Sync dependencies =="
 uv sync
+echo "== Migrate database =="
 uv run python manage.py migrate
+echo "== Collect static =="
 uv run python manage.py collectstatic --noinput
+echo "== Import manuals =="
 uv run python manage.py import_manual_md docs/manual
 
+echo "== Restart service =="
 sudo systemctl restart last-hub.service
+echo "== Service status =="
 sudo systemctl status --no-pager last-hub.service
