@@ -31,32 +31,14 @@
 
   <details class="accordion">
     <summary role="button" class="pico-background-red-400 pico-color-white">
-      Failed Reasons ({{ failed_reasons|length }})
+      Failed ({{ failed_reasons|length }})
     </summary>
-    {% if failed_reasons %}
-      <ul>
-        {% for reason in failed_reasons %}
-          <li>{{ reason }}</li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>None.</p>
-    {% endif %}
   </details>
 
   <details class="accordion">
     <summary role="button" class="pico-background-green-400 pico-color-white">
-      Passed Reasons ({{ passed_reasons|length }})
+      Passed ({{ passed_reasons|length }})
     </summary>
-    {% if passed_reasons %}
-      <ul>
-        {% for reason in passed_reasons %}
-          <li>{{ reason }}</li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>None.</p>
-    {% endif %}
   </details>
 
   <details class="accordion">
