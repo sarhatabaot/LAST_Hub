@@ -10,6 +10,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - UV_CACHE_DIR=/tmp/uv-cache
+      - UV_PROJECT_ENVIRONMENT=/tmp/uv-venv
       - XDG_CACHE_HOME=/tmp
       - STATIC_ROOT=/tmp/staticfiles
     command: >
@@ -27,6 +28,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - UV_CACHE_DIR=/tmp/uv-cache
+      - UV_PROJECT_ENVIRONMENT=/tmp/uv-venv
       - XDG_CACHE_HOME=/tmp
       - STATIC_ROOT=/tmp/staticfiles
     command: >
@@ -47,6 +49,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - UV_CACHE_DIR=/tmp/uv-cache
+      - UV_PROJECT_ENVIRONMENT=/tmp/uv-venv
       - XDG_CACHE_HOME=/tmp
       - STATIC_ROOT=/tmp/staticfiles
     command: >
@@ -67,6 +70,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - UV_CACHE_DIR=/tmp/uv-cache
+      - UV_PROJECT_ENVIRONMENT=/tmp/uv-venv
       - XDG_CACHE_HOME=/tmp
       - STATIC_ROOT=/tmp/staticfiles
     ports:
