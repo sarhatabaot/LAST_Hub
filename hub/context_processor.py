@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
 
-from hub.models import ManualPage
+from hub import operations
+from hub.models import ManualPage, OperationalChecklistState
 from hub.safety import fetch_safety_status
 
 
@@ -37,4 +38,31 @@ def manual_pages(request):
         pages = []
     return {
         "manual_pages": pages,
+    }
+
+
+def observatory_settings(request):
+    return {
+        "OBS_LATITUDE": settings.OBS_LATITUDE,
+        "OBS_LONGITUDE": settings.OBS_LONGITUDE,
+        "OBS_ELEVATION": getattr(settings, "OBS_ELEVATION", 0),
+    }
+
+
+def observatory_status(request):
+    try:
+        state, _ = OperationalChecklistState.objects.get_or_create(
+            pk=1,
+            defaults={"items": operations.default_checklist_state()},
+        )
+        status = state.observatory_state
+        label = state.state_label()
+    except (OperationalError, ProgrammingError):
+        status = OperationalChecklistState.STATE_UNKNOWN
+        label = "Unknown"
+    return {
+        "observatory_status": {
+            "state": status,
+            "label": label,
+        }
     }

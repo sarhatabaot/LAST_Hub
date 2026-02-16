@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const modeButtons = Array.from(
     document.querySelectorAll("[data-hub-mode]")
   );
-  const modeSwitch = document.querySelector("[data-hub-mode-switch]");
   const searchInput = document.querySelector("[data-sidebar-search]");
   const searchItems = Array.from(document.querySelectorAll("[data-search-item]"));
   const observerSection = document.querySelector(
@@ -13,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     '[data-hub-section="developer"]'
   );
 
-  if (!sidebar && !modeSwitch && modeButtons.length === 0) {
+  if (!sidebar && modeButtons.length === 0) {
     return;
   }
 
@@ -107,13 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const { persist } = options;
     currentMode = mode;
     setButtonState(mode);
-    if (modeSwitch) {
-      modeSwitch.checked = mode === "developer";
-      modeSwitch.setAttribute(
-        "aria-checked",
-        mode === "developer" ? "true" : "false"
-      );
-    }
     if (persist && window.localStorage) {
       window.localStorage.setItem(STORAGE_KEY, mode);
     }
@@ -135,13 +127,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const nextMode = button.dataset.hubMode;
         setMode(nextMode, { persist: true });
       });
-    });
-  }
-
-  if (modeSwitch) {
-    modeSwitch.addEventListener("change", () => {
-      const nextMode = modeSwitch.checked ? "developer" : "observer";
-      setMode(nextMode, { persist: true });
     });
   }
 

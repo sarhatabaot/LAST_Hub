@@ -15,10 +15,6 @@
         Checklist state is shared across all signed-in users.
       </p>
     </div>
-    <div class="operations-meta">
-      <div>Signed in as {{ request.user.get_username }}</div>
-      <a href="{% url 'logout' %}" class="secondary">Log out</a>
-    </div>
   </div>
 
   {% if messages %}

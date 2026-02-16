@@ -1,10 +1,12 @@
 services:
   migrate:
     image: ghcr.io/astral-sh/uv:python3.13-trixie-slim
+    user: "${UID}:${GID}"
     working_dir: /app
     volumes:
       - ./:/app
       - ./db.sqlite3:/app/db.sqlite3
+      - ./media:/app/media
     environment:
       - PYTHONUNBUFFERED=1
     command: >
@@ -13,10 +15,12 @@ services:
 
   collectstatic:
     image: ghcr.io/astral-sh/uv:python3.13-trixie-slim
+    user: "${UID}:${GID}"
     working_dir: /app
     volumes:
       - ./:/app
       - ./db.sqlite3:/app/db.sqlite3
+      - ./media:/app/media
     environment:
       - PYTHONUNBUFFERED=1
     command: >
@@ -28,10 +32,12 @@ services:
 
   web:
     image: ghcr.io/astral-sh/uv:python3.13-trixie-slim
+    user: "${UID}:${GID}"
     working_dir: /app
     volumes:
       - ./:/app
       - ./db.sqlite3:/app/db.sqlite3
+      - ./media:/app/media
     environment:
       - PYTHONUNBUFFERED=1
     ports:

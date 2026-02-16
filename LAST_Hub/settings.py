@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+from datetime import datetime
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -73,6 +74,8 @@ TEMPLATES = [
                 'hub.context_processor.project_info',
                 'hub.context_processor.safety_status',
                 'hub.context_processor.manual_pages',
+                'hub.context_processor.observatory_settings',
+                'hub.context_processor.observatory_status',
             ],
         },
     },
@@ -132,6 +135,7 @@ MEDIA_URL = "/hub/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 MARKDOWNX_URLS_PATH = "/hub/markdownx/markdownify/"
 MARKDOWNX_UPLOAD_URLS_PATH = "/hub/markdownx/upload/"
+MARKDOWNX_MEDIA_PATH = datetime.now().strftime("markdownx/%Y/%m/%d")
 MARKDOWNX_MARKDOWN_EXTENSIONS = [
     "fenced_code",
     "codehilite",
@@ -150,7 +154,7 @@ CONTROLLER_API_BASE_URL = os.environ.get(
 OBS_LATITUDE = 30.0529838
 OBS_LONGITUDE = 35.0407331
 
-PROJECT_VERSION = "0.1.0"
+PROJECT_VERSION = "0.2.0"
 PROJECT_SOURCE_URL = "https://github.com/sarhabaot/LAST_Hub"
 
 USE_X_FORWARDED_HOST = True

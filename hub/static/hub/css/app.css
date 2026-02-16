@@ -194,6 +194,11 @@ details.sidebar-subsection ul a {
   background-color: var(--pico-background-color);
 }
 
+.hub-header-right {
+  align-items: center;
+  align-self: center;
+}
+
 .hub-mode-indicator {
   font-size: 0.75rem;
   font-weight: 600;
@@ -202,98 +207,6 @@ details.sidebar-subsection ul a {
   color: var(--pico-muted-color);
 }
 
-.hub-mode-toggle {
-  display: inline-flex;
-}
-
-.hub-mode-toggle button.is-active {
-  border-color: var(--pico-primary);
-  background-color: var(--pico-primary);
-  color: var(--pico-primary-inverse);
-}
-
-.hub-mode-switch {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-}
-
-.hub-mode-switch-input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.hub-mode-switch-label {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  min-width: 9.5rem;
-  height: 1.9rem;
-  padding: 0.15rem;
-  border-radius: 999px;
-  border: 1px solid var(--pico-muted-border-color);
-  background-color: var(--pico-card-sectioning-background-color);
-  color: var(--pico-muted-color);
-  cursor: pointer;
-  transition: border-color 0.2s ease;
-  overflow: hidden;
-}
-
-.hub-mode-switch-label::after {
-  content: "";
-  position: absolute;
-  top: 0.2rem;
-  left: 0.2rem;
-  width: calc(50% - 0.25rem);
-  height: calc(100% - 0.4rem);
-  border-radius: 999px;
-  background-color: var(--pico-primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease;
-}
-
-.hub-mode-switch-input:checked + .hub-mode-switch-label::after {
-  transform: translateX(calc(100% - 0.4rem));
-}
-
-.hub-mode-switch-option {
-  position: relative;
-  z-index: 1;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  width: 50%;
-  text-align: center;
-  color: inherit;
-}
-
-.hub-mode-switch-option-left {
-  color: var(--pico-primary-inverse);
-}
-
-.hub-mode-switch-option-right {
-  color: var(--pico-muted-color);
-}
-
-.hub-mode-switch-input:checked + .hub-mode-switch-label .hub-mode-switch-option-left {
-  color: var(--pico-muted-color);
-}
-
-.hub-mode-switch-input:checked + .hub-mode-switch-label .hub-mode-switch-option-right {
-  color: var(--pico-primary-inverse);
-}
-
-.hub-mode-switch-option-left {
-  padding-left: 0.15rem;
-}
-
-.hub-mode-switch-option-right {
-  padding-right: 0.15rem;
-}
 
 .hub-header-left,
 .hub-header-right {
@@ -324,6 +237,8 @@ details.sidebar-subsection ul a {
   align-items: center;
   gap: 0.5rem;
   width: min(220px, 100%);
+  margin: 0;
+  align-self: center;
 }
 
 .hub-search label {
@@ -523,6 +438,10 @@ details.sidebar-subsection ul a {
   border-radius: 0.6rem;
   border: 1px solid var(--pico-muted-border-color);
   background: var(--pico-card-sectioning-background-color);
+}
+
+.checklist-item-readonly {
+  opacity: 0.75;
 }
 
 .checklist-item label {
