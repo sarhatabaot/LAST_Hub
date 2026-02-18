@@ -29,16 +29,86 @@
     </article>
   {% endif %}
 
-  <details class="accordion">
-    <summary role="button" class="pico-background-red-400 pico-color-white">
-      Failed ({{ failed_reasons|length }})
-    </summary>
-  </details>
+  <div class="safety-counts" role="group" aria-label="Safety summary counts">
+    <span class="safety-count safety-count-failed">Failed ({{ failed_count }})</span>
+    <span class="safety-count safety-count-passed">Passed ({{ passed_count }})</span>
+    <span class="safety-count safety-count-stale">Stale ({{ stale_sensors|length }})</span>
+  </div>
+
+  <section class="safety-meter-section">
+    <h2>Failed Checks</h2>
+    {% if failed_reason_metrics %}
+      <ul class="safety-meter-list">
+        {% for metric in failed_reason_metrics %}
+          <li
+            class="safety-meter-row"
+            data-metric-key="{{ metric.key|default_if_none:''|escape }}"
+            data-metric-label="{{ metric.label|default:metric.key|escape }}"
+            data-metric-value="{{ metric.value }}"
+            data-metric-threshold="{{ metric.threshold|default_if_none:'' }}"
+            data-metric-operator="{{ metric.operator|default_if_none:''|escape }}"
+            data-metric-unit="{{ metric.unit|default_if_none:''|escape }}"
+            data-metric-state="failed"
+          >
+            <p class="safety-meter-fallback">
+              {{ metric.label|default:metric.key }}: {{ metric.value }}
+              {% if metric.unit %} {{ metric.unit }}{% endif %}
+              {% if metric.operator and metric.threshold != None %}
+                ({{ metric.operator }} {{ metric.threshold }}{% if metric.unit %} {{ metric.unit }}{% endif %})
+              {% endif %}
+            </p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% elif failed_reasons %}
+      <ul class="safety-meter-list">
+        {% for reason in failed_reasons %}
+          <li class="safety-meter-row" data-failed-reason="{{ reason|escape }}">
+            <p class="safety-meter-fallback">{{ reason }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>None.</p>
+    {% endif %}
+  </section>
 
   <details class="accordion">
     <summary role="button" class="pico-background-green-400 pico-color-white">
-      Passed ({{ passed_reasons|length }})
+      Passed ({{ passed_count }})
     </summary>
+    {% if passed_reason_metrics %}
+      <ul class="safety-meter-list">
+        {% for metric in passed_reason_metrics %}
+          <li
+            class="safety-meter-row"
+            data-metric-key="{{ metric.key|default_if_none:''|escape }}"
+            data-metric-label="{{ metric.label|default:metric.key|escape }}"
+            data-metric-value="{{ metric.value }}"
+            data-metric-threshold="{{ metric.threshold|default_if_none:'' }}"
+            data-metric-operator="{{ metric.operator|default_if_none:''|escape }}"
+            data-metric-unit="{{ metric.unit|default_if_none:''|escape }}"
+            data-metric-state="passed"
+          >
+            <p class="safety-meter-fallback">
+              {{ metric.label|default:metric.key }}: {{ metric.value }}
+              {% if metric.unit %} {{ metric.unit }}{% endif %}
+              {% if metric.operator and metric.threshold != None %}
+                ({{ metric.operator }} {{ metric.threshold }}{% if metric.unit %} {{ metric.unit }}{% endif %})
+              {% endif %}
+            </p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% elif passed_reasons %}
+      <ul class="safety-list-plain">
+        {% for reason in passed_reasons %}
+          <li>{{ reason }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>None.</p>
+    {% endif %}
   </details>
 
   <details class="accordion">
@@ -46,7 +116,7 @@
       Stale Sensors ({{ stale_sensors|length }})
     </summary>
     {% if stale_sensors %}
-      <ul>
+      <ul class="safety-list-plain">
         {% for sensor in stale_sensors %}
           <li>{{ sensor }}</li>
         {% endfor %}
@@ -56,6 +126,386 @@
     {% endif %}
   </details>
 </section>
+
+<script>
+  (() => {
+    const rows = document.querySelectorAll(".safety-meter-row");
+    if (!rows.length) {
+      return;
+    }
+
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const formatNumber = (value) => {
+      if (!Number.isFinite(value)) {
+        return "";
+      }
+      if (Math.abs(value) >= 100) {
+        return value.toFixed(0);
+      }
+      if (Math.abs(value) >= 10) {
+        return value.toFixed(1);
+      }
+      return value.toFixed(2);
+    };
+
+    const parseAllowedRange = (conditionRaw) => {
+      const condition = (conditionRaw || "").trim();
+      if (!condition) {
+        return null;
+      }
+
+      let match = condition.match(
+        /value\s*<\s*(-?\d+(?:\.\d+)?)\s*or\s*value\s*>\s*(-?\d+(?:\.\d+)?)/i
+      );
+      if (!match) {
+        match = condition.match(
+          /value\s*>\s*(-?\d+(?:\.\d+)?)\s*or\s*value\s*<\s*(-?\d+(?:\.\d+)?)/i
+        );
+      }
+      if (!match) {
+        return null;
+      }
+
+      const first = Number.parseFloat(match[1]);
+      const second = Number.parseFloat(match[2]);
+      if (!Number.isFinite(first) || !Number.isFinite(second)) {
+        return null;
+      }
+
+      return {
+        min: Math.min(first, second),
+        max: Math.max(first, second),
+      };
+    };
+
+    const parseReason = (raw) => {
+      const text = (raw || "").trim();
+      if (!text) {
+        return null;
+      }
+
+      const compactPattern =
+        /(-?\d+(?:\.\d+)?)(?:\s*([%a-zA-ZdegC\/°]+))?\s*(<=|>=|<|>|==|=)\s*(-?\d+(?:\.\d+)?)(?:\s*([%a-zA-ZdegC\/°]+))?/i;
+      const compactMatch = text.match(compactPattern);
+      if (compactMatch) {
+        const value = Number.parseFloat(compactMatch[1]);
+        const threshold = Number.parseFloat(compactMatch[4]);
+        if (Number.isFinite(value) && Number.isFinite(threshold)) {
+          const title = text.slice(0, compactMatch.index).replace(/[:\s-]+$/, "").trim() || "Failed check";
+          return {
+            title,
+            value,
+            threshold,
+            operator: compactMatch[3],
+            unit: compactMatch[2] || compactMatch[5] || "",
+            raw: text,
+          };
+        }
+      }
+
+      const valueMatch = text.match(/value\s*[:=]?\s*(-?\d+(?:\.\d+)?)(?:\s*([%a-zA-ZdegC\/°]+))?/i);
+      const thresholdMatch = text.match(/threshold\s*[:=]?\s*(-?\d+(?:\.\d+)?)(?:\s*([%a-zA-ZdegC\/°]+))?/i);
+      if (valueMatch && thresholdMatch) {
+        const value = Number.parseFloat(valueMatch[1]);
+        const threshold = Number.parseFloat(thresholdMatch[1]);
+        if (Number.isFinite(value) && Number.isFinite(threshold)) {
+          const title = text.replace(/\s*\(?value\s*[:=]?.*$/i, "").replace(/[:\s-]+$/, "").trim() || "Failed check";
+          const operatorMatch = text.match(/(<=|>=|<|>|==|=)/);
+          return {
+            title,
+            value,
+            threshold,
+            operator: operatorMatch ? operatorMatch[1] : "<=",
+            unit: valueMatch[2] || thresholdMatch[2] || "",
+            raw: text,
+          };
+        }
+      }
+
+      const numbers = Array.from(text.matchAll(/-?\d+(?:\.\d+)?/g)).map((match) => ({
+        value: Number.parseFloat(match[0]),
+        index: match.index || 0,
+      }));
+
+      if (numbers.length >= 2) {
+        const value = numbers[0].value;
+        const threshold = numbers[1].value;
+        const title = text.slice(0, numbers[0].index).replace(/[:\s-]+$/, "").trim() || "Failed check";
+        const unitMatch = text.slice(numbers[0].index).match(/-?\d+(?:\.\d+)?\s*([%a-zA-ZdegC\/°]+)/);
+        const lowered = text.toLowerCase();
+        let operator = "<=";
+        if (lowered.includes("minimum") || lowered.includes("below") || lowered.includes("low")) {
+          operator = ">=";
+        }
+        return {
+          title,
+          value,
+          threshold,
+          operator,
+          unit: unitMatch ? unitMatch[1] : "",
+          raw: text,
+        };
+      }
+
+      return null;
+    };
+
+    const isUnsafeByOperator = (value, threshold, operator) => {
+      const op = (operator || "").trim();
+      if (op === ">") return value > threshold;
+      if (op === ">=") return value >= threshold;
+      if (op === "<") return value < threshold;
+      if (op === "<=") return value <= threshold;
+      if (op === "=" || op === "==") return Math.abs(value - threshold) < 1e-9;
+      return false;
+    };
+
+    const parseStructuredMetric = (row) => {
+      const hasMetric = row.dataset.metricValue !== undefined;
+      if (!hasMetric) {
+        return null;
+      }
+
+      const value = Number.parseFloat(row.dataset.metricValue || "");
+      if (!Number.isFinite(value)) {
+        return null;
+      }
+
+      const thresholdRaw = row.dataset.metricThreshold || "";
+      const thresholdParsed = Number.parseFloat(thresholdRaw);
+      const threshold = Number.isFinite(thresholdParsed) ? thresholdParsed : null;
+      const operator = (row.dataset.metricOperator || "").trim() || null;
+      const key = (row.dataset.metricKey || "").trim();
+      const condition = key.includes("|") ? key.split("|").slice(1).join("|").trim() : "";
+
+      return {
+        title: (row.dataset.metricLabel || "").trim() || "Failed check",
+        value,
+        threshold,
+        operator,
+        unit: (row.dataset.metricUnit || "").trim(),
+        state: (row.dataset.metricState || "").trim().toLowerCase() || "failed",
+        condition,
+      };
+    };
+
+    rows.forEach((row) => {
+      const raw = row.dataset.failedReason || "";
+      const parsed = parseStructuredMetric(row) || parseReason(raw);
+      if (!parsed) {
+        return;
+      }
+
+      const state = (parsed.state || "").toLowerCase();
+      if (state === "passed") {
+        row.classList.add("is-passed");
+      } else if (state === "failed") {
+        row.classList.add("is-failed");
+      }
+
+      const unitSuffix = parsed.unit ? ` ${parsed.unit}` : "";
+      const valueText = `${formatNumber(parsed.value)}${unitSuffix}`;
+
+      if (!Number.isFinite(parsed.threshold) || !parsed.operator) {
+        const allowedRange = parseAllowedRange(parsed.condition);
+
+        if (allowedRange) {
+          const min = allowedRange.min;
+          const max = allowedRange.max;
+          const spread = Math.max(1, Math.abs(max - min) * 0.25);
+          const lower = min - spread;
+          const upper = max + spread;
+          const positionOf = (value) =>
+            clamp(((value - lower) / (upper - lower)) * 100, 4, 96);
+          const minPosition = positionOf(min);
+          const maxPosition = positionOf(max);
+          const valuePosition = positionOf(parsed.value);
+          const allowedText = `${formatNumber(min)}${unitSuffix} to ${formatNumber(max)}${unitSuffix}`;
+          const withinRange = parsed.value >= min && parsed.value <= max;
+
+          row.textContent = "";
+
+          const header = document.createElement("div");
+          header.className = "safety-meter-header";
+          const title = document.createElement("strong");
+          title.textContent = parsed.title;
+          header.appendChild(title);
+
+          const values = document.createElement("div");
+          values.className = "safety-meter-values";
+          const valueNode = document.createElement("span");
+          valueNode.textContent = "Value: ";
+          const valueStrong = document.createElement("strong");
+          valueStrong.textContent = valueText;
+          valueNode.appendChild(valueStrong);
+
+          const rangeNode = document.createElement("span");
+          rangeNode.textContent = "Allowed: ";
+          const rangeStrong = document.createElement("strong");
+          rangeStrong.textContent = allowedText;
+          rangeNode.appendChild(rangeStrong);
+          values.appendChild(valueNode);
+          values.appendChild(rangeNode);
+
+          const track = document.createElement("div");
+          track.className = "safety-meter-track safety-meter-track-range";
+          track.classList.add(withinRange ? "is-within" : "is-outside");
+
+          const allowedBand = document.createElement("span");
+          allowedBand.className = "safety-meter-allowed-range";
+          allowedBand.style.left = `${Math.min(minPosition, maxPosition)}%`;
+          allowedBand.style.width = `${Math.max(2, Math.abs(maxPosition - minPosition))}%`;
+
+          const minBoundary = document.createElement("span");
+          minBoundary.className = "safety-meter-boundary";
+          minBoundary.title = "Range lower bound";
+          minBoundary.style.left = `${minPosition}%`;
+
+          const maxBoundary = document.createElement("span");
+          maxBoundary.className = "safety-meter-boundary";
+          maxBoundary.title = "Range upper bound";
+          maxBoundary.style.left = `${maxPosition}%`;
+
+          const valueMarker = document.createElement("span");
+          valueMarker.className = "safety-meter-value";
+          valueMarker.title = "Current value";
+          valueMarker.style.left = `${valuePosition}%`;
+
+          track.appendChild(allowedBand);
+          track.appendChild(minBoundary);
+          track.appendChild(maxBoundary);
+          track.appendChild(valueMarker);
+
+          const note = document.createElement("p");
+          note.className = "safety-meter-note";
+          note.textContent = withinRange
+            ? "Within allowed range."
+            : "Outside allowed range.";
+
+          row.appendChild(header);
+          row.appendChild(values);
+          row.appendChild(track);
+          row.appendChild(note);
+          return;
+        }
+
+        row.textContent = "";
+
+        const header = document.createElement("div");
+        header.className = "safety-meter-header";
+        const title = document.createElement("strong");
+        title.textContent = parsed.title;
+        header.appendChild(title);
+
+        const values = document.createElement("div");
+        values.className = "safety-meter-values";
+        const valueNode = document.createElement("span");
+        valueNode.textContent = "Value: ";
+        const valueStrong = document.createElement("strong");
+        valueStrong.textContent = valueText;
+        valueNode.appendChild(valueStrong);
+        values.appendChild(valueNode);
+
+        const note = document.createElement("p");
+        note.className = "safety-meter-note";
+        note.textContent = state === "passed" ? "Within allowed range." : "Threshold data unavailable.";
+
+        row.appendChild(header);
+        row.appendChild(values);
+        row.appendChild(note);
+        return;
+      }
+
+      const min = Math.min(parsed.value, parsed.threshold);
+      const max = Math.max(parsed.value, parsed.threshold);
+      const spread = Math.max(1, Math.abs(max - min), Math.abs(parsed.threshold) * 0.25);
+      const lower = min - spread * 0.35;
+      const upper = max + spread * 0.35;
+      const positionOf = (value) => clamp(((value - lower) / (upper - lower)) * 100, 4, 96);
+      const thresholdPosition = positionOf(parsed.threshold);
+      const valuePosition = positionOf(parsed.value);
+
+      const signedDelta = parsed.value - parsed.threshold;
+      let deviation = signedDelta;
+      let direction = signedDelta >= 0 ? "above threshold" : "below threshold";
+      if (parsed.operator === "=" || parsed.operator === "==") {
+        deviation = Math.abs(signedDelta);
+        direction = "from threshold";
+      }
+
+      const thresholdText = `${formatNumber(parsed.threshold)}${unitSuffix}`;
+      const deltaText = `${deviation >= 0 ? "+" : "-"}${formatNumber(Math.abs(deviation))}${unitSuffix} ${direction}`;
+
+      row.textContent = "";
+
+      const header = document.createElement("div");
+      header.className = "safety-meter-header";
+      const title = document.createElement("strong");
+      title.textContent = parsed.title;
+      header.appendChild(title);
+
+      const values = document.createElement("div");
+      values.className = "safety-meter-values";
+      const valueNode = document.createElement("span");
+      valueNode.textContent = "Value: ";
+      const valueStrong = document.createElement("strong");
+      valueStrong.textContent = valueText;
+      valueNode.appendChild(valueStrong);
+
+      const limitNode = document.createElement("span");
+      limitNode.textContent = "Limit: ";
+      const limitStrong = document.createElement("strong");
+      limitStrong.textContent = `${parsed.operator} ${thresholdText}`;
+      limitNode.appendChild(limitStrong);
+      values.appendChild(valueNode);
+      values.appendChild(limitNode);
+
+      const track = document.createElement("div");
+      track.className = "safety-meter-track";
+      const isUnsafe = isUnsafeByOperator(parsed.value, parsed.threshold, parsed.operator);
+      track.classList.add(isUnsafe ? "is-outside" : "is-within");
+
+      const allowedBand = document.createElement("span");
+      allowedBand.className = "safety-meter-allowed-range";
+      const op = (parsed.operator || "").trim();
+      let allowedLeft = 0;
+      let allowedRight = 100;
+      if (op === "<" || op === "<=") {
+        allowedLeft = thresholdPosition;
+      } else if (op === ">" || op === ">=") {
+        allowedRight = thresholdPosition;
+      } else if (op === "=" || op === "==") {
+        allowedLeft = 0;
+        allowedRight = 100;
+      }
+      allowedBand.style.left = `${allowedLeft}%`;
+      allowedBand.style.width = `${Math.max(1.5, allowedRight - allowedLeft)}%`;
+
+      const thresholdMarker = document.createElement("span");
+      thresholdMarker.className = "safety-meter-threshold";
+      thresholdMarker.title = "Threshold";
+      thresholdMarker.style.left = `${thresholdPosition}%`;
+
+      const valueMarker = document.createElement("span");
+      valueMarker.className = "safety-meter-value";
+      valueMarker.title = "Current value";
+      valueMarker.style.left = `${valuePosition}%`;
+
+      track.appendChild(allowedBand);
+      track.appendChild(thresholdMarker);
+      track.appendChild(valueMarker);
+
+      const delta = document.createElement("p");
+      delta.className = "safety-meter-delta";
+      delta.textContent = deltaText;
+
+      row.appendChild(header);
+      row.appendChild(values);
+      row.appendChild(track);
+      row.appendChild(delta);
+    });
+  })();
+</script>
 
 {% if evaluated_at %}
   <script>

@@ -526,6 +526,223 @@ details.sidebar-subsection-group ul a {
   border-color: transparent;
 }
 
+.safety-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+}
+
+.safety-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.8rem;
+  padding: 0.1rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--pico-muted-border-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.safety-count-failed {
+  background: rgba(239, 68, 68, 0.12);
+  color: #991b1b;
+}
+
+.safety-count-passed {
+  background: rgba(34, 197, 94, 0.12);
+  color: #166534;
+}
+
+.safety-count-stale {
+  background: rgba(148, 163, 184, 0.2);
+  color: #334155;
+}
+
+.safety-meter-section {
+  margin-bottom: 1rem;
+}
+
+.safety-meter-section h2 {
+  margin: 0 0 0.65rem;
+  font-size: 1rem;
+}
+
+.safety-meter-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.safety-meter-list > li {
+  list-style: none !important;
+  list-style-type: none !important;
+  list-style-image: none !important;
+}
+
+.safety-meter-list > li::marker {
+  content: "" !important;
+}
+
+.safety-list-plain {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+.safety-list-plain li {
+  list-style: none !important;
+  list-style-type: none !important;
+  list-style-image: none !important;
+}
+
+.safety-list-plain li::marker {
+  content: "" !important;
+}
+
+.safety-meter-row {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: 0.55rem;
+  background: var(--pico-card-sectioning-background-color);
+}
+
+.safety-meter-fallback {
+  margin: 0;
+}
+
+.safety-meter-header {
+  margin-bottom: 0.35rem;
+  font-size: 0.92rem;
+}
+
+.safety-meter-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--pico-muted-color);
+}
+
+.safety-meter-track {
+  position: relative;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(239, 68, 68, 0.2) 0%,
+    rgba(239, 68, 68, 0.16) 100%
+  );
+}
+
+.safety-meter-track.is-within {
+  background: linear-gradient(
+    90deg,
+    rgba(239, 68, 68, 0.18) 0%,
+    rgba(239, 68, 68, 0.14) 100%
+  );
+}
+
+.safety-meter-track.is-outside {
+  background: linear-gradient(
+    90deg,
+    rgba(220, 38, 38, 0.48) 0%,
+    rgba(239, 68, 68, 0.36) 100%
+  );
+}
+
+.safety-meter-track-range {
+  background: linear-gradient(
+    90deg,
+    rgba(239, 68, 68, 0.2) 0%,
+    rgba(239, 68, 68, 0.16) 100%
+  );
+}
+
+.safety-meter-allowed-range {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(22, 163, 74, 0.55);
+}
+
+.safety-meter-track.is-within .safety-meter-allowed-range {
+  background: rgba(34, 197, 94, 0.48);
+  box-shadow: inset 0 0 0 1px rgba(22, 163, 74, 0.58);
+}
+
+.safety-meter-track.is-outside .safety-meter-allowed-range {
+  background: rgba(34, 197, 94, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(22, 163, 74, 0.28);
+}
+
+.safety-meter-threshold {
+  position: absolute;
+  top: 50%;
+  width: 0.2rem;
+  height: 1.2rem;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: #0f172a;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.safety-meter-boundary {
+  position: absolute;
+  top: 50%;
+  width: 0.2rem;
+  height: 1.2rem;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: #0f172a;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.safety-meter-value {
+  position: absolute;
+  top: 50%;
+  width: 0.75rem;
+  height: 0.75rem;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  border: 2px solid #ffffff;
+  background: #dc2626;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.15);
+}
+
+.safety-meter-delta {
+  margin: 0.45rem 0 0;
+  font-size: 0.76rem;
+  color: #991b1b;
+  font-weight: 600;
+}
+
+.safety-meter-note {
+  margin: 0.45rem 0 0;
+  font-size: 0.76rem;
+  color: var(--pico-muted-color);
+  font-weight: 600;
+}
+
+.safety-meter-row.is-passed .safety-meter-value {
+  background: #16a34a;
+}
+
+.safety-meter-row.is-passed .safety-meter-delta {
+  color: #166534;
+}
+
+.safety-meter-row.is-passed .safety-meter-note {
+  color: #166534;
+}
 
 .icon-link {
   position: relative;

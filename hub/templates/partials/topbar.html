@@ -39,18 +39,17 @@
         {% if request.user.is_staff %}
           <a
             href="{% url 'admin:index' %}"
-            role="button"
             class="secondary outline"
           >
             Admin
           </a>
         {% endif %}
         <details class="hub-user-menu">
-          <summary role="button" class="secondary outline hub-user-toggle">
+          <summary class="secondary outline hub-user-toggle">
             {{ request.user.get_username }}
           </summary>
           <div class="hub-user-menu-panel">
-            <a href="{% url 'logout' %}" role="button" class="secondary">Log out</a>
+            <a href="{% url 'logout' %}" class="secondary">Log out</a>
           </div>
         </details>
       {% else %}
