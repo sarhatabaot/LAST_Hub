@@ -36,11 +36,23 @@
     </form>
     <div class="hub-auth">
       {% if request.user.is_authenticated %}
-        <small>Signed in as {{ request.user.get_username }}</small>
         {% if request.user.is_staff %}
-          <a href="/hub/admin/" class="secondary">Admin</a>
+          <a
+            href="{% url 'admin:index' %}"
+            role="button"
+            class="secondary outline"
+          >
+            Admin
+          </a>
         {% endif %}
-        <a href="{% url 'logout' %}" class="secondary">Log out</a>
+        <details class="hub-user-menu">
+          <summary role="button" class="secondary outline hub-user-toggle">
+            {{ request.user.get_username }}
+          </summary>
+          <div class="hub-user-menu-panel">
+            <a href="{% url 'logout' %}" role="button" class="secondary">Log out</a>
+          </div>
+        </details>
       {% else %}
         <a href="{% url 'login' %}" class="secondary">Log in</a>
       {% endif %}

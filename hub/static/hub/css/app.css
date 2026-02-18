@@ -280,10 +280,58 @@ details.sidebar-subsection-group ul a {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  position: relative;
 }
 
-.hub-auth small {
-  color: var(--pico-muted-color);
+.hub-user-menu {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+}
+
+.hub-user-menu summary {
+  margin: 0;
+}
+
+.hub-user-menu .hub-user-toggle[role="button"] {
+  margin: 0;
+  min-height: 1.75rem;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.hub-user-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.hub-user-menu summary::marker {
+  display: none;
+}
+
+.hub-user-menu-panel {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 20;
+  display: none;
+  min-width: 8.75rem;
+  padding: 0.35rem;
+  border-radius: 0.45rem;
+  border: 1px solid var(--pico-muted-border-color);
+  background-color: var(--pico-background-color);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.hub-user-menu[open] .hub-user-menu-panel {
+  display: block;
+}
+
+.hub-user-menu-panel a[role="button"] {
+  display: block;
+  width: 100%;
+  margin: 0;
+  white-space: nowrap;
 }
 
 .hub-header .safety-button {
