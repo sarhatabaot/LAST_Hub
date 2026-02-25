@@ -23,34 +23,30 @@
     {% endfor %}
   {% endif %}
 
-  <article class="operations-card">
-    <strong>Observatory state:</strong> {{ state_label }}
-    <div class="operations-meta">
-      {% if state.last_action %}
-        Last action: {{ state.action_label }} ({{ state.action_status_label }})
-        {% if state.last_action_at %} · {{ state.last_action_at|date:"Y-m-d H:i" }}{% endif %}
-        {% if state.last_action_by %} by {{ state.last_action_by.get_username }}{% endif %}
-      {% else %}
-        No actions recorded yet.
-      {% endif %}
+  <!-- Top Row: 2-Column Layout -->
+  <div class="operations-top-row">
+    <!-- Left Column: Observatory State -->
+    <div class="operations-state-column">
+      {% include "operations/_observatory_state.html" %}
     </div>
-    {% if state.last_action_message %}
-      <div class="operations-meta">{{ state.last_action_message }}</div>
-    {% endif %}
-    {% if state.updated_at %}
-      <div class="operations-meta">
-        Checklist updated {{ state.updated_at|date:"Y-m-d H:i" }}
-        {% if state.updated_by %}by {{ state.updated_by.get_username }}{% endif %}
+
+    <!-- Right Column: Mount Configuration State -->
+    <div class="operations-mount-column">
+      {% include "operations/_mount_summary.html" %}
+    </div>
+  </div>
+</section>
+
+<!-- Main Content: Checklist and Actions -->
+  <div class="operations-main-content">
+    <div class="operations-checklist-column">
+      <div id="operations-dynamic">
+        {% include "operations/_checklist.html" %}
       </div>
-    {% endif %}
-  </article>
-</section>
-
-<div id="operations-dynamic">
-  {% include "operations/_checklist.html" %}
-</div>
-
-<section class="section" id="mount-summary">
-  {% include "operations/_mount_summary.html" %}
-</section>
+    </div>
+    
+    <div class="operations-actions-column">
+      {% include "operations/_actions.html" %}
+    </div>
+  </div>
 {% endblock %}

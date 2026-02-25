@@ -1,0 +1,23 @@
+<section class="section">
+  <article class="operations-card">
+    <strong>Observatory state:</strong> {{ state_label }}
+    <div class="operations-meta">
+      {% if state.last_action %}
+        Last action: {{ state.action_label }} ({{ state.action_status_label }})
+        {% if state.last_action_at %} · {{ state.last_action_at|date:"Y-m-d H:i" }}{% endif %}
+        {% if state.last_action_by %} by {{ state.last_action_by.get_username }}{% endif %}
+      {% else %}
+        No actions recorded yet.
+      {% endif %}
+    </div>
+    {% if state.last_action_message %}
+      <div class="operations-meta">{{ state.last_action_message }}</div>
+    {% endif %}
+    {% if state.updated_at %}
+      <div class="operations-meta">
+        Checklist updated {{ state.updated_at|date:"Y-m-d H:i" }}
+        {% if state.updated_by %}by {{ state.updated_by.get_username }}{% endif %}
+      </div>
+    {% endif %}
+  </article>
+</section>
