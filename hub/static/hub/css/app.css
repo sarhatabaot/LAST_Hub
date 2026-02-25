@@ -115,6 +115,11 @@ details.sidebar-subsection-group ul a {
   margin: 0;
 }
 
+.sidebar-section:not(:first-child) {
+  border-top: 1px solid var(--pico-color-grey-800);
+  padding-top: 0.5rem;
+}
+
 .sidebar-section summary {
   cursor: pointer;
   margin-bottom: 0.35rem;
@@ -204,6 +209,7 @@ details.sidebar-subsection-group ul a {
   line-height: 1.4;
   font-size: 0.75rem;
 }
+
 
 .content {
   margin-left: 14rem;
