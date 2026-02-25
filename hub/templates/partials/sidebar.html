@@ -25,6 +25,16 @@
             Checklist
           </a>
         </li>
+        {% if request.user.is_staff %}
+        <li data-search-item>
+          <a
+            href="{% url 'mount_configuration' %}"
+            class="{% if request.resolver_match and request.resolver_match.url_name == 'mount_configuration' %} contrast{% else %} secondary {% endif %}"
+          >
+            Mount Configuration
+          </a>
+        </li>
+        {% endif %}
         <li>
           <details
             class="sidebar-subsection"

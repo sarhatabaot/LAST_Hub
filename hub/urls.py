@@ -15,6 +15,9 @@ urlpatterns = [
     path("operations/toggle/", views.checklist_toggle, name="operations_toggle"),
     path("operations/open/", views.open_observatory, name="operations_open"),
     path("operations/close/", views.close_observatory, name="operations_close"),
+    path("operations/mounts/", views.mount_configuration, name="mount_configuration"),
+    path("operations/mounts/<str:mount_id>/update/", views.update_mount_configuration, name="update_mount_configuration"),
+    path("operations/mounts/save/", views.save_mount_configurations, name="save_mount_configurations"),
     path("accounts/request/", views.account_request, name="account_request"),
     path("accounts/", include("django.contrib.auth.urls")),
 ]

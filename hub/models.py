@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 from markdownx.models import MarkdownxField
+import json
+from pathlib import Path
 
 
 class OperationalChecklistState(models.Model):
@@ -110,3 +112,40 @@ class ManualPage(models.Model):
 
     def __str__(self):
         return self.title
+
+
+def get_mount_choices():
+    """Dynamically load mount choices from mounts.json file."""
+    BASE_DIR = Path(__file__).resolve().parent
+    mounts_path = BASE_DIR / "data" / "mounts.json"
+    
+    with open(mounts_path, 'r') as f:
+        mounts_data = json.load(f)
+        # Use mount_id as both value and display text
+        return [(mount['mount_id'], mount['mount_id']) for mount in mounts_data]
+
+
+class MountConfiguration(models.Model):
+    mount_id = models.CharField(max_length=3, choices=get_mount_choices, unique=True)
+    enabled = models.BooleanField(default=True)
+    reason = models.TextField(blank=True, help_text="Reason for disabling this mount (if disabled)")
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="mount_config_updates",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Mount Configuration"
+        verbose_name_plural = "Mount Configurations"
+        ordering = ['mount_id']
+
+    def __str__(self):
+        status = "Enabled" if self.enabled else f"Disabled ({self.reason or 'No reason provided'})"
+        return f"{self.get_mount_id_display()}: {status}"
+
+
