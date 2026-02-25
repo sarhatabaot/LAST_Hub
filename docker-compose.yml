@@ -86,7 +86,7 @@ services:
       - XDG_CACHE_HOME=/tmp
       - STATIC_ROOT=/tmp/staticfiles
     ports:
-      - "8085:8000"
+      - "8000:8000"
     command: >
       sh -c "uv sync && uv run python manage.py runserver 0.0.0.0:8000"
     depends_on:

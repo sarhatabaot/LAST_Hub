@@ -16,7 +16,7 @@ from LAST_Hub.settings import BASE_DIR
 from controller import client as controller_client
 from hub import operations
 from hub.forms import AccountRequestForm
-from hub.models import ManualPage, OperationalChecklistState
+from hub.models import ManualPage, OperationalChecklistState, MountConfiguration
 from hub.safety import fetch_safety_status
 
 
@@ -171,12 +171,19 @@ def operations_view(request):
 
     all_checked = all(item["checked"] for item in checklist_items)
 
+    # Ensure mount configurations are synchronized and get mount summary data
+    operations.get_mount_configurations()  # This ensures all configs are up to date
+    enabled_mounts = operations.get_enabled_mounts()
+    disabled_mounts = operations.get_disabled_mounts()
+
     context = {
         "state": state,
         "state_label": state.state_label(),
         "checklist_items": checklist_items,
         "all_checked": all_checked,
         "controller_configured": bool(settings.CONTROLLER_API_BASE_URL),
+        "enabled_mounts": enabled_mounts,
+        "disabled_mounts": disabled_mounts,
     }
     return render(request, "operations/operations.html", context)
 
@@ -341,3 +348,112 @@ def close_observatory(request):
         return render(request, "operations/_checklist.html", context)
 
     return redirect("operations")
+
+
+@login_required
+def mount_configuration(request):
+    """Mount configuration page for staff users."""
+    if not request.user.is_staff:
+        messages.error(request, "You don't have permission to access this page.")
+        return redirect("operations")
+    
+    # Ensure all mount configurations exist and are synchronized
+    mount_configs = operations.get_mount_configurations()
+    mount_order = operations.get_mount_order()
+    
+    # Get mount summary data for the mount summary section
+    enabled_mounts = operations.get_enabled_mounts()
+    disabled_mounts = operations.get_disabled_mounts()
+    
+    context = {
+        "mount_configs": mount_configs,
+        "mount_order": mount_order,
+        "enabled_mounts": enabled_mounts,
+        "disabled_mounts": disabled_mounts,
+    }
+    return render(request, "operations/mount_configuration.html", context)
+
+
+@login_required
+@require_POST
+def update_mount_configuration(request, mount_id):
+    """Update mount configuration via HTMX."""
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    
+    try:
+        mount_config = MountConfiguration.objects.get(mount_id=mount_id)
+    except MountConfiguration.DoesNotExist:
+        return HttpResponse(status=404)
+    
+    # Get form data - handle both checkbox and textarea
+    enabled_key = f'mount_{mount_id}_enabled'
+    reason_key = f'mount_{mount_id}_reason'
+    
+    enabled = request.POST.get(enabled_key) == 'on'
+    reason = request.POST.get(reason_key, '').strip()
+    
+    # Update the mount configuration
+    mount_config.enabled = enabled
+    mount_config.reason = reason
+    mount_config.updated_by = request.user
+    
+    try:
+        mount_config.save()
+        # Return updated mount summary for checklist page
+        enabled_mounts = operations.get_enabled_mounts()
+        disabled_mounts = operations.get_disabled_mounts()
+        
+        context = {
+            'enabled_mounts': enabled_mounts,
+            'disabled_mounts': disabled_mounts,
+        }
+        return render(request, "operations/_mount_summary.html", context)
+    except Exception as e:
+        # Log the error and return a simple error response
+        print(f"Error saving mount configuration: {e}")
+        return HttpResponse(status=500)
+
+
+@login_required
+@require_POST
+def save_mount_configurations(request):
+    """Save all mount configurations at once."""
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    
+    # Get all mount configurations
+    mount_configs = operations.get_mount_configurations()
+    
+    # Process form data for all mounts
+    for mount_config in mount_configs:
+        mount_id = mount_config.mount_id
+        enabled_key = f'mount_{mount_id}_enabled'
+        reason_key = f'mount_{mount_id}_reason'
+        
+        enabled = request.POST.get(enabled_key) == 'on'
+        reason = request.POST.get(reason_key, '').strip()
+        
+        mount_config.enabled = enabled
+        mount_config.reason = reason
+        mount_config.updated_by = request.user
+    
+    # Save all configurations in a transaction
+    try:
+        with transaction.atomic():
+            for mount_config in mount_configs:
+                mount_config.save()
+        
+        # Return updated mount summary for checklist page
+        enabled_mounts = operations.get_enabled_mounts()
+        disabled_mounts = operations.get_disabled_mounts()
+        
+        context = {
+            'enabled_mounts': enabled_mounts,
+            'disabled_mounts': disabled_mounts,
+        }
+        return render(request, "operations/_mount_summary.html", context)
+    except Exception as e:
+        # Log the error and return a simple error response
+        print(f"Error saving mount configurations: {e}")
+        return HttpResponse(status=500)
