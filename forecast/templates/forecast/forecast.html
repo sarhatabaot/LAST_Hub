@@ -4,7 +4,6 @@
 {% block title %}Forecast{% endblock %}
 
 {% block extra_head %}
-  <link rel="icon" type="image/svg+xml" href="{% static 'forecast/icons/favicon.svg' %}">
   <link rel="stylesheet" href="{% static 'forecast/css/style.css' %}">
 {% endblock %}
 
@@ -18,7 +17,6 @@
     </div>
   </header>
 
-  <div id="forecastSummary" class="dashboard-grid dashboard-grid-compact"></div>
   <div id="forecastProviders" class="provider-grid"></div>
   <div id="forecastWarnings" class="note-stack"></div>
   <div id="chartGrid" class="chart-grid"></div>

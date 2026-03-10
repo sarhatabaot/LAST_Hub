@@ -41,3 +41,9 @@ class DocsTests(TestCase):
         self.assertContains(response, "Nightly Ops")
         self.assertContains(response, "open and close the observatory")
 
+    def test_pygments_stylesheet_supports_dark_theme(self):
+        stylesheet = Path(__file__).resolve().parent.parent / "hub" / "static" / "hub" / "css" / "pygments.css"
+        css = stylesheet.read_text(encoding="utf-8")
+
+        self.assertIn("@media (prefers-color-scheme: dark)", css)
+        self.assertIn("--code-bg", css)

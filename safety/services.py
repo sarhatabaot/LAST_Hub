@@ -1,6 +1,31 @@
+import re
+
 import requests
 
 from LAST_Hub import settings
+
+
+def _parse_allowed_range_from_text(text):
+    raw = str(text or "").strip()
+    if not raw:
+        return None
+
+    patterns = [
+        r"(-?\d+(?:\.\d+)?)\s*(?:<=|<)\s*value\s*(?:<=|<)\s*(-?\d+(?:\.\d+)?)",
+        r"value\s*(?:>|>=)\s*(-?\d+(?:\.\d+)?)\s*and\s*value\s*(?:<|<=)\s*(-?\d+(?:\.\d+)?)",
+        r"value\s*(?:<|<=)\s*(-?\d+(?:\.\d+)?)\s*or\s*value\s*(?:>|>=)\s*(-?\d+(?:\.\d+)?)",
+        r"value\s*(?:>|>=)\s*(-?\d+(?:\.\d+)?)\s*or\s*value\s*(?:<|<=)\s*(-?\d+(?:\.\d+)?)",
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, raw, re.IGNORECASE)
+        if not match:
+            continue
+        first = float(match.group(1))
+        second = float(match.group(2))
+        return (min(first, second), max(first, second))
+
+    return None
 
 
 def _normalize_reason_metrics(metrics):
@@ -29,9 +54,26 @@ def _normalize_reason_metrics(metrics):
                 "operator": str(metric.get("operator") or "").strip(),
                 "unit": str(metric.get("unit") or "").strip(),
                 "state": str(metric.get("state") or "").strip(),
+                "raw_reason": "",
+                "range_min": None,
+                "range_max": None,
             }
         )
     return normalized
+
+
+def _attach_reason_context(metrics, reasons):
+    if not metrics:
+        return metrics
+
+    reasons = list(reasons or [])
+    for index, metric in enumerate(metrics):
+        raw_reason = reasons[index] if index < len(reasons) else ""
+        metric["raw_reason"] = str(raw_reason or "").strip()
+        allowed_range = _parse_allowed_range_from_text(metric["raw_reason"])
+        if allowed_range:
+            metric["range_min"], metric["range_max"] = allowed_range
+    return metrics
 
 
 def fetch_safety_status(timeout=3):
@@ -62,6 +104,8 @@ def fetch_safety_status(timeout=3):
         reason_metrics = payload.get("reason_metrics") or {}
         passed_reason_metrics = _normalize_reason_metrics(reason_metrics.get("passed"))
         failed_reason_metrics = _normalize_reason_metrics(reason_metrics.get("failed"))
+        passed_reason_metrics = _attach_reason_context(passed_reason_metrics, passed_reasons)
+        failed_reason_metrics = _attach_reason_context(failed_reason_metrics, failed_reasons)
         passed_count = len(passed_reasons) if passed_reasons else len(passed_reason_metrics)
         failed_count = len(failed_reasons) if failed_reasons else len(failed_reason_metrics)
         stale_sensors = payload.get("stale_sensors") or []
@@ -81,4 +125,3 @@ def fetch_safety_status(timeout=3):
         "evaluated_at": evaluated_at,
         "error": error,
     }
-

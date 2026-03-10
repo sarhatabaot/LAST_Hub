@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 from django.test import TestCase
@@ -5,6 +6,24 @@ from django.urls import reverse
 
 
 class ForecastTests(TestCase):
+    @patch("forecast.services.requests.get")
+    def test_forecast_workspace_omits_summary_cards_container(self, mock_get):
+        response = Mock()
+        response.json.return_value = {
+            "temperature": {
+                "time": [1_700_000_000_000],
+                "value": [12.5],
+            },
+        }
+        response.raise_for_status.return_value = None
+        mock_get.return_value = response
+
+        page = self.client.get(reverse("forecast:index"))
+
+        self.assertEqual(page.status_code, 200)
+        self.assertNotContains(page, 'id="forecastSummary"')
+        self.assertNotContains(page, "forecast/icons/favicon.svg")
+
     @patch("forecast.services.requests.get")
     def test_forecast_api_returns_normalized_payload(self, mock_get):
         response = Mock()
@@ -40,3 +59,35 @@ class ForecastTests(TestCase):
         self.assertEqual(payload["providers"][0]["status"], "error")
         self.assertTrue(payload["warnings"])
 
+    @patch("forecast.services.requests.get")
+    def test_forecast_api_returns_qualitative_overview_states(self, mock_get):
+        response = Mock()
+        response.json.return_value = {
+            "cloud_cover_total": {
+                "time": [1_700_000_000_000],
+                "value": [75],
+            },
+            "total_precipitation": {
+                "time": [1_700_000_000_000],
+                "value": [0.0],
+            },
+        }
+        response.raise_for_status.return_value = None
+        mock_get.return_value = response
+
+        api_response = self.client.get(reverse("forecast:api"))
+
+        self.assertEqual(api_response.status_code, 200)
+        payload = api_response.json()
+        self.assertEqual(payload["overview_states"]["cloud"]["state"], "Cloudy")
+        self.assertEqual(payload["overview_states"]["rain"]["state"], "Dry")
+        self.assertEqual(payload["overview_states"]["rain"]["detail"], "0 mm latest precipitation")
+
+    def test_forecast_chart_js_uses_line_series(self):
+        chart_js = (
+            Path(__file__).resolve().parent / "static" / "forecast" / "js" / "chart.js"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn('type: "line"', chart_js)
+        self.assertNotIn('type: "bar"', chart_js)
+        self.assertIn("suggestedMin: 0.1", chart_js)

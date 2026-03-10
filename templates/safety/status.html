@@ -12,8 +12,8 @@
     </div>
   </header>
 
-  <article class="safety-card {% if safe %}pico-background-green-500{% elif safe == False %}pico-background-red-500{% else %}pico-background-slate-50{% endif %}">
-    <h1 class="safety-status-title {% if safe %}pico-color-white{% elif safe == False %}pico-color-white{% endif %}">
+  <article class="safety-card {% if safe %}safety-card-safe{% elif safe == False %}safety-card-unsafe{% else %}safety-card-unknown{% endif %}">
+    <h1 class="safety-status-title {% if safe or safe == False %}safety-status-title-contrast{% endif %}">
       {% if safe %}SAFE{% elif safe == False %}UNSAFE{% else %}UNKNOWN{% endif %}
     </h1>
   </article>
@@ -51,6 +51,9 @@
             data-metric-threshold="{{ metric.threshold|default_if_none:'' }}"
             data-metric-operator="{{ metric.operator|default_if_none:''|escape }}"
             data-metric-unit="{{ metric.unit|default_if_none:''|escape }}"
+            data-metric-range-min="{{ metric.range_min|default_if_none:'' }}"
+            data-metric-range-max="{{ metric.range_max|default_if_none:'' }}"
+            data-metric-raw="{{ metric.raw_reason|default_if_none:''|escape }}"
             data-metric-state="failed"
           >
             <p class="safety-meter-fallback">
@@ -77,7 +80,7 @@
   </section>
 
   <details class="accordion">
-    <summary role="button" class="pico-background-green-400 pico-color-white">
+    <summary role="button" class="safety-accordion-summary safety-accordion-summary-passed">
       Passed ({{ passed_count }})
     </summary>
     {% if passed_reason_metrics %}
@@ -91,6 +94,9 @@
             data-metric-threshold="{{ metric.threshold|default_if_none:'' }}"
             data-metric-operator="{{ metric.operator|default_if_none:''|escape }}"
             data-metric-unit="{{ metric.unit|default_if_none:''|escape }}"
+            data-metric-range-min="{{ metric.range_min|default_if_none:'' }}"
+            data-metric-range-max="{{ metric.range_max|default_if_none:'' }}"
+            data-metric-raw="{{ metric.raw_reason|default_if_none:''|escape }}"
             data-metric-state="passed"
           >
             <p class="safety-meter-fallback">
@@ -115,7 +121,7 @@
   </details>
 
   <details class="accordion">
-    <summary role="button" class="pico-background-slate-200 pico-color-slate-900">
+    <summary role="button" class="safety-accordion-summary safety-accordion-summary-stale">
       Stale Sensors ({{ stale_sensors|length }})
     </summary>
     {% if stale_sensors %}
@@ -149,6 +155,14 @@
         return value.toFixed(1);
       }
       return value.toFixed(2);
+    };
+
+    const formatCompactNumber = (value) => {
+      if (!Number.isFinite(value)) {
+        return "";
+      }
+      const rounded = Number(value.toFixed(2));
+      return Number.isInteger(rounded) ? String(rounded) : String(rounded);
     };
 
     const parseAllowedRange = (conditionRaw) => {
@@ -245,6 +259,36 @@
       return null;
     };
 
+    const readMetricRow = (row) => {
+      const label = (row.dataset.metricLabel || "").trim();
+      if (!label) {
+        return null;
+      }
+
+      const value = Number.parseFloat(row.dataset.metricValue || "");
+      if (!Number.isFinite(value)) {
+        return null;
+      }
+
+      const thresholdRaw = (row.dataset.metricThreshold || "").trim();
+      const threshold = thresholdRaw === "" ? null : Number.parseFloat(thresholdRaw);
+      const rangeMinRaw = (row.dataset.metricRangeMin || "").trim();
+      const rangeMaxRaw = (row.dataset.metricRangeMax || "").trim();
+      const rangeMin = rangeMinRaw === "" ? null : Number.parseFloat(rangeMinRaw);
+      const rangeMax = rangeMaxRaw === "" ? null : Number.parseFloat(rangeMaxRaw);
+
+      return {
+        title: label,
+        value,
+        threshold: Number.isFinite(threshold) ? threshold : null,
+        rangeMin: Number.isFinite(rangeMin) ? rangeMin : null,
+        rangeMax: Number.isFinite(rangeMax) ? rangeMax : null,
+        operator: (row.dataset.metricOperator || "").trim(),
+        unit: (row.dataset.metricUnit || "").trim(),
+        raw: (row.dataset.metricRaw || label).trim(),
+      };
+    };
+
     const isUnsafeByOperator = (value, threshold, operator) => {
       const op = (operator || "").trim();
       if (op === ">") return value > threshold;
@@ -256,29 +300,94 @@
     };
 
     rows.forEach((row) => {
-      const reason = parseReason(row.dataset.failedReason || row.textContent);
+      const reason = readMetricRow(row) || parseReason(row.dataset.failedReason || row.textContent);
       if (!reason) {
         return;
       }
 
-      const max = Math.max(reason.value, reason.threshold) || 1;
-      const current = clamp((reason.value / max) * 100, 0, 100);
-      const threshold = clamp((reason.threshold / max) * 100, 0, 100);
-      const range = parseAllowedRange(reason.raw);
-      const unsafe = isUnsafeByOperator(reason.value, reason.threshold, reason.operator);
+      const metricState = row.dataset.metricState === "passed" || row.dataset.metricState === "failed"
+        ? row.dataset.metricState
+        : null;
+      const parsedRange = parseAllowedRange(reason.raw);
+      const rangeMin = Number.isFinite(reason.rangeMin) ? reason.rangeMin : parsedRange?.min ?? null;
+      const rangeMax = Number.isFinite(reason.rangeMax) ? reason.rangeMax : parsedRange?.max ?? null;
+
+      const hasTwoSidedRange = Number.isFinite(rangeMin) && Number.isFinite(rangeMax);
+      const hasOneSidedLimit = Number.isFinite(reason.threshold);
+
+      let domainStart = reason.value;
+      let domainEnd = reason.value;
+      if (hasTwoSidedRange) {
+        domainStart = Math.min(domainStart, rangeMin);
+        domainEnd = Math.max(domainEnd, rangeMax);
+      }
+      if (hasOneSidedLimit) {
+        domainStart = Math.min(domainStart, reason.threshold);
+        domainEnd = Math.max(domainEnd, reason.threshold);
+      }
+
+      let padding = (domainEnd - domainStart) * 0.12;
+      if (!Number.isFinite(padding) || padding <= 0) {
+        padding = Math.max(Math.abs(domainEnd || domainStart || 1) * 0.2, 1);
+      }
+      domainStart -= padding;
+      domainEnd += padding;
+
+      if (hasOneSidedLimit && (reason.operator === "<" || reason.operator === "<=")) {
+        domainStart = Math.min(domainStart, reason.value - padding);
+        domainEnd = Math.max(domainEnd, reason.threshold + padding);
+      }
+      if (hasOneSidedLimit && (reason.operator === ">" || reason.operator === ">=")) {
+        domainStart = Math.min(domainStart, reason.threshold - padding);
+        domainEnd = Math.max(domainEnd, reason.value + padding);
+      }
+
+      const domainSpan = Math.max(domainEnd - domainStart, 1);
+      const current = clamp(((reason.value - domainStart) / domainSpan) * 100, 0, 100);
+
+      let allowedStart = 0;
+      let allowedEnd = 100;
+
+      if (hasTwoSidedRange) {
+        allowedStart = clamp(((rangeMin - domainStart) / domainSpan) * 100, 0, 100);
+        allowedEnd = clamp(((rangeMax - domainStart) / domainSpan) * 100, 0, 100);
+      } else if (hasOneSidedLimit && (reason.operator === "<" || reason.operator === "<=")) {
+        allowedStart = 0;
+        allowedEnd = clamp(((reason.threshold - domainStart) / domainSpan) * 100, 0, 100);
+      } else if (hasOneSidedLimit && (reason.operator === ">" || reason.operator === ">=")) {
+        allowedStart = clamp(((reason.threshold - domainStart) / domainSpan) * 100, 0, 100);
+        allowedEnd = 100;
+      }
+
+      const unsafe = hasTwoSidedRange
+        ? reason.value < rangeMin || reason.value > rangeMax
+        : hasOneSidedLimit
+        ? isUnsafeByOperator(reason.value, reason.threshold, reason.operator)
+        : metricState === "failed";
+      const resolvedState = metricState || (unsafe ? "failed" : "passed");
+      const stateLabel = resolvedState === "failed" ? "Outside limit" : "Within limit";
+      const limitText = hasTwoSidedRange
+        ? `Limit ${formatCompactNumber(rangeMin)} ${reason.unit} to ${formatCompactNumber(rangeMax)} ${reason.unit}`.trim()
+        : hasOneSidedLimit
+        ? `Limit ${reason.operator} ${formatCompactNumber(reason.threshold)} ${reason.unit}`.trim()
+        : "";
+      const markerClass = resolvedState === "failed" ? "is-unsafe" : "is-safe";
 
       row.innerHTML = `
-        <div class="safety-meter-card">
+        <div class="safety-meter-card is-${resolvedState}">
           <div class="safety-meter-labels">
             <strong>${reason.title}</strong>
-            <span>${formatNumber(reason.value)} ${reason.unit}</span>
+            <span>${formatCompactNumber(reason.value)} ${reason.unit}</span>
+          </div>
+          <div class="safety-meter-summary">
+            <span class="safety-meter-state is-${resolvedState}">${stateLabel}</span>
+            ${limitText ? `<span class="safety-meter-limit">${limitText}</span>` : ""}
           </div>
           <div class="safety-meter-track">
-            <span class="safety-meter-fill ${unsafe ? "is-unsafe" : "is-safe"}" style="width:${current}%"></span>
-            <span class="safety-meter-threshold" style="left:${threshold}%"></span>
-            ${range ? `<span class="safety-meter-range" style="left:${clamp((range.min / max) * 100, 0, 100)}%;width:${clamp(((range.max - range.min) / max) * 100, 0, 100)}%"></span>` : ""}
+            <span class="safety-meter-range is-${resolvedState}" style="left:${allowedStart}%;width:${Math.max(allowedEnd - allowedStart, 0)}%"></span>
+            <span class="safety-meter-marker ${markerClass}" style="left:${current}%"></span>
           </div>
-          <p class="safety-meter-meta">Threshold ${reason.operator} ${formatNumber(reason.threshold)} ${reason.unit}</p>
+          <p class="safety-meter-meta">Current ${formatCompactNumber(reason.value)} ${reason.unit}</p>
         </div>
       `;
     });

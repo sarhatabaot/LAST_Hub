@@ -21,25 +21,6 @@ function formatStatus(status) {
   return "Error";
 }
 
-function renderSummaryCards(payload) {
-  const container = document.getElementById("forecastSummary");
-  if (!(container instanceof HTMLDivElement)) {
-    return;
-  }
-
-  container.innerHTML = "";
-  for (const card of payload.summary_cards || []) {
-    const element = document.createElement("article");
-    element.className = "summary-card";
-    element.innerHTML = `
-      <p class="card-kicker">${card.label}</p>
-      <h2>${card.value}</h2>
-      <p class="card-copy">${card.detail}</p>
-    `;
-    container.appendChild(element);
-  }
-}
-
 function renderProviders(payload) {
   const container = document.getElementById("forecastProviders");
   if (!(container instanceof HTMLDivElement)) {
@@ -108,11 +89,15 @@ function renderCharts(payload) {
     title.className = "chart-title";
     title.textContent = group.unit ? `${group.label} (${group.unit})` : group.label;
 
+    const frame = document.createElement("div");
+    frame.className = "chart-frame";
+
     const canvas = document.createElement("canvas");
     canvas.className = "chart-canvas";
 
     card.appendChild(title);
-    card.appendChild(canvas);
+    frame.appendChild(canvas);
+    card.appendChild(frame);
     container.appendChild(card);
 
     const datasets = (group.datasets || []).map((dataset) => ({
@@ -131,7 +116,6 @@ async function loadPayload() {
 }
 
 function renderPayload(payload) {
-  renderSummaryCards(payload);
   renderProviders(payload);
   renderWarnings(payload);
   renderCharts(payload);

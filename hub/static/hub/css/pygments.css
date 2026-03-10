@@ -1,10 +1,38 @@
+.manual-content {
+  --code-bg: #f6f8fa;
+  --code-text: #24292f;
+  --code-comment: #6a737d;
+  --code-keyword: #d73a49;
+  --code-string: #032f62;
+  --code-name: #6f42c1;
+  --code-number: #005cc5;
+  --code-base: #24292f;
+  --code-error-bg: #ffeef0;
+  --code-error-text: #b31d28;
+}
+
+@media (prefers-color-scheme: dark) {
+  .manual-content {
+    --code-bg: #101a28;
+    --code-text: #d7e3f0;
+    --code-comment: #8ea2b8;
+    --code-keyword: #ff8ea3;
+    --code-string: #8fc7ff;
+    --code-name: #c8a7ff;
+    --code-number: #75b8ff;
+    --code-base: #d7e3f0;
+    --code-error-bg: #412226;
+    --code-error-text: #ffb3bd;
+  }
+}
+
 .manual-content pre {
   padding: 0.75rem 1rem;
   overflow-x: auto;
   border-radius: 0.5rem;
   border: 1px solid var(--pico-muted-border-color);
-  background: #f6f8fa;
-  color: #24292f;
+  background: var(--code-bg);
+  color: var(--code-text);
   font-size: 0.85rem;
   line-height: 1.5;
 }
@@ -17,7 +45,7 @@
 .manual-content .codehilite .cm,
 .manual-content .codehilite .c1,
 .manual-content .codehilite .cs {
-  color: #6a737d;
+  color: var(--code-comment);
   font-style: italic;
 }
 
@@ -28,12 +56,12 @@
 .manual-content .codehilite .kp,
 .manual-content .codehilite .kr,
 .manual-content .codehilite .kt {
-  color: #d73a49;
+  color: var(--code-keyword);
 }
 
 .manual-content .codehilite .o,
 .manual-content .codehilite .ow {
-  color: #d73a49;
+  color: var(--code-keyword);
 }
 
 .manual-content .codehilite .s,
@@ -48,14 +76,14 @@
 .manual-content .codehilite .sr,
 .manual-content .codehilite .s1,
 .manual-content .codehilite .ss {
-  color: #032f62;
+  color: var(--code-string);
 }
 
 .manual-content .codehilite .nf,
 .manual-content .codehilite .nc,
 .manual-content .codehilite .nn,
 .manual-content .codehilite .na {
-  color: #6f42c1;
+  color: var(--code-name);
 }
 
 .manual-content .codehilite .m,
@@ -64,7 +92,7 @@
 .manual-content .codehilite .mi,
 .manual-content .codehilite .mo,
 .manual-content .codehilite .il {
-  color: #005cc5;
+  color: var(--code-number);
 }
 
 .manual-content .codehilite .bp,
@@ -74,10 +102,10 @@
 .manual-content .codehilite .vc,
 .manual-content .codehilite .vg,
 .manual-content .codehilite .vi {
-  color: #24292f;
+  color: var(--code-base);
 }
 
 .manual-content .codehilite .err {
-  color: #b31d28;
-  background-color: #ffeef0;
+  color: var(--code-error-text);
+  background-color: var(--code-error-bg);
 }

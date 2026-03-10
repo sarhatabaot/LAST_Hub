@@ -102,6 +102,12 @@ def _format_window_label(start, end):
     return f"{start_dt.strftime('%b %d, %Y')} - {end_dt.strftime('%b %d, %Y')} UTC"
 
 
+def _format_display_value(value, unit="", decimals=1):
+    if unit == "mm" and value < 0.1:
+        return "0"
+    return f"{value:.{decimals}f}"
+
+
 def fetch_provider(provider, timeout=10):
     if not provider["enabled"]:
         return {
@@ -257,13 +263,60 @@ def get_forecast_aggregate():
 
     for stat in summary["stats"]:
         unit = f" {stat['unit']}" if stat["unit"] else ""
+        latest = _format_display_value(stat["latest"], stat["unit"], decimals=1)
+        minimum = _format_display_value(stat["min"], stat["unit"], decimals=1)
+        maximum = _format_display_value(stat["max"], stat["unit"], decimals=1)
         summary_cards.append(
             {
                 "label": stat["label"],
-                "value": f"{stat['latest']:.1f}{unit}",
-                "detail": f"Range {stat['min']:.1f} to {stat['max']:.1f}{unit}",
+                "value": f"{latest}{unit}",
+                "detail": f"Range {minimum} to {maximum}{unit}",
             }
         )
+
+    latest_by_key = {stat["key"]: stat for stat in summary["stats"]}
+    cloud_stat = latest_by_key.get("cloud_cover")
+    rain_stat = latest_by_key.get("total_precipitation")
+
+    if cloud_stat:
+        latest_cloud = cloud_stat["latest"]
+        if latest_cloud <= 20:
+            cloud_state_name = "Clear"
+        elif latest_cloud <= 60:
+            cloud_state_name = "Variable"
+        else:
+            cloud_state_name = "Cloudy"
+        cloud_state = {
+            "label": "Cloud state",
+            "state": cloud_state_name,
+            "detail": f"{latest_cloud:.0f}% latest cloud cover",
+        }
+    else:
+        cloud_state = {
+            "label": "Cloud state",
+            "state": "Unknown",
+            "detail": "No cloud-cover data available",
+        }
+
+    if rain_stat:
+        latest_rain = rain_stat["latest"]
+        if latest_rain <= 0.05:
+            rain_state_name = "Dry"
+        elif latest_rain <= 0.5:
+            rain_state_name = "Light risk"
+        else:
+            rain_state_name = "Wet"
+        rain_state = {
+            "label": "Rain state",
+            "state": rain_state_name,
+            "detail": f"{_format_display_value(latest_rain, 'mm', decimals=2)} mm latest precipitation",
+        }
+    else:
+        rain_state = {
+            "label": "Rain state",
+            "state": "Unknown",
+            "detail": "No precipitation data available",
+        }
 
     return {
         "generated_at": datetime.now(tz=timezone.utc).isoformat(),
@@ -271,5 +324,9 @@ def get_forecast_aggregate():
         "warnings": warnings,
         "summary": summary,
         "summary_cards": summary_cards,
+        "overview_states": {
+            "cloud": cloud_state,
+            "rain": rain_state,
+        },
         "series_groups": build_series_groups(rows),
     }
