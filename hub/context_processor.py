@@ -1,16 +1,52 @@
-import re
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
+from django.urls import reverse
 
-from hub import operations
-from hub.models import ManualPage, OperationalChecklistState
-from hub.safety import fetch_safety_status
+from checklist.services import default_checklist_state
+from hub.models import OperationalChecklistState
+from safety.services import fetch_safety_status
 
 
 def project_info(request):
     return {
         "PROJECT_VERSION": settings.PROJECT_VERSION,
         "PROJECT_SOURCE_URL": settings.PROJECT_SOURCE_URL
+    }
+
+
+def primary_navigation(request):
+    current_url_name = request.resolver_match.url_name if request.resolver_match else ""
+    current_namespace = request.resolver_match.namespace if request.resolver_match else ""
+    return {
+        "primary_navigation": [
+            {
+                "label": "Overview",
+                "url": reverse("hub_overview"),
+                "is_active": current_url_name == "hub_overview",
+            },
+            {
+                "label": "Forecast",
+                "url": reverse("forecast:index"),
+                "is_active": current_namespace == "forecast",
+            },
+            {
+                "label": "Safety",
+                "url": reverse("safety:index"),
+                "is_active": current_namespace == "safety",
+            },
+            {
+                "label": "Checklist",
+                "url": reverse("checklist:index"),
+                "is_active": current_namespace == "checklist" or current_url_name == "operations",
+            },
+            {
+                "label": "Docs",
+                "url": reverse("docs:index"),
+                "is_active": current_namespace == "docs",
+            },
+        ],
+        "current_url_name": current_url_name,
+        "current_namespace": current_namespace,
     }
 
 
@@ -32,46 +68,6 @@ def safety_status(request):
     }
 
 
-def manual_pages(request):
-    try:
-        pages = list(ManualPage.objects.order_by("section", "slug"))
-    except (OperationalError, ProgrammingError):
-        pages = []
-
-    current_slug = ""
-    if (
-        request.resolver_match
-        and request.resolver_match.url_name == "manual_detail"
-        and request.resolver_match.kwargs.get("slug")
-    ):
-        current_slug = request.resolver_match.kwargs.get("slug")
-
-    sections = []
-    def strip_order_prefix(value):
-        return re.sub(r"^\s*\d+\s*[-._]\s*", "", value or "").strip()
-
-    for page in pages:
-        key = page.section or ""
-        if not sections or sections[-1]["key"] != key:
-            label_source = key.split("/")[-1] if key else ""
-            sections.append(
-                {
-                    "key": key,
-                    "label": strip_order_prefix(label_source).replace("-", " ").replace("_", " ").title()
-                    or "General",
-                    "pages": [],
-                    "is_active": False,
-                }
-            )
-        sections[-1]["pages"].append(page)
-        if current_slug and page.slug == current_slug:
-            sections[-1]["is_active"] = True
-
-    return {
-        "manual_sections": sections,
-    }
-
-
 def observatory_settings(request):
     return {
         "OBS_LATITUDE": settings.OBS_LATITUDE,
@@ -84,7 +80,7 @@ def observatory_status(request):
     try:
         state, _ = OperationalChecklistState.objects.get_or_create(
             pk=1,
-            defaults={"items": operations.default_checklist_state()},
+            defaults={"items": default_checklist_state()},
         )
         status = state.observatory_state
         label = state.state_label()

@@ -1,27 +1,31 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Forecast Viewer{% endblock %}
+{% block title %}Forecast{% endblock %}
 
 {% block extra_head %}
   <link rel="icon" type="image/svg+xml" href="{% static 'forecast/icons/favicon.svg' %}">
   <link rel="stylesheet" href="{% static 'forecast/css/style.css' %}">
 {% endblock %}
 
-{% block sidebar %}
-  {% include "partials/sidebar.html" %}
-{% endblock %}
-
 {% block content %}
-<header class="page-header">
-  <div class="page-header-text">
-    <h1 id="pageTitle">IMS232 Forecast</h1>
-    <p id="pageSubtitle" aria-busy="true">Loading range…</p>
-  </div>
-</header>
+<section class="page-shell forecast-shell">
+  <header class="page-header page-header-tight">
+    <div class="page-header-text">
+      <p class="eyebrow">Forecast</p>
+      <h1 id="pageTitle">Forecast Aggregator</h1>
+      <p id="pageSubtitle" aria-busy="true">{{ forecast_data.summary.window_label }}</p>
+    </div>
+  </header>
 
-<div id="chartGrid" class="chart-grid"></div>
+  <div id="forecastSummary" class="dashboard-grid dashboard-grid-compact"></div>
+  <div id="forecastProviders" class="provider-grid"></div>
+  <div id="forecastWarnings" class="note-stack"></div>
+  <div id="chartGrid" class="chart-grid"></div>
+</section>
 
-<script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+{{ forecast_data|json_script:"forecast-data" }}
+
+<script src="https://cdn.jsdelivr.net/npm/luxon@3.7.2/build/global/luxon.min.js"></script>
 <script type="module" src="{% static 'forecast/js/main.js' %}"></script>
 {% endblock %}

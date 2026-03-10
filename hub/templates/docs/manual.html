@@ -1,31 +1,75 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Manual{% endblock %}
-
-{% block sidebar %}
-  {% include "partials/sidebar.html" %}
-{% endblock %}
+{% block title %}Docs{% endblock %}
 
 {% block extra_head %}
   <link rel="stylesheet" href="{% static 'hub/css/pygments.css' %}">
 {% endblock %}
 
 {% block content %}
-<section class="section">
-  <header class="embedded-header">
-    <h2>{{ page.title|default:"Manual" }}</h2>
+<section class="page-shell docs-shell">
+  <header class="page-header page-header-tight">
+    <div>
+      <p class="eyebrow">Docs</p>
+      <h1>{{ page.title|default:"Operator manual" }}</h1>
+      <p class="page-copy">Filesystem-backed markdown with full-text search and section navigation.</p>
+    </div>
   </header>
 
-  {% if page %}
-    <div class="manual-content">
-      {{ content_html|safe }}
-    </div>
-  {% else %}
-    <p class="operations-meta">
-      Select a manual page from the list or create one in the admin.
-    </p>
-  {% endif %}
+  <div class="docs-layout">
+    <aside class="docs-sidebar">
+      <form method="get" class="docs-search">
+        <label for="docsSearch">Search docs</label>
+        <input id="docsSearch" name="q" type="search" value="{{ search_query }}" placeholder="Search titles and content">
+      </form>
+
+      {% if search_query %}
+        <section class="docs-results">
+          <p class="card-kicker">Search results</p>
+          {% if search_results %}
+            <ul class="docs-result-list">
+              {% for result in search_results %}
+                <li>
+                  <a href="{% url 'docs:detail' result.slug %}?q={{ search_query|urlencode }}">{{ result.title }}</a>
+                  <small>{{ result.excerpt }}</small>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="meta-line">No documents matched your query.</p>
+          {% endif %}
+        </section>
+      {% endif %}
+
+      <nav class="docs-nav" aria-label="Manual sections">
+        {% for section in doc_sections %}
+          <section class="docs-nav-section">
+            <p class="card-kicker">{{ section.label }}</p>
+            <ul>
+              {% for manual in section.pages %}
+                <li>
+                  <a href="{% url 'docs:detail' manual.slug %}{% if search_query %}?q={{ search_query|urlencode }}{% endif %}" class="{% if page and page.slug == manual.slug %}docs-link-active{% endif %}">
+                    {{ manual.title }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          </section>
+        {% endfor %}
+      </nav>
+    </aside>
+
+    <article class="docs-content-card">
+      {% if page %}
+        <div class="manual-content">
+          {{ content_html|safe }}
+        </div>
+      {% else %}
+        <p class="meta-line">No markdown pages were found in the manual directory.</p>
+      {% endif %}
+    </article>
+  </div>
 </section>
 {% endblock %}
 

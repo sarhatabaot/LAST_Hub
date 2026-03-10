@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Observatory Overview{% endblock %}
+
+{% block content %}
+<section class="page-shell">
+  <header class="page-header page-header-tight">
+    <div>
+      <p class="eyebrow">Overview</p>
+      <h1>Operations dashboard</h1>
+      <p class="page-copy">Use this page as the starting point for weather checks, safety review, observatory state, and operator docs.</p>
+    </div>
+  </header>
+
+  <section class="dashboard-grid">
+    <article class="surface-card">
+      <p class="card-kicker">Safety</p>
+      <h2>{% if safety_data.safe %}SAFE{% elif safety_data.safe == False %}UNSAFE{% else %}UNKNOWN{% endif %}</h2>
+      <p class="card-copy">{{ safety_data.failed_count }} failed, {{ safety_data.passed_count }} passed, {{ safety_data.stale_sensors|length }} stale.</p>
+      <a href="{% url 'safety:index' %}">Open full safety status</a>
+    </article>
+
+    <article class="surface-card">
+      <p class="card-kicker">Checklist</p>
+      <h2>{{ checklist_summary.completed_items }}/{{ checklist_summary.total_items }}</h2>
+      <p class="card-copy">
+        {% if checklist_summary.all_checked %}Observatory is ready for open actions.{% else %}Checklist still has incomplete readiness steps.{% endif %}
+      </p>
+      <a href="{% url 'checklist:index' %}">Open checklist</a>
+    </article>
+
+    <article class="surface-card">
+      <p class="card-kicker">Forecast</p>
+      <h2>{{ forecast_data.summary.window_label }}</h2>
+      <p class="card-copy">{{ forecast_data.providers|length }} provider configured, {{ forecast_data.summary.point_count }} normalized points loaded.</p>
+      <a href="{% url 'forecast:index' %}">Open forecast workspace</a>
+    </article>
+
+    <article class="surface-card">
+      <p class="card-kicker">Docs</p>
+      <h2>Operator manual</h2>
+      <p class="card-copy">Filesystem markdown pages with searchable procedures and checklists.</p>
+      <a href="{% url 'docs:index' %}">Open docs</a>
+    </article>
+  </section>
+
+  <section class="dashboard-split">
+    <article class="surface-card">
+      <div class="card-header-inline">
+        <div>
+          <p class="card-kicker">Quick launch</p>
+          <h2>Primary apps</h2>
+        </div>
+      </div>
+      <div class="quick-links">
+        {% for item in primary_navigation %}
+          <a href="{{ item.url }}" class="quick-link">{{ item.label }}</a>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="surface-card">
+      <div class="card-header-inline">
+        <div>
+          <p class="card-kicker">Secondary resources</p>
+          <h2>Legacy links</h2>
+        </div>
+        <a href="{% url 'hub_resources' %}">See all resources</a>
+      </div>
+      <div class="resource-groups">
+        {% for section_name, services in service_sections.items %}
+          <div class="resource-group">
+            <h3>{{ section_name }}</h3>
+            <ul class="resource-list">
+              {% for service in services|slice:":3" %}
+                <li><a href="{{ service.path }}" target="_blank" rel="noopener noreferrer">{{ service.name }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+</section>
+{% endblock %}

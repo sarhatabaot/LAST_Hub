@@ -45,6 +45,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'markdownx',
     'hub',
+    'forecast',
+    'safety',
+    'checklist',
+    'docs',
     'controller',
 ]
 
@@ -72,8 +76,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'hub.context_processor.project_info',
+                'hub.context_processor.primary_navigation',
                 'hub.context_processor.safety_status',
-                'hub.context_processor.manual_pages',
                 'hub.context_processor.observatory_settings',
                 'hub.context_processor.observatory_status',
             ],
@@ -148,6 +152,7 @@ OBS_SAFETY_API_BASE_URL = os.environ.get(
     "OBS_SAFETY_API_BASE_URL",
     "http://10.23.1.25/observatory/safety/api/",
 )
+MANUAL_DOCS_ROOT = BASE_DIR / "docs" / "manual"
 CONTROLLER_API_BASE_URL = os.environ.get(
     "CONTROLLER_API_BASE_URL",
     "",
@@ -162,5 +167,5 @@ PROJECT_SOURCE_URL = "https://github.com/sarhabaot/LAST_Hub"
 USE_X_FORWARDED_HOST = True
 
 LOGIN_URL = "/hub/accounts/login/"
-LOGIN_REDIRECT_URL = "/hub/operations/"
+LOGIN_REDIRECT_URL = "/hub/checklist/"
 LOGOUT_REDIRECT_URL = "/hub/"
