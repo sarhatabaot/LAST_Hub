@@ -1,22 +1,21 @@
 <header class="hub-header" data-hub-header>
   <div class="hub-header-left">
-    {% block header_left %}
-      <a
-        href="{% url 'safety_status' %}"
-        role="button"
-        class="safety-button {% if safety_sidebar.error %}pico-background-slate-50{% elif safety_sidebar.safe %}pico-background-green-500 pico-color-white{% else %}pico-background-red-500 pico-color-white{% endif %}"
-      >
-        Safety: {{ safety_sidebar.label }}
-      </a>
-      <a
-        href="{% url 'operations' %}"
-        role="button"
-        class="safety-button {% if observatory_status.state == 'open' %}pico-background-blue-200 pico-color-slate-900{% elif observatory_status.state == 'closed' %}pico-background-slate-50 pico-color-slate-700{% else %}pico-background-slate-50{% endif %}"
-      >
-        Observatory: {{ observatory_status.label }}
-      </a>
-    {% endblock %}
+    <a
+      href="{% url 'safety:index' %}"
+      role="button"
+      class="status-pill {% if safety_sidebar.error %}secondary{% elif safety_sidebar.safe %}status-pill-safe{% else %}status-pill-alert{% endif %}"
+    >
+      Safety: {{ safety_sidebar.label }}
+    </a>
+    <a
+      href="{% url 'checklist:index' %}"
+      role="button"
+      class="status-pill {% if observatory_status.state == 'open' %}status-pill-open{% else %}secondary{% endif %}"
+    >
+      Observatory: {{ observatory_status.label }}
+    </a>
   </div>
+
   <div class="hub-header-center">
     <div
       class="hub-skybox"
@@ -28,24 +27,15 @@
       Loading sky data…
     </div>
   </div>
+
   <div class="hub-header-right">
-    <form role="search" class="hub-search">
-      <label>
-        <input name="search" type="search" placeholder="Search" data-sidebar-search/>
-      </label>
-    </form>
     <div class="hub-auth">
       {% if request.user.is_authenticated %}
         {% if request.user.is_staff %}
-          <a
-            href="{% url 'admin:index' %}"
-            class="secondary outline"
-          >
-            Admin
-          </a>
+          <a href="{% url 'admin:index' %}" class="secondary outline compact-button">Admin</a>
         {% endif %}
         <details class="hub-user-menu">
-          <summary class="secondary outline hub-user-toggle">
+          <summary class="secondary outline hub-user-toggle compact-button">
             {{ request.user.get_username }}
           </summary>
           <div class="hub-user-menu-panel">
@@ -53,7 +43,7 @@
           </div>
         </details>
       {% else %}
-        <a href="{% url 'login' %}" class="secondary">Log in</a>
+        <a href="{% url 'login' %}" class="secondary compact-button">Log in</a>
       {% endif %}
     </div>
   </div>

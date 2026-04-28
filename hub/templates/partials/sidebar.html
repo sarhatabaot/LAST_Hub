@@ -1,195 +1,34 @@
 <aside class="sidebar" data-hub-sidebar>
-  <nav class="sidebar-nav">
-    <div class="sidebar-section sidebar-shared" data-hub-section="shared">
-      <div class="sidebar-section-title">Shared Resources</div>
-      <ul>
-        <li data-search-item>
-          <a
-            href="{% url 'home' %}"
-            class="{% if request.resolver_match and request.resolver_match.url_name == 'home' %} contrast{% else %} secondary {% endif %}"
-          >
-            How to use this website
-          </a>
-        </li>
-      </ul>
-    </div>
+  <div class="sidebar-brand">
+    <p class="sidebar-kicker">LAST</p>
+    <h1>Observatory Hub</h1>
+    <p class="sidebar-copy">Operator-first controls and status.</p>
+  </div>
 
-    <details class="sidebar-section" data-hub-section="observer" open>
-      <summary>Observation</summary>
-      <ul>
-        <li data-search-item>
-          <a
-            href="{% url 'operations' %}"
-            class="{% if request.resolver_match and request.resolver_match.url_name == 'operations' %} contrast{% else %} secondary {% endif %}"
-          >
-            Checklist
-          </a>
-        </li>
-        {% if request.user.is_staff %}
-        <li data-search-item>
-          <a
-            href="{% url 'mount_configuration' %}"
-            class="{% if request.resolver_match and request.resolver_match.url_name == 'mount_configuration' %} contrast{% else %} secondary {% endif %}"
-          >
-            Mount Configuration
-          </a>
-        </li>
-        {% endif %}
-        <li>
-          <details
-            class="sidebar-subsection"
-            {% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' %}open{% endif %}
-          >
-            <summary>Manual</summary>
-            <ul>
-              {% if manual_sections %}
-                {% for section in manual_sections %}
-                  {% if section.key %}
-                    <li>
-                      <details class="sidebar-subsection-group" {% if section.is_active %}open{% endif %}>
-                        <summary>{{ section.label }}</summary>
-                        <ul>
-                          {% for manual in section.pages %}
-                            <li data-search-item>
-                              <a
-                                href="{% url 'manual_detail' manual.slug %}"
-                                class="{% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' and request.resolver_match.kwargs.slug == manual.slug %} contrast{% else %} secondary {% endif %}"
-                              >
-                                {{ manual.title }}
-                              </a>
-                            </li>
-                          {% endfor %}
-                        </ul>
-                      </details>
-                    </li>
-                  {% else %}
-                    {% for manual in section.pages %}
-                      <li data-search-item>
-                        <a
-                          href="{% url 'manual_detail' manual.slug %}"
-                          class="{% if request.resolver_match and request.resolver_match.url_name == 'manual_detail' and request.resolver_match.kwargs.slug == manual.slug %} contrast{% else %} secondary {% endif %}"
-                        >
-                          {{ manual.title }}
-                        </a>
-                      </li>
-                    {% endfor %}
-                  {% endif %}
-                {% endfor %}
-              {% else %}
-                <li class="operations-meta">No manual pages yet.</li>
-              {% endif %}
-            </ul>
-          </details>
-        </li>
-        <li><strong>Observations</strong></li>
-        <li data-search-item>
-          <a
-            href="{% url 'forecast' %}"
-            class="secondary"
-          >
-            Forecast
-          </a>
-        </li>
-        <li data-search-item>
-          <a
-            href="https://zoom.earth/maps/precipitation/#view=31.7364,36.2071,7z/model=icon"
-            class="secondary icon-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Zoom Earth
-          </a>
-        </li>
-        <li data-search-item>
-          <a
-            href="{% url 'allsky' %}"
-            class="secondary"
-          >
-            AllSky
-          </a>
-        </li>
-        <li data-search-item>
-          <a
-            href="http://10.23.1.25/grafana-new"
-            class="secondary icon-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Grafana
-          </a>
-        </li>
-        <li data-search-item>
-          <a
-            href="http://10.23.1.25/"
-            class="secondary icon-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Zorg
-          </a>
-        </li>
-        <li data-search-item>
-          <a
-            href="http://ap-ag-ofek-pc/"
-            class="secondary icon-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            CAST
-          </a>
-        </li>
-      </ul>
-    </details>
-
-    <details class="sidebar-section" data-hub-section="developer">
-      <summary>Development</summary>
-      <ul>
-        <li><strong>Docs (WIP)</strong></li>
-        <li data-search-item>
-          <a
-            href="http://10.23.1.25/observatory/safety/api/docs"
-            class="secondary icon-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Observatory Safety API
-          </a>
-        </li>
-        <li data-search-item>
-          <a
-            href="http://10.23.1.25/observatory/data/api/docs"
-            class="secondary icon-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Observatory Data API
-          </a>
-        </li>
-        <li><strong>Experimental Marshals</strong></li>
-        <li data-search-item>
-          <a href="http://socsrv:5000" class="secondary icon-link" target="_blank" rel="noopener noreferrer">Skyportal</a>
-        </li>
-        <li data-search-item>
-          <a href="http://socsrv:8100" class="secondary icon-link" target="_blank" rel="noopener noreferrer">TOM</a>
-        </li>
-        <li><strong>Development</strong></li>
-        <li data-search-item>
-          <a
-            href="{% url 'hub' %}"
-            class="{% if request.resolver_match and request.resolver_match.url_name == 'hub' %} contrast{% else %} secondary {% endif %}"
-          >
-            Repositories
-          </a>
-        </li>
-      </ul>
-    </details>
+  <nav class="sidebar-nav" aria-label="Primary">
+    {% for item in primary_navigation %}
+      <a href="{{ item.url }}" class="sidebar-link {% if item.is_active %}is-active{% endif %}">
+        {{ item.label }}
+      </a>
+    {% endfor %}
   </nav>
 
+  <div class="sidebar-secondary">
+    <p class="sidebar-kicker">Secondary</p>
+    <a href="{% url 'hub_resources' %}" class="sidebar-link {% if current_url_name == 'hub_resources' %}is-active{% endif %}">
+      Resources
+    </a>
+    <a href="{% url 'allsky' %}" class="sidebar-link {% if current_url_name == 'allsky' %}is-active{% endif %}">
+      AllSky
+    </a>
+    <a href="{% url 'zorg' %}" class="sidebar-link {% if current_url_name == 'zorg' %}is-active{% endif %}">
+      Zorg
+    </a>
+  </div>
+
   <footer class="sidebar-footer">
-    <div>
-      <a href="{{ PROJECT_SOURCE_URL }}" target="_blank" class="secondary">
-        v{{ PROJECT_VERSION }}
-      </a>
-    </div>
+    <a href="{{ PROJECT_SOURCE_URL }}" target="_blank" class="secondary">
+      v{{ PROJECT_VERSION }}
+    </a>
   </footer>
 </aside>

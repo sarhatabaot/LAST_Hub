@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Observatory Overview{% endblock %}
+
+{% block content %}
+<section class="page-shell">
+  <header class="page-header page-header-tight">
+    <div>
+      <p class="eyebrow">Overview</p>
+      <h1>Operations dashboard</h1>
+      <p class="page-copy">Use this page as the starting point for weather checks, safety review, observatory state, and operator docs.</p>
+    </div>
+  </header>
+
+  <section class="dashboard-grid">
+    <article class="surface-card">
+      <p class="card-kicker">Safety</p>
+      <h2>{% if safety_data.safe %}SAFE{% elif safety_data.safe == False %}UNSAFE{% else %}UNKNOWN{% endif %}</h2>
+      <div class="overview-stack">
+        {% if overview_failed_checks %}
+          <div>
+            <p class="overview-label">Failed checks</p>
+            <ul class="overview-snippet-list">
+              {% for item in overview_failed_checks %}
+                <li>
+                  <span class="overview-snippet-chip overview-snippet-chip-unsafe" data-tooltip="{{ item.full_text }}" data-placement="top">
+                    {{ item.label }}
+                  </span>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% else %}
+          <p class="card-copy">No failed checks reported.</p>
+        {% endif %}
+        <p class="card-copy">
+          Stale: {{ safety_data.stale_sensors|length }}
+          {% if safety_data.stale_sensors %}
+            · {{ overview_stale_summary }}
+          {% endif %}
+        </p>
+      </div>
+      <a href="{% url 'safety:index' %}">Open full safety status</a>
+    </article>
+
+    <article class="surface-card">
+      <p class="card-kicker">Checklist</p>
+      <h2>{{ checklist_summary.completed_items }}/{{ checklist_summary.total_items }}</h2>
+      <p class="card-copy">
+        {% if checklist_summary.all_checked %}Observatory is ready for open actions.{% else %}Checklist still has incomplete readiness steps.{% endif %}
+      </p>
+      <a href="{% url 'checklist:index' %}">Open checklist</a>
+    </article>
+
+    <article class="surface-card">
+      <p class="card-kicker">Forecast</p>
+      <h2>Weather outlook</h2>
+      <div class="overview-stack">
+        <div class="overview-state-row">
+          <span class="overview-label">{{ forecast_data.overview_states.cloud.label }}</span>
+          <strong>{{ forecast_data.overview_states.cloud.state }}</strong>
+        </div>
+        <p class="card-copy">{{ forecast_data.overview_states.cloud.detail }}</p>
+        <div class="overview-state-row">
+          <span class="overview-label">{{ forecast_data.overview_states.rain.label }}</span>
+          <strong>{{ forecast_data.overview_states.rain.state }}</strong>
+        </div>
+        <p class="card-copy">{{ forecast_data.overview_states.rain.detail }}</p>
+      </div>
+      <a href="{% url 'forecast:index' %}">Open forecast workspace</a>
+    </article>
+
+    <article class="surface-card">
+      <p class="card-kicker">Docs</p>
+      <h2>Operator manual</h2>
+      <p class="card-copy">Filesystem markdown pages with searchable procedures and checklists.</p>
+      <a href="{% url 'docs:index' %}">Open docs</a>
+    </article>
+  </section>
+</section>
+{% endblock %}

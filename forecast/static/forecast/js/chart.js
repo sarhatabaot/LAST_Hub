@@ -1,8 +1,9 @@
 import {
   Chart,
-  BarController,
-  BarElement,
+  LineController,
+  LineElement,
   LinearScale,
+  PointElement,
   Title,
   Tooltip,
   Legend
@@ -10,9 +11,10 @@ import {
 import { DateTime } from "https://cdn.jsdelivr.net/npm/luxon@3.7.2/+esm";
 
 Chart.register(
-  BarController,
-  BarElement,
+  LineController,
+  LineElement,
   LinearScale,
+  PointElement,
   Title,
   Tooltip,
   Legend
@@ -59,6 +61,28 @@ function gridColorForTheme(theme) {
     : "rgba(148, 163, 184, 0.35)";
 }
 
+function formatSeriesValue(value, unit) {
+  if (unit === "mm" && value < 0.1) {
+    return "0";
+  }
+  if (Math.abs(value) >= 100) {
+    return value.toFixed(0);
+  }
+  if (Math.abs(value) >= 10) {
+    return value.toFixed(1);
+  }
+  return value.toFixed(2);
+}
+
+function yAxisOptions(unit) {
+  if (unit === "mm") {
+    return {
+      suggestedMin: 0.1,
+    };
+  }
+  return {};
+}
+
 function applyThemeToChart(chart) {
   const theme = resolveTheme();
   const palette = paletteForTheme(theme);
@@ -84,8 +108,7 @@ function applyThemeToChart(chart) {
   chart.update();
 }
 
-export function createSeriesChart(canvas, datasets, yLabel, isCloudGroup = false) {
-
+export function createSeriesChart(canvas, datasets, yLabel) {
   const toMillis = (value) =>
     typeof value === "number" ? value : Date.parse(value);
 
@@ -97,23 +120,26 @@ export function createSeriesChart(canvas, datasets, yLabel, isCloudGroup = false
   const palette = paletteForTheme(theme);
   const axisColor = axisColorForTheme(theme);
   const gridColor = gridColorForTheme(theme);
+  const yOptions = yAxisOptions(yLabel || "");
 
   const chart = new Chart(canvas, {
-    type: "bar",
+    type: "line",
     data: {
       datasets: datasets.map((dataset, index) => {
         const color = palette[index % palette.length];
-        const isCloud = dataset.label.toLowerCase().includes("cloud");
 
         return {
           label: dataset.label,
           data: dataset.data,
           parsing: false,
           borderColor: color,
-          backgroundColor: color + "66",
-          borderWidth: 1,
-          barThickness: isCloud ? 4 : undefined,
-          stack: dataset.stack ?? (isCloudGroup ? "cloud" : undefined)
+          backgroundColor: color,
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 3,
+          pointHitRadius: 12,
+          tension: 0.22,
+          fill: false
         };
       })
     },
@@ -140,7 +166,7 @@ export function createSeriesChart(canvas, datasets, yLabel, isCloudGroup = false
             },
             label: (item) => {
               const unit = yLabel ? ` ${yLabel}` : "";
-              return `${item.dataset.label}: ${item.parsed.y}${unit}`;
+              return `${item.dataset.label}: ${formatSeriesValue(item.parsed.y, yLabel || "")}${unit}`;
             }
           }
         },
@@ -150,7 +176,7 @@ export function createSeriesChart(canvas, datasets, yLabel, isCloudGroup = false
       },
       scales: {
         y: {
-          stacked: isCloudGroup,
+          ...yOptions,
           title: {
             display: true,
             text: yLabel ?? "Value"
@@ -163,7 +189,6 @@ export function createSeriesChart(canvas, datasets, yLabel, isCloudGroup = false
           }
         },
         x: {
-          stacked: isCloudGroup,
           type: "linear",
           ticks: {
             color: axisColor,

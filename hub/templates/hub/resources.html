@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Resources{% endblock %}
+
+{% block content %}
+<section class="page-shell">
+  <header class="page-header page-header-tight">
+    <div>
+      <p class="eyebrow">Secondary</p>
+      <h1>Resources and legacy links</h1>
+      <p class="page-copy">Operator-primary navigation stays focused. The links below remain available for secondary workflows and engineering context.</p>
+    </div>
+  </header>
+
+  {% for section_name, services in service_sections.items %}
+    <section class="resource-section">
+      <h2>{{ section_name }}</h2>
+      <div class="resource-card-grid">
+        {% for service in services %}
+          <a href="{{ service.path }}" class="resource-card" target="_blank" rel="noopener noreferrer">
+            <strong>{{ service.name }}</strong>
+            <span>{{ service.description }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endfor %}
+</section>
+{% endblock %}

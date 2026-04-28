@@ -19,13 +19,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
-from hub import views as hub_views
-
 urlpatterns = [
     path("hub/", include("hub.urls")),
     path("hub/admin_tools_stats/",  include('admin_tools_stats.urls')),
     path('hub/admin/', admin.site.urls),
-    path("hub/safety/", hub_views.safety_status, name="safety_status"),
 ]
 
 if settings.DEBUG:
