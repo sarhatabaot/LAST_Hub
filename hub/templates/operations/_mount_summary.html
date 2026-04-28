@@ -1,0 +1,43 @@
+<section class="section">
+  <h3>Mount Configuration</h3>
+  <div class="mount-summary">
+    <div class="mount-summary-section">
+      <h4>Enabled Mounts</h4>
+      {% if enabled_mounts %}
+        <div class="mount-list">
+          {% for mount in enabled_mounts %}
+            <span class="mount-badge enabled">{{ mount.get_mount_id_display }}</span>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="mount-empty">No mounts enabled</p>
+      {% endif %}
+    </div>
+    
+    <div class="mount-summary-section">
+      <h4>Disabled Mounts</h4>
+      {% if disabled_mounts %}
+        <div class="mount-list">
+          {% for mount in disabled_mounts %}
+            <div class="mount-badge disabled">
+              <span>{{ mount.get_mount_id_display }}</span>
+              {% if mount.reason %}
+                <span class="mount-reason" data-tooltip="{{ mount.reason }}">(Reason: {{ mount.reason|truncatechars:30 }})</span>
+              {% else %}
+                <span class="mount-reason">No reason provided</span>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="mount-empty">All mounts enabled</p>
+      {% endif %}
+    </div>
+  </div>
+  
+  {% if request.user.is_staff %}
+    <div class="mount-actions">
+      <a href="{% url 'mount_configuration' %}" class="secondary">Configure Mounts</a>
+    </div>
+  {% endif %}
+</section>

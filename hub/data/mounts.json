@@ -1,0 +1,62 @@
+[
+  {
+    "mount_id": "M01",
+    "enabled": true,
+    "reason": ""
+  },
+  {
+    "mount_id": "M02",
+    "enabled": true,
+    "reason": ""
+  },
+  {
+    "mount_id": "M03",
+    "enabled": true,
+    "reason": ""
+  },
+  {
+    "mount_id": "M04",
+    "enabled": true,
+    "reason": ""
+  },
+  {
+    "mount_id": "M05",
+    "enabled": true,
+    "reason": ""
+  },
+  {
+    "mount_id": "M06",
+    "enabled": true,
+    "reason": ""
+  },
+  {
+    "mount_id": "M07",
+    "enabled": true,
+    "reason": ""
+  },
+  {
+    "mount_id": "M08",
+    "enabled": true,
+    "reason": ""
+  },
+  {
+    "mount_id": "M09",
+    "enabled": true,
+    "reason": ""
+  },
+  {
+    "mount_id": "M10",
+    "enabled": true,
+    "reason": ""
+  },
+  {
+    "mount_id": "M11",
+    "enabled": false,
+    "reason": "Not yet installed"
+  },
+  {
+    "mount_id": "M12",
+    "enabled": false,
+    "reason": "Not yet installed"
+  }
+]

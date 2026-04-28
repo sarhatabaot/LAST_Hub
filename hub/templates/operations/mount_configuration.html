@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Mount Configuration{% endblock %}
+
+{% block sidebar %}
+  {% include "partials/sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="section" id="mount-summary">
+  {% include "operations/_mount_summary.html" %}
+</section>
+
+<section class="section">
+  <div class="operations-header">
+    <div>
+      <h2>Mount Configuration</h2>
+      <p class="operations-meta">
+        Configure which mounts are enabled for automatic startup when opening the observatory.
+      </p>
+    </div>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <article class="operations-card">{{ message }}</article>
+    {% endfor %}
+  {% endif %}
+
+  <article class="operations-card">
+    <form id="mount-config-form" hx-post="{% url 'save_mount_configurations' %}" hx-target="#mount-summary" hx-swap="innerHTML">
+      {% csrf_token %}
+      <div class="mount-config-grid">
+        {% comment %} Row 1: First 6 mounts (even numbers first, then odd numbers) {% endcomment %}
+        <div class="mount-config-row">
+          {% for mount in mount_configs %}
+            {% if forloop.counter <= 6 %}
+              <div class="mount-config-item" data-mount-id="{{ mount.mount_id }}">
+                <div class="mount-config-cell">
+                  <div class="mount-toggle">
+                    <label>
+                      <input 
+                        name="mount_{{ mount.mount_id }}_enabled" 
+                        type="checkbox" 
+                        role="switch"
+                        aria-invalid="false"
+                        {% if mount.enabled %}checked{% endif %}
+                        hx-post="{% url 'update_mount_configuration' mount.mount_id %}"
+                        hx-target="#mount-summary"
+                        hx-swap="innerHTML"
+                        hx-trigger="change"
+                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                      >
+                      Enable {{ mount.get_mount_id_display }}
+                    </label>
+                  </div>
+                  
+                  <div class="mount-reason-field" style="display: {% if mount.enabled %}none{% else %}block{% endif %};">
+                    <textarea 
+                      name="mount_{{ mount.mount_id }}_reason" 
+                      rows="2"
+                      placeholder="Enter reason for disabling this mount (e.g., broken, custom target, maintenance, etc.)"
+                      hx-post="{% url 'update_mount_configuration' mount.mount_id %}"
+                      hx-target="#mount-summary"
+                      hx-swap="innerHTML"
+                      hx-trigger="input delay:500ms"
+                    >{{ mount.reason }}</textarea>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        
+        {% comment %} Row 2: Remaining mounts {% endcomment %}
+        <div class="mount-config-row">
+          {% for mount in mount_configs %}
+            {% if forloop.counter > 6 %}
+              <div class="mount-config-item" data-mount-id="{{ mount.mount_id }}">
+                <div class="mount-config-cell">
+                  <div class="mount-toggle">
+                    <label>
+                      <input 
+                        name="mount_{{ mount.mount_id }}_enabled" 
+                        type="checkbox" 
+                        role="switch"
+                        aria-invalid="false"
+                        {% if mount.enabled %}checked{% endif %}
+                        hx-post="{% url 'update_mount_configuration' mount.mount_id %}"
+                        hx-target="#mount-summary"
+                        hx-swap="innerHTML"
+                        hx-trigger="change"
+                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                      >
+                      Enable {{ mount.get_mount_id_display }}
+                    </label>
+                  </div>
+                  
+                  <div class="mount-reason-field" style="display: {% if mount.enabled %}none{% else %}block{% endif %};">
+                    <textarea 
+                      name="mount_{{ mount.mount_id }}_reason" 
+                      rows="2"
+                      placeholder="Enter reason for disabling this mount (e.g., broken, custom target, maintenance, etc.)"
+                      hx-post="{% url 'update_mount_configuration' mount.mount_id %}"
+                      hx-target="#mount-summary"
+                      hx-swap="innerHTML"
+                      hx-trigger="input delay:500ms"
+                    >{{ mount.reason }}</textarea>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      
+      <div class="mount-actions">
+        <button type="submit" class="secondary">
+          Save All Mount Configurations
+        </button>
+      </div>
+    </form>
+  </article>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle toggle switch changes
+  document.querySelectorAll('input[type="checkbox"][role="switch"]').forEach(function(toggle) {
+    toggle.addEventListener('change', function() {
+      const mountItem = this.closest('.mount-config-item');
+      const reasonField = mountItem.querySelector('.mount-reason-field');
+      
+      if (this.checked) {
+        reasonField.style.display = 'none';
+      } else {
+        reasonField.style.display = 'block';
+      }
+    });
+  });
+  
+  // Initialize reason field visibility based on initial checkbox state
+  document.querySelectorAll('input[type="checkbox"][role="switch"]').forEach(function(toggle) {
+    const mountItem = toggle.closest('.mount-config-item');
+    const reasonField = mountItem.querySelector('.mount-reason-field');
+    
+    if (toggle.checked) {
+      reasonField.style.display = 'none';
+    } else {
+      reasonField.style.display = 'block';
+    }
+  });
+});
+</script>
+{% endblock %}
