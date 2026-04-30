@@ -1,0 +1,228 @@
+.safety-shell {
+  gap: 0.85rem;
+}
+
+/* Status card -------------------------------------------------------- */
+.safety-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1rem 1.25rem;
+}
+
+.safety-status-title {
+  margin: 0;
+  font-size: 2.4rem;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+
+.safety-evaluated-at {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--hub-text-muted);
+}
+
+.safety-evaluated-at.safety-status-title-contrast {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Metric card theme tokens ------------------------------------------- */
+:root {
+  --safety-metric-head-height: 2.25rem;
+
+  /* Light theme: pastel green/red/grey gradients with dark text and a
+     solid-accent OK/FAIL pill. The gradient still encodes state at a
+     glance; contrast comes from the dark text + dark pill. */
+  --safety-metric-fg: #0b1c2f;
+  --safety-metric-fg-strong: #0b1c2f;
+  --safety-metric-fg-muted: rgba(11, 28, 47, 0.65);
+  --safety-metric-bar-track: rgba(11, 28, 47, 0.15);
+  --safety-metric-bar-allowed: rgba(11, 28, 47, 0.30);
+  --safety-metric-marker-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
+  --safety-metric-pill-fg: #ffffff;
+
+  --safety-metric-passed-bg: linear-gradient(180deg, #b8e6d4 0%, #8fd3b9 100%);
+  --safety-metric-passed-border: #5fae8d;
+  --safety-metric-passed-pill: #12715b;
+
+  --safety-metric-failed-bg: linear-gradient(180deg, #f4c1bb 0%, #ec9b94 100%);
+  --safety-metric-failed-border: #c46a62;
+  --safety-metric-failed-pill: #b83b33;
+
+  --safety-metric-stale-bg: linear-gradient(180deg, #d3dae5 0%, #b6c0cf 100%);
+  --safety-metric-stale-border: #8593a8;
+  --safety-metric-stale-pill: #56657a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark theme: deep saturated gradients with white text + translucent
+       white pill, the original full-tile look. */
+    --safety-metric-fg: #ffffff;
+    --safety-metric-fg-strong: rgba(255, 255, 255, 0.96);
+    --safety-metric-fg-muted: rgba(255, 255, 255, 0.82);
+    --safety-metric-bar-track: rgba(255, 255, 255, 0.18);
+    --safety-metric-bar-allowed: rgba(255, 255, 255, 0.36);
+    --safety-metric-marker-shadow: 0 0 0 2px rgba(0, 0, 0, 0.35);
+    --safety-metric-pill-fg: #ffffff;
+
+    --safety-metric-passed-bg: linear-gradient(180deg, #1b7c63 0%, #135b49 100%);
+    --safety-metric-passed-border: #1f7f66;
+    --safety-metric-passed-pill: rgba(255, 255, 255, 0.16);
+
+    --safety-metric-failed-bg: linear-gradient(180deg, #b84f46 0%, #8f352f 100%);
+    --safety-metric-failed-border: #aa4942;
+    --safety-metric-failed-pill: rgba(255, 255, 255, 0.16);
+
+    --safety-metric-stale-bg: linear-gradient(180deg, #4d5d75 0%, #394760 100%);
+    --safety-metric-stale-border: #4d5d75;
+    --safety-metric-stale-pill: rgba(255, 255, 255, 0.16);
+  }
+}
+
+/* Metric grid -------------------------------------------------------- */
+.safety-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.65rem;
+}
+
+.safety-metric {
+  aspect-ratio: 1 / 1;
+  display: grid;
+  /* Fixed-height head row keeps every card's header the same shape; the
+     label slot sits inside it. JS shrinks the label font until it fits
+     this slot, so text is never clipped no matter how long the label. */
+  grid-template-rows: var(--safety-metric-head-height) 1fr 0.5rem 1rem;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 0.85rem;
+  border: 1px solid transparent;
+  box-shadow: var(--hub-shadow);
+  color: var(--safety-metric-fg);
+  overflow: hidden;
+}
+
+.safety-metric.is-passed {
+  background: var(--safety-metric-passed-bg);
+  border-color: var(--safety-metric-passed-border);
+  --safety-metric-pill-bg: var(--safety-metric-passed-pill);
+}
+
+.safety-metric.is-failed {
+  background: var(--safety-metric-failed-bg);
+  border-color: var(--safety-metric-failed-border);
+  --safety-metric-pill-bg: var(--safety-metric-failed-pill);
+}
+
+.safety-metric.is-stale {
+  background: var(--safety-metric-stale-bg);
+  border-color: var(--safety-metric-stale-border);
+  --safety-metric-pill-bg: var(--safety-metric-stale-pill);
+}
+
+.safety-metric-head {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 0.4rem;
+  min-width: 0;
+  height: 100%;
+}
+
+.safety-metric-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--safety-metric-fg-strong);
+  line-height: 1.2;
+  word-break: break-word;
+  /* Fills the head row; JS scales the font down to fit so long labels
+     are never clipped (see fitMetricLabels in main.js). */
+  height: 100%;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.safety-metric-state {
+  flex-shrink: 0;
+  align-self: flex-start;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--safety-metric-pill-bg);
+  color: var(--safety-metric-pill-fg);
+}
+
+.safety-metric-value {
+  margin: 0;
+  align-self: center;
+  justify-self: center;
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.05;
+  color: var(--safety-metric-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  text-align: center;
+}
+
+.safety-metric-bar {
+  position: relative;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--safety-metric-bar-track);
+  overflow: visible;
+}
+
+.safety-metric-bar-empty { visibility: hidden; }
+
+.safety-metric-bar-range {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: var(--safety-metric-bar-allowed);
+}
+
+.safety-metric-bar-marker {
+  position: absolute;
+  top: -0.18rem;
+  bottom: -0.18rem;
+  width: 0.22rem;
+  margin-left: -0.11rem;
+  border-radius: 999px;
+  background: var(--safety-metric-fg);
+  box-shadow: var(--safety-metric-marker-shadow);
+}
+
+.safety-metric-limit {
+  margin: 0;
+  font-size: 0.74rem;
+  color: var(--safety-metric-fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 600px) {
+  .safety-metrics-grid {
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  }
+  .safety-metric {
+    aspect-ratio: auto;
+    min-height: 8.5rem;
+  }
+  .safety-status-title { font-size: 2rem; }
+  .safety-metric-value { font-size: 1.5rem; }
+}

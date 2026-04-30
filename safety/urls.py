@@ -6,5 +6,5 @@ app_name = "safety"
 
 urlpatterns = [
     path("", views.status_view, name="index"),
+    path("api/", views.status_api, name="api"),
 ]
-
