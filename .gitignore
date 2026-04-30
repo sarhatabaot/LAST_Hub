@@ -5,3 +5,5 @@ __pycache__
 *.iml
 staticfiles
 db.sqlite3
+data/
+.env

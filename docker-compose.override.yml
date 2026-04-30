@@ -1,0 +1,15 @@
+# Auto-loaded by `docker compose up` for local development.
+# Bind-mounts source for live reload and runs as the host user so any files
+# the container writes (migrations, __pycache__, etc.) stay owned by you.
+# For a production-style run, use: docker compose -f docker-compose.yml up
+services:
+  migrate: &dev
+    user: "${UID:-1000}:${GID:-1000}"
+    volumes:
+      - ./:/app
+      - db-data:/app/data
+      - media:/app/media
+      - staticfiles:/app/staticfiles
+  collectstatic: *dev
+  import_manuals: *dev
+  web: *dev

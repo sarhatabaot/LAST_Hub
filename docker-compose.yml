@@ -1,94 +1,64 @@
+x-app: &app
+  build: .
+  image: last-hub
+  environment:
+    HTTP_PROXY:
+    HTTPS_PROXY:
+    NO_PROXY:
+    DB_PATH: /app/data/db.sqlite3
+    ALLOWED_HOSTS: localhost,127.0.0.1,archimedes
+    IMS_USERNAME:
+    IMS_PASSWORD:
+    IMS_BASE_URL: https://data.israel-meteo-service.org
+    IMS_DIRECTORY: IMS_ICON
+    IMS_DATA_DIR: /app/data/forecast
+    IMS_VERIFY_SSL: "false"
+    FORECAST_CACHE_PATH: /app/data/forecast.json
+    FORECAST_RETENTION_DAYS: "2"
+
+  volumes:
+    - db-data:/app/data
+    - media:/app/media
+    - staticfiles:/app/staticfiles
+
 services:
   migrate:
-    image: ghcr.io/astral-sh/uv:python3.13-trixie-slim
-    user: "${UID:-1000}:${GID:-1000}"
-    working_dir: /app
-    volumes:
-      - ./:/app
-      - ./db.sqlite3:/app/db.sqlite3
-      - ./media:/app/media
-    environment:
-      - PYTHONUNBUFFERED=1
-      - HTTP_PROXY
-      - HTTPS_PROXY
-      - NO_PROXY
-      - UV_CACHE_DIR=/tmp/uv-cache
-      - UV_PROJECT_ENVIRONMENT=/tmp/uv-venv
-      - XDG_CACHE_HOME=/tmp
-      - STATIC_ROOT=/tmp/staticfiles
-    command: >
-      sh -c "uv sync && uv run python manage.py migrate"
+    <<: *app
+    command: python manage.py migrate
     restart: "no"
 
   collectstatic:
-    image: ghcr.io/astral-sh/uv:python3.13-trixie-slim
-    user: "${UID:-1000}:${GID:-1000}"
-    working_dir: /app
-    volumes:
-      - ./:/app
-      - ./db.sqlite3:/app/db.sqlite3
-      - ./media:/app/media
-    environment:
-      - PYTHONUNBUFFERED=1
-      - HTTP_PROXY
-      - HTTPS_PROXY
-      - NO_PROXY
-      - UV_CACHE_DIR=/tmp/uv-cache
-      - UV_PROJECT_ENVIRONMENT=/tmp/uv-venv
-      - XDG_CACHE_HOME=/tmp
-      - STATIC_ROOT=/tmp/staticfiles
-    command: >
-      sh -c "uv sync && uv run python manage.py collectstatic --noinput"
+    <<: *app
+    command: python manage.py collectstatic --noinput
     restart: "no"
     depends_on:
       migrate:
         condition: service_completed_successfully
 
   import_manuals:
-    image: ghcr.io/astral-sh/uv:python3.13-trixie-slim
-    user: "${UID:-1000}:${GID:-1000}"
-    working_dir: /app
-    volumes:
-      - ./:/app
-      - ./db.sqlite3:/app/db.sqlite3
-      - ./media:/app/media
-    environment:
-      - PYTHONUNBUFFERED=1
-      - HTTP_PROXY
-      - HTTPS_PROXY
-      - NO_PROXY
-      - UV_CACHE_DIR=/tmp/uv-cache
-      - UV_PROJECT_ENVIRONMENT=/tmp/uv-venv
-      - XDG_CACHE_HOME=/tmp
-      - STATIC_ROOT=/tmp/staticfiles
-    command: >
-      sh -c "uv sync && uv run python manage.py import_manual_md docs/manual"
+    <<: *app
+    command: python manage.py import_manual_md docs/manual
+    restart: "no"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  forecast_init:
+    <<: *app
+    command: python manage.py fetch_forecast
     restart: "no"
     depends_on:
       migrate:
         condition: service_completed_successfully
 
   web:
-    image: ghcr.io/astral-sh/uv:python3.13-trixie-slim
-    user: "${UID:-1000}:${GID:-1000}"
-    working_dir: /app
-    volumes:
-      - ./:/app
-      - ./db.sqlite3:/app/db.sqlite3
-      - ./media:/app/media
-    environment:
-      - PYTHONUNBUFFERED=1
-      - HTTP_PROXY
-      - HTTPS_PROXY
-      - NO_PROXY
-      - UV_CACHE_DIR=/tmp/uv-cache
-      - UV_PROJECT_ENVIRONMENT=/tmp/uv-venv
-      - XDG_CACHE_HOME=/tmp
-      - STATIC_ROOT=/tmp/staticfiles
+    <<: *app
     ports:
-      - "8000:8000"
-    command: >
-      sh -c "uv sync && uv run python manage.py runserver 0.0.0.0:8000"
+      - "3002:8000"
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.fetch-forecast.schedule: "@every 1h"
+      ofelia.job-exec.fetch-forecast.command: "python manage.py fetch_forecast"
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -96,3 +66,17 @@ services:
         condition: service_completed_successfully
       import_manuals:
         condition: service_completed_successfully
+
+  ofelia:
+    image: mcuadros/ofelia:latest
+    command: daemon --docker
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - web
+
+volumes:
+  db-data:
+  media:
+  staticfiles:
