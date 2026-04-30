@@ -200,7 +200,7 @@ FORECAST_PRECIP_THRESHOLDS = (0.05, 0.1)        # mm precipitation per step
 FORECAST_NIGHT_START = "16:00"  # HH:MM local time, evening
 FORECAST_NIGHT_END = "06:00"    # HH:MM local time, next morning
 
-PROJECT_VERSION = "0.2.0"
+PROJECT_VERSION = "0.3.0"
 PROJECT_SOURCE_URL = "https://github.com/sarhabaot/LAST_Hub"
 
 USE_X_FORWARDED_HOST = True

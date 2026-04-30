@@ -28,11 +28,21 @@ def primary_navigation(request):
                 "label": "Forecast",
                 "url": reverse("forecast:index"),
                 "is_active": current_namespace == "forecast",
+                "badge": {
+                    "text": "new",
+                    "tooltip": "Added in 0.3.0",
+                    "variant": "new",
+                },
             },
             {
                 "label": "Safety",
                 "url": reverse("safety:index"),
                 "is_active": current_namespace == "safety",
+                "badge": {
+                    "text": "new",
+                    "tooltip": "Added in 0.3.0",
+                    "variant": "new",
+                },
                 "children": [
                     {
                         "label": "Grafana",
@@ -45,16 +55,31 @@ def primary_navigation(request):
                 "label": "Checklist",
                 "url": reverse("checklist:index"),
                 "is_active": current_namespace == "checklist" or current_url_name == "operations",
+                "badge": {
+                    "text": "WIP",
+                    "tooltip": "Work in progress — open/close don't drive real hardware yet.",
+                    "variant": "wip",
+                },
             },
             {
                 "label": "Controller",
                 "url": reverse("hub_controller"),
                 "is_active": current_url_name == "hub_controller",
+                "badge": {
+                    "text": "WIP",
+                    "tooltip": "Work in progress — backed by a mock; commands don't reach hardware yet.",
+                    "variant": "wip",
+                },
             },
             {
                 "label": "Docs",
                 "url": reverse("docs:index"),
                 "is_active": current_namespace == "docs",
+                "badge": {
+                    "text": "WIP",
+                    "tooltip": "Work in progress — information may not be 100% up to date.",
+                    "variant": "wip",
+                },
             },
         ],
         "current_url_name": current_url_name,

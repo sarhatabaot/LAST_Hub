@@ -7,8 +7,13 @@
 
   <nav class="sidebar-nav" aria-label="Primary">
     {% for item in primary_navigation %}
-      <a href="{{ item.url }}" class="sidebar-link {% if item.is_active %}is-active{% endif %}">
-        {{ item.label }}
+      <a
+        href="{{ item.url }}"
+        class="sidebar-link {% if item.is_active %}is-active{% endif %}"
+        {% if item.badge %}data-tooltip="{{ item.badge.tooltip }}" data-placement="right"{% endif %}
+      >
+        <span class="sidebar-link-label">{{ item.label }}</span>
+        {% if item.badge %}<span class="sidebar-badge sidebar-badge-{{ item.badge.variant|default:'wip' }}">{{ item.badge.text }}</span>{% endif %}
       </a>
       {% for child in item.children %}
         <a
