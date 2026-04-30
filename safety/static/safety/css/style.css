@@ -56,30 +56,28 @@
   --safety-metric-stale-pill: #56657a;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Dark theme: deep saturated gradients with white text + translucent
-       white pill, the original full-tile look. */
-    --safety-metric-fg: #ffffff;
-    --safety-metric-fg-strong: rgba(255, 255, 255, 0.96);
-    --safety-metric-fg-muted: rgba(255, 255, 255, 0.82);
-    --safety-metric-bar-track: rgba(255, 255, 255, 0.18);
-    --safety-metric-bar-allowed: rgba(255, 255, 255, 0.36);
-    --safety-metric-marker-shadow: 0 0 0 2px rgba(0, 0, 0, 0.35);
-    --safety-metric-pill-fg: #ffffff;
+:root[data-theme="dark"] {
+  /* Dark theme: deep saturated gradients with white text + translucent
+     white pill, the original full-tile look. */
+  --safety-metric-fg: #ffffff;
+  --safety-metric-fg-strong: rgba(255, 255, 255, 0.96);
+  --safety-metric-fg-muted: rgba(255, 255, 255, 0.82);
+  --safety-metric-bar-track: rgba(255, 255, 255, 0.18);
+  --safety-metric-bar-allowed: rgba(255, 255, 255, 0.36);
+  --safety-metric-marker-shadow: 0 0 0 2px rgba(0, 0, 0, 0.35);
+  --safety-metric-pill-fg: #ffffff;
 
-    --safety-metric-passed-bg: linear-gradient(180deg, #1b7c63 0%, #135b49 100%);
-    --safety-metric-passed-border: #1f7f66;
-    --safety-metric-passed-pill: rgba(255, 255, 255, 0.16);
+  --safety-metric-passed-bg: linear-gradient(180deg, #1b7c63 0%, #135b49 100%);
+  --safety-metric-passed-border: #1f7f66;
+  --safety-metric-passed-pill: rgba(255, 255, 255, 0.16);
 
-    --safety-metric-failed-bg: linear-gradient(180deg, #b84f46 0%, #8f352f 100%);
-    --safety-metric-failed-border: #aa4942;
-    --safety-metric-failed-pill: rgba(255, 255, 255, 0.16);
+  --safety-metric-failed-bg: linear-gradient(180deg, #b84f46 0%, #8f352f 100%);
+  --safety-metric-failed-border: #aa4942;
+  --safety-metric-failed-pill: rgba(255, 255, 255, 0.16);
 
-    --safety-metric-stale-bg: linear-gradient(180deg, #4d5d75 0%, #394760 100%);
-    --safety-metric-stale-border: #4d5d75;
-    --safety-metric-stale-pill: rgba(255, 255, 255, 0.16);
-  }
+  --safety-metric-stale-bg: linear-gradient(180deg, #4d5d75 0%, #394760 100%);
+  --safety-metric-stale-border: #4d5d75;
+  --safety-metric-stale-pill: rgba(255, 255, 255, 0.16);
 }
 
 /* Metric grid -------------------------------------------------------- */
@@ -213,6 +211,85 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Compass tile (wind direction) -------------------------------------- */
+/* The base .safety-metric grid has a `1fr` middle row, which is really
+   `minmax(auto, 1fr)` — the SVG's intrinsic 1:1 ratio inflates the auto
+   minimum and pushes the bar+limit rows off the bottom of the card. Use
+   minmax(0, 1fr) for compass cards so the row can actually shrink. */
+.safety-metric-compass-card {
+  grid-template-rows: var(--safety-metric-head-height) minmax(0, 1fr) 0.5rem 1rem;
+}
+
+.safety-metric-compass {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.safety-compass-svg {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.safety-compass-ring {
+  fill: rgba(255, 255, 255, 0.10);
+  stroke: var(--safety-metric-fg-muted);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.safety-compass-tick {
+  stroke: var(--safety-metric-fg-muted);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.safety-compass-tick.is-major {
+  stroke: var(--safety-metric-fg-strong);
+  stroke-width: 1.4;
+}
+
+.safety-compass-cardinal {
+  fill: var(--safety-metric-fg-strong);
+  font-size: 11px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-family: inherit;
+}
+
+.safety-compass-needle {
+  transform-origin: 50px 50px;
+  transition: transform 240ms ease-out;
+}
+
+/* In light mode the pill bg is a solid accent (dark green / red / grey)
+   that pops on the pastel tile, so reuse it for the needle. In dark mode
+   the pill is translucent white — too faint for an arm — so swap to the
+   solid foreground color instead. */
+.safety-compass-needle-from {
+  fill: var(--safety-metric-pill-bg);
+}
+
+[data-theme="dark"] .safety-compass-needle-from {
+  fill: var(--safety-metric-fg);
+}
+
+.safety-compass-needle-to {
+  fill: var(--safety-metric-fg-muted);
+  opacity: 0.55;
+}
+
+.safety-compass-hub {
+  fill: var(--safety-metric-fg-strong);
 }
 
 @media (max-width: 600px) {

@@ -47,6 +47,57 @@ function fmtLimit(metric) {
   return "";
 }
 
+const CARDINAL_16 = [
+  "N", "NNE", "NE", "ENE",
+  "E", "ESE", "SE", "SSE",
+  "S", "SSW", "SW", "WSW",
+  "W", "WNW", "NW", "NNW",
+];
+
+function cardinalOf(deg) {
+  if (typeof deg !== "number" || !Number.isFinite(deg)) return "";
+  const normalized = ((deg % 360) + 360) % 360;
+  return CARDINAL_16[Math.round(normalized / 22.5) % 16];
+}
+
+function isWindDirection(metric) {
+  const key = (metric.key || "").toLowerCase();
+  const unit = (metric.unit || "").toLowerCase();
+  const looksDeg = unit === "deg" || unit === "degrees" || unit === "°";
+  return /wind.*dir|wind_?dir/.test(key) || (key.includes("wind") && looksDeg);
+}
+
+function compassSvg(bearingDeg) {
+  // 16 small ticks every 22.5°. The needle's "from" arm points to the bearing
+  // (where the wind is coming from, the standard meteorological convention);
+  // its "to" arm sits opposite as a counterweight.
+  const ticks = Array.from({ length: 16 }, (_, i) => {
+    const major = i % 4 === 0;
+    const len = major ? 6 : 3;
+    const angle = (i * 22.5 - 90) * (Math.PI / 180);
+    const x1 = 50 + Math.cos(angle) * 44;
+    const y1 = 50 + Math.sin(angle) * 44;
+    const x2 = 50 + Math.cos(angle) * (44 - len);
+    const y2 = 50 + Math.sin(angle) * (44 - len);
+    return `<line class="safety-compass-tick${major ? " is-major" : ""}" x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" />`;
+  }).join("");
+  return `
+    <svg class="safety-compass-svg" viewBox="0 0 100 100" aria-hidden="true">
+      <circle class="safety-compass-ring" cx="50" cy="50" r="44" />
+      ${ticks}
+      <text class="safety-compass-cardinal" x="50" y="13">N</text>
+      <text class="safety-compass-cardinal" x="87" y="53">E</text>
+      <text class="safety-compass-cardinal" x="50" y="93">S</text>
+      <text class="safety-compass-cardinal" x="13" y="53">W</text>
+      <g class="safety-compass-needle" style="transform: rotate(${bearingDeg}deg)">
+        <path class="safety-compass-needle-from" d="M50 14 L45 50 L55 50 Z" />
+        <path class="safety-compass-needle-to" d="M50 86 L45 50 L55 50 Z" />
+        <circle class="safety-compass-hub" cx="50" cy="50" r="3.2" />
+      </g>
+    </svg>
+  `;
+}
+
 function fmtTimestamp(iso) {
   if (!iso) return "";
   const d = new Date(iso);
@@ -173,8 +224,31 @@ function renderMetrics(payload) {
     card.className = `safety-metric is-${metric._state}`;
     const label = metric.label || metric.key || "Sensor";
     const isStale = metric._state === "stale";
-    const limit = isStale ? "" : fmtLimit(metric);
     const stateLabel = isStale ? "STALE" : (metric._state === "failed" ? "FAIL" : "OK");
+
+    if (!isStale && isWindDirection(metric) && Number.isFinite(metric.value)) {
+      const bearing = ((metric.value % 360) + 360) % 360;
+      const cardinal = cardinalOf(bearing);
+      // Needle uses the full 0–360 bearing for rotation, but the readout
+      // is shown in the sensor's native −180..180 range (so 270° → −90°).
+      const signedDeg = bearing > 180 ? bearing - 360 : bearing;
+      const display = `${Math.round(signedDeg)}° ${cardinal}`;
+      card.classList.add("safety-metric-compass-card");
+      card.setAttribute("aria-label", `${label} ${stateLabel}: wind from ${display}`);
+      card.innerHTML = `
+        <header class="safety-metric-head">
+          <span class="safety-metric-label" title="${label}">${label}</span>
+          <span class="safety-metric-state">${stateLabel}</span>
+        </header>
+        <div class="safety-metric-compass">${compassSvg(bearing)}</div>
+        <div class="safety-metric-bar safety-metric-bar-empty" aria-hidden="true"></div>
+        <p class="safety-metric-limit">${display}</p>
+      `;
+      grid.appendChild(card);
+      continue;
+    }
+
+    const limit = isStale ? "" : fmtLimit(metric);
     const valueText = isStale ? "—" : fmtValue(metric);
     card.setAttribute(
       "aria-label",
