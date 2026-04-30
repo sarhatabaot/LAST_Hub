@@ -28,9 +28,9 @@ SECRET_KEY = 'django-insecure-rnib3=gd=kqojf^rf&g9-ch-vnm7xvg#s+fgj%2%07s3s)sa0i
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "10.23.1.25"
+    h.strip()
+    for h in os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    if h.strip()
 ]
 
 
@@ -83,6 +83,7 @@ TEMPLATES = [
                 'hub.context_processor.safety_status',
                 'hub.context_processor.observatory_settings',
                 'hub.context_processor.observatory_status',
+                'hub.context_processor.analytics',
             ],
         },
     },
@@ -97,7 +98,7 @@ WSGI_APPLICATION = 'LAST_Hub.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.environ.get("DB_PATH", BASE_DIR / "db.sqlite3"),
     }
 }
 
@@ -150,19 +151,52 @@ MARKDOWNX_MARKDOWN_EXTENSIONS = [
     "admonition",
 ]
 
-FORECAST_URL = "http://10.23.1.16/forecast"
 OBS_SAFETY_API_BASE_URL = os.environ.get(
     "OBS_SAFETY_API_BASE_URL",
     "http://10.23.1.25/observatory/safety/api/",
 )
+
+IMS_USERNAME = os.environ.get("IMS_USERNAME", "")
+IMS_PASSWORD = os.environ.get("IMS_PASSWORD", "")
+IMS_BASE_URL = os.environ.get(
+    "IMS_BASE_URL", "https://data.israel-meteo-service.org"
+)
+IMS_DIRECTORY = os.environ.get("IMS_DIRECTORY", "IMS_ICON")
+IMS_DATA_DIR = Path(
+    os.environ.get("IMS_DATA_DIR", BASE_DIR / "data" / "forecast")
+)
+IMS_VERIFY_SSL = os.environ.get("IMS_VERIFY_SSL", "false").lower() == "true"
+FORECAST_CACHE_PATH = Path(
+    os.environ.get("FORECAST_CACHE_PATH", BASE_DIR / "data" / "forecast.json")
+)
+FORECAST_RETENTION_DAYS = int(os.environ.get("FORECAST_RETENTION_DAYS", "2"))
 MANUAL_DOCS_ROOT = BASE_DIR / "docs" / "manual"
 CONTROLLER_API_BASE_URL = os.environ.get(
     "CONTROLLER_API_BASE_URL",
     "",
 )
 
+UMAMI_SCRIPT_URL = os.environ.get("UMAMI_SCRIPT_URL", "")
+UMAMI_WEBSITE_ID = os.environ.get("UMAMI_WEBSITE_ID", "")
+
 OBS_LATITUDE = 30.0529838
 OBS_LONGITUDE = 35.0407331
+
+# ---------------------------------------------------------------------------
+# Forecast tuning knobs — adjust these to change verdict colors and the
+# observation-night display window. Each pair is (marginal threshold, no-go
+# threshold): values below the first are "go" (green), between are "marginal"
+# (yellow/orange), at or above the second are "no-go" (red).
+# ---------------------------------------------------------------------------
+FORECAST_CLOUD_THRESHOLDS = (30.0, 60.0)        # % total cloud cover
+FORECAST_HUMIDITY_THRESHOLDS = (80.0, 85.0)     # % relative humidity
+FORECAST_PRECIP_THRESHOLDS = (0.05, 0.1)        # mm precipitation per step
+
+# Fixed local-time window shown in the forecast view. Astronomical dusk
+# (the real start of useful observation) falls inside this range year-round,
+# but we display the same hours every night for consistency.
+FORECAST_NIGHT_START = "16:00"  # HH:MM local time, evening
+FORECAST_NIGHT_END = "06:00"    # HH:MM local time, next morning
 
 PROJECT_VERSION = "0.2.0"
 PROJECT_SOURCE_URL = "https://github.com/sarhabaot/LAST_Hub"
