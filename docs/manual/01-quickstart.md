@@ -4,7 +4,7 @@ This is a quickstart guide for new observers with essential information for your
 
 ---
 
-## 1. Weather Station Monitoring (Grafana)
+## 1. Weather station monitoring (Grafana)
 
 Monitor weather stations through Grafana via the browser on any computer in the wired WIS network or in the observatory.
 
@@ -19,12 +19,15 @@ Monitor weather stations through Grafana via the browser on any computer in the 
 **Troubleshooting:**
 
 * If weather plots are empty, restart the service using:
-`sudo systemctl restart last-safety-daemon`
+
+  ```bash
+  sudo systemctl restart last-safety-daemon
+  ```
 * Additional instructions: [Grafana Troubleshooting Wiki](https://github.com/blumzi/WAO_Safety/wiki/troubleshooting)
 
 ---
 
-## 2. Closure Conditions
+## 2. Closure conditions
 
 The observatory **must** be closed if any of these conditions are reached:
 
@@ -36,14 +39,14 @@ The observatory **must** be closed if any of these conditions are reached:
 
 ---
 
-## 3. External Conditions & Surveillance
+## 3. External conditions & surveillance
 
-### Cloud Coverage & Forecasts
+### Cloud coverage & forecasts
 
 * **Satellite Images:** [Sat24 (Israel)](https://www.sat24.com/en-gb/country/il) and [Zoom Earth](https://zoom.earth/)
-* **Weather Forecasts:** [Meteoblue Astronomy Seeing](https://www.google.com/search?q=https://www.meteoblue.com/en/weather/outdoors/seeing/ne%25e2%2580%2599ot-semadar_israel_8346527) and [YR.no Details](https://www.yr.no/nb/detaljer/tabell/2-8346527/Israel/S%C3%B8rdistriktet/Ne%E2%80%99ot%20Semadar)
+* **Weather Forecasts:** [Meteoblue Astronomy Seeing](https://www.meteoblue.com/en/weather/outdoors/seeing/ne%E2%80%99ot-semadar_israel_8346527) and [YR.no Details](https://www.yr.no/nb/detaljer/tabell/2-8346527/Israel/S%C3%B8rdistriktet/Ne%E2%80%99ot%20Semadar)
 
-### Visual Monitoring
+### Visual monitoring
 
 Periodically monitor the situation in the observatory using the webcams:
 
@@ -51,9 +54,9 @@ Periodically monitor the situation in the observatory using the webcams:
 
 ---
 
-## 4. Telescope & Image Quality
+## 4. Telescope & image quality
 
-### MultiPanel Monitoring
+### MultiPanel monitoring
 
 * **Mount Status:** Ensure status is **‘tracking’** during observations.
 * **⚠️ Critical:** If status is **‘idle’** while observing, call your backup expert observer immediately.
@@ -65,5 +68,5 @@ Periodically check the focus of each telescope via the FWHM reported in the Mult
 1. **Check Images:** Inspect specific unit images following the detailed guide.
 2. **Diagnose Elongation:** If stars are only slightly elongated, it may be wind. If this occurs before 1:00 AM, call your backup expert observer to raise the walls.
 3. **Diagnose Focus:** If stars appear out of focus:
-* Call your backup expert observer.
-* **Alternatively:** If you are experienced, stop observations on the specific mount, refocus, and then restart observations.
+   * Call your backup expert observer.
+   * **Alternatively:** If you are experienced, stop observations on the specific mount, refocus, and then restart observations.

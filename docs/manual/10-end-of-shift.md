@@ -1,6 +1,7 @@
 # End of shift (sunrise)
 
 The following operations should happen automatically if all is fine, but sometimes it is not, so check. At sunrise, stop observations on each mount using the command from the previous section. Then:
+
 1. Shutdown all mounts.
 2. Close Roof and walls.
 3. Turn AC on.
