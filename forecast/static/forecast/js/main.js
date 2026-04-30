@@ -1,8 +1,5 @@
-import { createSeriesChart, updateChartTheme } from "./chart.js";
-
 const LUXON = () => globalThis.luxon?.DateTime;
 
-let charts = [];
 let currentPayload = null;
 let selectedNightIndex = 0;
 
@@ -39,34 +36,6 @@ function getInitialPayload() {
     return JSON.parse(node.textContent || "null");
   } catch {
     return null;
-  }
-}
-
-function formatStatus(status) {
-  if (status === "ok") return "Loaded";
-  if (status === "disabled") return "Disabled";
-  if (status === "missing") return "No cache yet";
-  return "Error";
-}
-
-function renderProviders(payload) {
-  const container = document.getElementById("forecastProviders");
-  if (!(container instanceof HTMLDivElement)) {
-    return;
-  }
-
-  container.innerHTML = "";
-  for (const provider of payload.providers || []) {
-    const element = document.createElement("article");
-    element.className = "provider-card";
-    element.innerHTML = `
-      <p class="card-kicker">Provider</p>
-      <h2>${provider.label}</h2>
-      <p class="card-copy provider-${provider.status}">${formatStatus(provider.status)}</p>
-      <p class="meta-line">${provider.row_count} normalized rows</p>
-      ${provider.error ? `<p class="meta-line">${provider.error}</p>` : ""}
-    `;
-    container.appendChild(element);
   }
 }
 
@@ -299,49 +268,6 @@ function renderOutlook(payload) {
   });
 }
 
-function updateTheme() {
-  charts.forEach((chart) => updateChartTheme(chart));
-}
-
-function renderCharts(payload) {
-  const container = document.getElementById("chartGrid");
-  if (!(container instanceof HTMLDivElement)) {
-    return;
-  }
-
-  container.innerHTML = "";
-  charts.forEach((chart) => chart.destroy());
-  charts = [];
-
-  for (const group of payload.series_groups || []) {
-    const card = document.createElement("article");
-    card.className = "chart-card";
-
-    const title = document.createElement("h2");
-    title.className = "chart-title";
-    title.textContent = group.unit ? `${group.label} (${group.unit})` : group.label;
-
-    const frame = document.createElement("div");
-    frame.className = "chart-frame";
-
-    const canvas = document.createElement("canvas");
-    canvas.className = "chart-canvas";
-
-    card.appendChild(title);
-    frame.appendChild(canvas);
-    card.appendChild(frame);
-    container.appendChild(card);
-
-    const datasets = (group.datasets || []).map((dataset) => ({
-      label: dataset.label,
-      data: dataset.points,
-    }));
-    charts.push(createSeriesChart(canvas, datasets, group.unit));
-  }
-
-  updateTheme();
-}
-
 async function loadPayload() {
   const response = await fetch("/hub/forecast/api/");
   return response.json();
@@ -357,8 +283,6 @@ function renderPayload(payload) {
   renderTonight(payload);
   renderHourlyGrid(payload);
   renderOutlook(payload);
-  renderProviders(payload);
-  renderCharts(payload);
   setSubtitle(payload);
 }
 
@@ -375,13 +299,5 @@ async function init() {
     console.error(error);
   }
 }
-
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") {
-    updateTheme();
-  }
-});
-
-window.addEventListener("resize", updateTheme);
 
 init();

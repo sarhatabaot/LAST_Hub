@@ -1,4 +1,3 @@
-from pathlib import Path
 from unittest.mock import Mock, patch
 
 from django.test import TestCase
@@ -82,12 +81,3 @@ class ForecastTests(TestCase):
         self.assertEqual(payload["overview_states"]["cloud"]["state"], "Cloudy")
         self.assertEqual(payload["overview_states"]["rain"]["state"], "Dry")
         self.assertEqual(payload["overview_states"]["rain"]["detail"], "0 mm latest precipitation")
-
-    def test_forecast_chart_js_uses_line_series(self):
-        chart_js = (
-            Path(__file__).resolve().parent / "static" / "forecast" / "js" / "chart.js"
-        ).read_text(encoding="utf-8")
-
-        self.assertIn('type: "line"', chart_js)
-        self.assertNotIn('type: "bar"', chart_js)
-        self.assertIn("suggestedMin: 0.1", chart_js)

@@ -22,12 +22,6 @@
   <article id="tonightCard" class="tonight-card" hidden></article>
   <section id="hourlyGrid" class="hourly-grid" hidden></section>
   <section id="outlookStrip" class="outlook-strip" hidden></section>
-
-  <details class="trends-details">
-    <summary>Trends &amp; raw series</summary>
-    <div id="forecastProviders" class="provider-grid"></div>
-    <div id="chartGrid" class="chart-grid"></div>
-  </details>
 </section>
 
 {{ forecast_data|json_script:"forecast-data" }}
