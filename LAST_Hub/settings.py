@@ -173,8 +173,10 @@ FORECAST_RETENTION_DAYS = int(os.environ.get("FORECAST_RETENTION_DAYS", "2"))
 MANUAL_DOCS_ROOT = BASE_DIR / "docs" / "manual"
 CONTROLLER_API_BASE_URL = os.environ.get(
     "CONTROLLER_API_BASE_URL",
-    "",
+    "http://localhost:8000/controller",
 )
+CONTROLLER_BACKEND = os.environ.get("CONTROLLER_BACKEND", "mock")
+CONTROLLER_MOCK_UNITS = int(os.environ.get("CONTROLLER_MOCK_UNITS", "4"))
 
 UMAMI_SCRIPT_URL = os.environ.get("UMAMI_SCRIPT_URL", "")
 UMAMI_WEBSITE_ID = os.environ.get("UMAMI_WEBSITE_ID", "")

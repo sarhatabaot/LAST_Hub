@@ -23,6 +23,7 @@ urlpatterns = [
     path("hub/", include("hub.urls")),
     path("hub/admin_tools_stats/",  include('admin_tools_stats.urls')),
     path('hub/admin/', admin.site.urls),
+    path("controller/", include("controller.urls")),
 ]
 
 if settings.DEBUG:
