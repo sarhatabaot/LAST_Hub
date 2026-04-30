@@ -11,6 +11,7 @@ urlpatterns = [
     path("observations/allsky/", views.allsky_view, name="allsky"),
     path("observations/zorg/", views.zorg_view, name="zorg"),
     path("operations/", views.operations_redirect, name="operations"),
+    path("controller/", views.controller_view, name="hub_controller"),
     path("accounts/request/", views.account_request, name="account_request"),
     path("accounts/", include("django.contrib.auth.urls")),
 ]

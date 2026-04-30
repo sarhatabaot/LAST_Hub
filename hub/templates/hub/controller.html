@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Controller{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/awesomplete@1.1.5/awesomplete.css">
+  <style>
+    [data-controller-hint] {
+      display: block;
+      margin: 0.25rem 0 0.75rem;
+      padding: 0.35rem 0.6rem;
+      border-left: 3px solid var(--pico-muted-border-color, #888);
+      font-size: 0.875em;
+      color: var(--pico-muted-color, #555);
+    }
+    [data-controller-hint][data-state="error"] {
+      border-left-color: var(--pico-color-red-550, #c0392b);
+      color: var(--pico-color-red-600, #b03a2e);
+    }
+    [data-controller-hint][data-state="warn"] {
+      border-left-color: var(--pico-color-orange-550, #d35400);
+      color: var(--pico-color-orange-600, #ba4a00);
+    }
+    [data-controller-hint][data-state="ok"] {
+      border-left-color: var(--pico-color-green-550, #2e7d32);
+      color: var(--pico-color-green-600, #2e7d32);
+    }
+    [data-controller-hint] .arg-name { font-weight: 600; }
+    [data-controller-hint] .arg-example { font-style: italic; opacity: 0.85; }
+
+    .units-field {
+      margin: 0.5rem 0 0.75rem;
+      padding: 0.4rem 0.7rem 0.55rem;
+      border: 1px solid var(--pico-muted-border-color, #ccc);
+      border-radius: 6px;
+    }
+    .units-field legend {
+      font-size: 0.8em;
+      color: var(--pico-muted-color, #555);
+      padding: 0 0.4rem;
+    }
+    .units-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.9rem;
+    }
+    .units-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin: 0;
+      font-size: 0.9em;
+      cursor: pointer;
+    }
+    .units-chip input[type="checkbox"] {
+      margin: 0;
+    }
+  </style>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/awesomplete@1.1.5/awesomplete.min.js"></script>
+  <script src="{% static 'hub/js/controller-autocomplete.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<section class="page-shell">
+  <header class="page-header page-header-tight">
+    <div>
+      <p class="eyebrow">Controller</p>
+      <h1>superunit controller</h1>
+      <p class="page-copy">
+        Live view of the local controller service and a pass-through for raw
+        commands. Backend:
+        <strong>{{ controller_backend|default:"unknown" }}</strong>.
+      </p>
+    </div>
+  </header>
+
+  {% if not controller_configured %}
+    <article class="surface-card">
+      <p class="card-kicker">Not configured</p>
+      <p class="card-copy">
+        <code>CONTROLLER_API_BASE_URL</code> is empty. Set it in <code>.env</code>
+        (defaults to <code>http://localhost:8000/controller</code>) and reload.
+      </p>
+    </article>
+  {% endif %}
+
+  {% include "hub/_controller_panel.html" %}
+</section>
+{% endblock %}

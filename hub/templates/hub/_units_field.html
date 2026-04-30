@@ -1,0 +1,15 @@
+{# Renders a checkbox group with name="units". Empty = "all" per the protocol;
+   the hub view flashes an error if the user submits with everything unchecked. #}
+{% if available_units %}
+<fieldset class="units-field">
+  <legend>Target units</legend>
+  <div class="units-chip-row">
+    {% for unit_id in available_units %}
+      <label class="units-chip">
+        <input type="checkbox" name="units" value="{{ unit_id }}" checked>
+        <span>Unit {{ unit_id }}</span>
+      </label>
+    {% endfor %}
+  </div>
+</fieldset>
+{% endif %}

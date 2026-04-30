@@ -1,0 +1,146 @@
+<div id="controller-panel">
+  {% if controller_status_error %}
+    <article class="surface-card">
+      <p class="card-kicker">Status error</p>
+      <p class="card-copy">{{ controller_status_error }}</p>
+    </article>
+  {% endif %}
+
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li class="message message-{{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if units_table %}
+    <section class="surface-card">
+      <h2>Units</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Unit</th>
+            <th>GeneralStatus</th>
+            <th>Executing</th>
+            <th>AbortActivity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for unit in units_table %}
+            <tr>
+              <td>{{ unit.id }}</td>
+              <td>{{ unit.general_status|default:"—" }}</td>
+              <td>{{ unit.executing|default:"—" }}</td>
+              <td>{% if unit.abort %}yes{% else %}no{% endif %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  {% endif %}
+
+  <section class="surface-card">
+    <h2>High-level actions</h2>
+    {% if request.user.is_authenticated %}
+      <form method="post"
+            action="{% url 'hub_controller' %}"
+            hx-post="{% url 'hub_controller' %}"
+            hx-target="#controller-panel"
+            hx-swap="outerHTML"
+            hx-disabled-elt="find button">
+        {% csrf_token %}
+        {% include "hub/_units_field.html" %}
+        <div class="grid">
+          <button type="submit" name="action" value="open">Open observatory</button>
+          <button type="submit" name="action" value="close" class="secondary">Close observatory</button>
+          <button type="submit" name="action" value="abort" class="contrast">Abort</button>
+        </div>
+      </form>
+    {% else %}
+      <div class="grid">
+        <button type="button" disabled>Open observatory</button>
+        <button type="button" class="secondary" disabled>Close observatory</button>
+        <button type="button" class="contrast" disabled>Abort</button>
+      </div>
+      <p class="operations-note">Sign in to issue observatory actions.</p>
+    {% endif %}
+  </section>
+
+  <section class="surface-card">
+    <h2>Send command</h2>
+    <p class="card-copy">
+      Only commands listed below are accepted. Channel and wait/no-wait come
+      from the catalog so each call uses the right semantics — see
+      <a href="https://github.com/sarhabaot/LAST_Hub/blob/main/controller/CONTROLLER_REFERENCE.md">CONTROLLER_REFERENCE.md</a>.
+    </p>
+    {% if request.user.is_authenticated %}
+      <form method="post"
+            action="{% url 'hub_controller' %}"
+            hx-post="{% url 'hub_controller' %}"
+            hx-target="#controller-panel"
+            hx-swap="outerHTML"
+            hx-disabled-elt="find button">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="command">
+        <label>
+          Command
+          <input type="text"
+                 name="command"
+                 data-controller-autocomplete
+                 placeholder="Unit.GeneralStatus"
+                 autocomplete="off"
+                 spellcheck="false"
+                 required>
+        </label>
+        <small data-controller-hint aria-live="polite">Pick a command from the suggestions.</small>
+        {% include "hub/_units_field.html" %}
+        <button type="submit">Dispatch</button>
+      </form>
+      {{ command_schema|json_script:"controller-command-schema" }}
+    {% else %}
+      <p class="operations-note">Sign in to dispatch commands.</p>
+    {% endif %}
+  </section>
+
+  <section class="surface-card">
+    <h2>Command catalog</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Command</th>
+          <th>Channel</th>
+          <th>Mode</th>
+          <th>Summary</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in command_catalog %}
+          <tr>
+            <td><code>{{ entry.base }}</code></td>
+            <td>{{ entry.channel }}</td>
+            <td>{% if entry.wait %}query{% else %}send{% endif %}</td>
+            <td>{{ entry.summary }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="surface-card">
+    <h2>Recent events</h2>
+    {% if events %}
+      <ol class="events-list">
+        {% for event in events %}
+          <li>
+            <code>{{ event.ts }}</code>
+            <strong>{{ event.kind }}</strong>
+            {{ event.message }}
+          </li>
+        {% endfor %}
+      </ol>
+    {% else %}
+      <p class="card-copy">No events recorded yet.</p>
+    {% endif %}
+  </section>
+</div>

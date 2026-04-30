@@ -47,6 +47,11 @@ def primary_navigation(request):
                 "is_active": current_namespace == "checklist" or current_url_name == "operations",
             },
             {
+                "label": "Controller",
+                "url": reverse("hub_controller"),
+                "is_active": current_url_name == "hub_controller",
+            },
+            {
                 "label": "Docs",
                 "url": reverse("docs:index"),
                 "is_active": current_namespace == "docs",
