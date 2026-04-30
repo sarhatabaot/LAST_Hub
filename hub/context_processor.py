@@ -33,6 +33,13 @@ def primary_navigation(request):
                 "label": "Safety",
                 "url": reverse("safety:index"),
                 "is_active": current_namespace == "safety",
+                "children": [
+                    {
+                        "label": "Grafana",
+                        "url": "http://10.23.1.25/grafana-new/",
+                        "external": True,
+                    },
+                ],
             },
             {
                 "label": "Checklist",
@@ -73,6 +80,13 @@ def observatory_settings(request):
         "OBS_LATITUDE": settings.OBS_LATITUDE,
         "OBS_LONGITUDE": settings.OBS_LONGITUDE,
         "OBS_ELEVATION": getattr(settings, "OBS_ELEVATION", 0),
+    }
+
+
+def analytics(request):
+    return {
+        "UMAMI_SCRIPT_URL": getattr(settings, "UMAMI_SCRIPT_URL", ""),
+        "UMAMI_WEBSITE_ID": getattr(settings, "UMAMI_WEBSITE_ID", ""),
     }
 
 

@@ -10,6 +10,15 @@
       <a href="{{ item.url }}" class="sidebar-link {% if item.is_active %}is-active{% endif %}">
         {{ item.label }}
       </a>
+      {% for child in item.children %}
+        <a
+          href="{{ child.url }}"
+          class="sidebar-link sidebar-sublink"
+          {% if child.external %}target="_blank" rel="noopener"{% endif %}
+        >
+          {{ child.label }}
+        </a>
+      {% endfor %}
     {% endfor %}
   </nav>
 

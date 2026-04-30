@@ -10,6 +10,9 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/iconoir-icons/iconoir@main/css/iconoir.css">
   <link rel="stylesheet" href="{% static 'hub/css/app.css' %}">
+  {% if UMAMI_SCRIPT_URL and UMAMI_WEBSITE_ID %}
+  <script defer src="{{ UMAMI_SCRIPT_URL }}" data-website-id="{{ UMAMI_WEBSITE_ID }}"></script>
+  {% endif %}
   {% block extra_head %}{% endblock %}
 </head>
 <body data-hub-page="{{ request.resolver_match.url_name|default:'' }}">

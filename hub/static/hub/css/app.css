@@ -199,6 +199,13 @@ h6,
   color: var(--hub-text-strong);
 }
 
+.sidebar-sublink {
+  margin-left: 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--hub-text-muted);
+}
+
 .sidebar-footer {
   margin-top: auto;
   padding-top: 0.75rem;
@@ -400,9 +407,7 @@ h6,
   gap: 0.45rem;
 }
 
-.overview-snippet-list li,
-.safety-meter-list li,
-.safety-list-plain li {
+.overview-snippet-list li {
   list-style: none !important;
 }
 
@@ -696,55 +701,8 @@ h6,
   color: #fff;
 }
 
-.safety-accordion-summary {
-  border: 1px solid var(--hub-border);
-  border-radius: 0.75rem;
-  background: var(--hub-surface-muted);
-  color: var(--hub-text-strong);
-}
-
-.safety-accordion-summary-passed {
-  background: #d9f1e8;
-  border-color: rgba(18, 113, 91, 0.18);
-  color: #11614d;
-}
-
-.safety-accordion-summary-stale {
-  background: #e7edf5;
-  border-color: rgba(81, 97, 116, 0.16);
-  color: #34495f;
-}
-
 .safety-status-title {
   margin: 0;
-}
-
-.safety-counts {
-  display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-}
-
-.safety-count {
-  padding: 0.35rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.safety-count-failed {
-  background: #fbe6e4;
-  color: #8f2d26;
-}
-
-.safety-count-passed {
-  background: #d9f1e8;
-  color: #11614d;
-}
-
-.safety-count-stale {
-  background: #e7edf5;
-  color: #516174;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -760,165 +718,6 @@ h6,
 
   .safety-card-unknown {
     background: var(--hub-surface);
-  }
-
-  .safety-accordion-summary-passed {
-    background: rgba(18, 113, 91, 0.18);
-    border-color: rgba(18, 113, 91, 0.26);
-    color: #9be5d2;
-  }
-
-  .safety-accordion-summary-stale {
-    background: rgba(125, 148, 176, 0.16);
-    border-color: rgba(125, 148, 176, 0.24);
-    color: #c7d8ea;
-  }
-
-  .safety-count-failed {
-    background: rgba(184, 59, 51, 0.18);
-    color: #ffada6;
-  }
-
-  .safety-count-passed {
-    background: rgba(18, 113, 91, 0.18);
-    color: #9be5d2;
-  }
-
-  .safety-count-stale {
-    background: rgba(125, 148, 176, 0.16);
-    color: #c7d8ea;
-  }
-}
-
-.safety-meter-list,
-.safety-list-plain {
-  margin: 0;
-  padding-left: 0;
-  list-style: none;
-}
-
-.safety-meter-card {
-  padding: 0.85rem 1rem;
-  border-radius: 0.8rem;
-  background: var(--hub-surface);
-  border: 1px solid var(--hub-border);
-  box-shadow: var(--hub-shadow);
-}
-
-.safety-meter-card.is-passed {
-  border-color: rgba(18, 113, 91, 0.2);
-}
-
-.safety-meter-card.is-failed {
-  border-color: rgba(184, 59, 51, 0.2);
-}
-
-.safety-meter-labels {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.45rem;
-  color: var(--hub-text-strong);
-}
-
-.safety-meter-summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.45rem;
-  flex-wrap: wrap;
-}
-
-.safety-meter-state {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.2rem 0.55rem;
-  border-radius: 999px;
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.safety-meter-state.is-passed {
-  background: rgba(18, 113, 91, 0.12);
-  color: #11614d;
-}
-
-.safety-meter-state.is-failed {
-  background: rgba(184, 59, 51, 0.12);
-  color: #9a352e;
-}
-
-.safety-meter-limit {
-  font-size: 0.8rem;
-  color: var(--hub-text-muted);
-}
-
-.safety-meter-track {
-  position: relative;
-  height: 0.75rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--hub-text-muted) 16%, transparent 84%);
-  overflow: hidden;
-}
-
-.safety-meter-marker {
-  position: absolute;
-  top: -0.22rem;
-  bottom: -0.22rem;
-  width: 0.22rem;
-  margin-left: -0.11rem;
-  border-radius: 999px;
-  background: var(--hub-text-strong);
-  z-index: 2;
-}
-
-.safety-meter-marker.is-safe {
-  background: #2b8b73;
-}
-
-.safety-meter-marker.is-unsafe {
-  background: #cc5b52;
-}
-
-.safety-meter-range {
-  position: absolute;
-  top: 0.13rem;
-  bottom: 0.13rem;
-  border-radius: 999px;
-  background: rgba(43, 139, 115, 0.18);
-  z-index: 1;
-}
-
-.safety-meter-range.is-failed {
-  background: rgba(204, 91, 82, 0.22);
-}
-
-.safety-meter-meta {
-  margin: 0.45rem 0 0;
-  font-size: 0.8rem;
-  color: var(--hub-text-muted);
-}
-
-@media (prefers-color-scheme: dark) {
-  .safety-meter-card.is-passed {
-    border-color: rgba(18, 113, 91, 0.32);
-  }
-
-  .safety-meter-card.is-failed {
-    border-color: rgba(184, 59, 51, 0.32);
-  }
-
-  .safety-meter-state.is-passed {
-    background: rgba(18, 113, 91, 0.18);
-    color: #9be5d2;
-  }
-
-  .safety-meter-state.is-failed {
-    background: rgba(184, 59, 51, 0.18);
-    color: #ffada6;
   }
 }
 
