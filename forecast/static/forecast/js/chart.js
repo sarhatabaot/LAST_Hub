@@ -62,9 +62,6 @@ function gridColorForTheme(theme) {
 }
 
 function formatSeriesValue(value, unit) {
-  if (unit === "mm" && value < 0.1) {
-    return "0";
-  }
   if (Math.abs(value) >= 100) {
     return value.toFixed(0);
   }
@@ -77,7 +74,8 @@ function formatSeriesValue(value, unit) {
 function yAxisOptions(unit) {
   if (unit === "mm") {
     return {
-      suggestedMin: 0.1,
+      min: 0,
+      ticks: { stepSize: 0.5 },
     };
   }
   return {};
@@ -182,7 +180,8 @@ export function createSeriesChart(canvas, datasets, yLabel) {
             text: yLabel ?? "Value"
           },
           ticks: {
-            color: axisColor
+            color: axisColor,
+            ...(yOptions.ticks ?? {})
           },
           grid: {
             color: gridColor

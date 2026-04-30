@@ -12,14 +12,22 @@
   <header class="page-header page-header-tight">
     <div class="page-header-text">
       <p class="eyebrow">Forecast</p>
-      <h1 id="pageTitle">Forecast Aggregator</h1>
+      <h1 id="pageTitle">Sky forecast</h1>
       <p id="pageSubtitle" aria-busy="true">{{ forecast_data.summary.window_label }}</p>
     </div>
   </header>
 
-  <div id="forecastProviders" class="provider-grid"></div>
   <div id="forecastWarnings" class="note-stack"></div>
-  <div id="chartGrid" class="chart-grid"></div>
+
+  <article id="tonightCard" class="tonight-card" hidden></article>
+  <section id="hourlyGrid" class="hourly-grid" hidden></section>
+  <section id="outlookStrip" class="outlook-strip" hidden></section>
+
+  <details class="trends-details">
+    <summary>Trends &amp; raw series</summary>
+    <div id="forecastProviders" class="provider-grid"></div>
+    <div id="chartGrid" class="chart-grid"></div>
+  </details>
 </section>
 
 {{ forecast_data|json_script:"forecast-data" }}

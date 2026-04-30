@@ -1,8 +1,33 @@
+import json
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from zoneinfo import ZoneInfo
 
-import requests
 from django.conf import settings
+
+
+VERDICT_GO = "go"
+VERDICT_MARGINAL = "marginal"
+VERDICT_NOGO = "nogo"
+VERDICT_RANK = {VERDICT_GO: 0, VERDICT_MARGINAL: 1, VERDICT_NOGO: 2}
+VERDICT_LABELS = {
+    VERDICT_GO: "OK",
+    VERDICT_MARGINAL: "Marginal",
+    VERDICT_NOGO: "No-go",
+}
+
+
+def _cloud_thresholds():
+    return tuple(settings.FORECAST_CLOUD_THRESHOLDS)
+
+
+def _humidity_thresholds():
+    return tuple(settings.FORECAST_HUMIDITY_THRESHOLDS)
+
+
+def _precip_thresholds():
+    return tuple(settings.FORECAST_PRECIP_THRESHOLDS)
 
 
 SERIES_LABELS = {
@@ -23,10 +48,10 @@ DEFAULT_VISIBLE_GROUPS = (
 def _provider_definitions():
     return [
         {
-            "key": "ims232",
-            "label": "IMS232",
-            "url": settings.FORECAST_URL,
-            "enabled": bool(settings.FORECAST_URL),
+            "key": "ims",
+            "label": "IMS ICON",
+            "cache_path": Path(settings.FORECAST_CACHE_PATH),
+            "enabled": True,
         }
     ]
 
@@ -103,36 +128,43 @@ def _format_window_label(start, end):
 
 
 def _format_display_value(value, unit="", decimals=1):
-    if unit == "mm" and value < 0.1:
-        return "0"
     return f"{value:.{decimals}f}"
 
 
-def fetch_provider(provider, timeout=10):
+def fetch_provider(provider):
     if not provider["enabled"]:
         return {
             "provider": provider,
             "status": "disabled",
             "rows": [],
-            "error": "Provider URL is not configured.",
+            "error": "Provider is not configured.",
+        }
+
+    cache_path = provider["cache_path"]
+    if not cache_path.exists():
+        return {
+            "provider": provider,
+            "status": "missing",
+            "rows": [],
+            "error": "Forecast cache has not been generated yet.",
         }
 
     try:
-        response = requests.get(provider["url"], timeout=timeout)
-        response.raise_for_status()
-        rows = normalize_rows(response.json())
+        with open(cache_path) as f:
+            data = json.load(f)
+        rows = normalize_rows(data)
         return {
             "provider": provider,
             "status": "ok",
             "rows": rows,
             "error": "",
         }
-    except (requests.RequestException, ValueError, OSError) as exc:
+    except (OSError, ValueError) as exc:
         return {
             "provider": provider,
             "status": "error",
             "rows": [],
-            "error": f"Failed to load provider: {exc}",
+            "error": f"Failed to read forecast cache: {exc}",
         }
 
 
@@ -224,6 +256,176 @@ def build_series_groups(rows):
         )
 
     return series_groups
+
+
+def _classify(value, thresholds):
+    if value is None:
+        return None
+    if value < thresholds[0]:
+        return VERDICT_GO
+    if value < thresholds[1]:
+        return VERDICT_MARGINAL
+    return VERDICT_NOGO
+
+
+def _worst_verdict(verdicts):
+    valid = [v for v in verdicts if v]
+    if not valid:
+        return None
+    return max(valid, key=lambda v: VERDICT_RANK[v])
+
+
+def _parse_hhmm(value):
+    hour, minute = (int(part) for part in str(value).split(":"))
+    return hour, minute
+
+
+def _night_windows(now_utc, count=3):
+    tz = ZoneInfo(settings.TIME_ZONE)
+    start_h, start_m = _parse_hhmm(settings.FORECAST_NIGHT_START)
+    end_h, end_m = _parse_hhmm(settings.FORECAST_NIGHT_END)
+    crosses_midnight = (end_h, end_m) <= (start_h, start_m)
+
+    base_date = now_utc.astimezone(tz).date() - timedelta(days=1)
+    windows = []
+    offset = 0
+    while len(windows) < count and offset < count + 5:
+        date = base_date + timedelta(days=offset)
+        offset += 1
+        start_local = datetime(date.year, date.month, date.day, start_h, start_m, tzinfo=tz)
+        end_date = date + timedelta(days=1) if crosses_midnight else date
+        end_local = datetime(end_date.year, end_date.month, end_date.day, end_h, end_m, tzinfo=tz)
+        start_utc = start_local.astimezone(timezone.utc)
+        end_utc = end_local.astimezone(timezone.utc)
+        if end_utc <= now_utc:
+            continue
+        windows.append((start_utc, end_utc))
+    return windows
+
+
+def _rows_in_window(rows, start_ms, end_ms):
+    out = defaultdict(list)
+    for row in rows:
+        time_ms = row["time"]
+        if not isinstance(time_ms, (int, float)):
+            continue
+        if start_ms <= time_ms < end_ms:
+            value = _coerce_number(row["value"])
+            if value is None:
+                continue
+            out[row["series"]].append((int(time_ms), value))
+    return out
+
+
+def _evaluate_window(rows, dusk_dt, dawn_dt):
+    start_ms = int(dusk_dt.timestamp() * 1000)
+    end_ms = int(dawn_dt.timestamp() * 1000)
+    by_series = _rows_in_window(rows, start_ms, end_ms)
+
+    def values(series):
+        return [v for _, v in by_series.get(series, [])]
+
+    cloud = values("total_cloud_cover")
+    rh = values("relative_humidity")
+    precip = values("total_precipitation")
+
+    peak_cloud = max(cloud) if cloud else None
+    max_rh = max(rh) if rh else None
+    max_precip = max(precip) if precip else None
+    total_precip = sum(precip) if precip else None
+
+    cloud_v = _classify(peak_cloud, _cloud_thresholds())
+    rh_v = _classify(max_rh, _humidity_thresholds())
+    precip_v = _classify(max_precip, _precip_thresholds())
+
+    has_data = bool(cloud or rh or precip)
+    verdict = _worst_verdict([cloud_v, rh_v, precip_v]) if has_data else None
+
+    return {
+        "verdict": verdict,
+        "verdict_label": VERDICT_LABELS.get(verdict, "Unknown"),
+        "peak_cloud": peak_cloud,
+        "max_rh": max_rh,
+        "max_precip": max_precip,
+        "total_precip": total_precip,
+        "metric_verdicts": {
+            "cloud": cloud_v,
+            "rh": rh_v,
+            "precip": precip_v,
+        },
+        "has_data": has_data,
+    }
+
+
+def _hourly_grid(rows, dusk_dt, dawn_dt):
+    start_ms = int(dusk_dt.timestamp() * 1000)
+    end_ms = int(dawn_dt.timestamp() * 1000)
+
+    by_time: dict[int, dict] = defaultdict(dict)
+    for row in rows:
+        time_ms = row["time"]
+        if not isinstance(time_ms, (int, float)):
+            continue
+        if not (start_ms <= time_ms < end_ms):
+            continue
+        value = _coerce_number(row["value"])
+        if value is None:
+            continue
+        by_time[int(time_ms)][row["series"]] = value
+
+    hours = []
+    for time_ms in sorted(by_time.keys()):
+        s = by_time[time_ms]
+        cloud_v = _classify(s.get("total_cloud_cover"), _cloud_thresholds())
+        rh_v = _classify(s.get("relative_humidity"), _humidity_thresholds())
+        precip_v = _classify(s.get("total_precipitation"), _precip_thresholds())
+        hours.append({
+            "time_ms": time_ms,
+            "total_cloud": s.get("total_cloud_cover"),
+            "high_cloud": s.get("high_cloud_cover"),
+            "mid_cloud": s.get("medium_cloud_cover"),
+            "low_cloud": s.get("low_cloud_cover"),
+            "rh": s.get("relative_humidity"),
+            "precip": s.get("total_precipitation"),
+            "temp": s.get("temperature"),
+            "metric_verdicts": {
+                "cloud": cloud_v,
+                "rh": rh_v,
+                "precip": precip_v,
+            },
+            "verdict": _worst_verdict([cloud_v, rh_v, precip_v]),
+        })
+    return hours
+
+
+def _build_observability(rows, now_utc=None):
+    now_utc = now_utc or datetime.now(tz=timezone.utc)
+    windows = _night_windows(now_utc, count=3)
+    if not windows:
+        return None
+
+    nights = []
+    for index, (start_dt, end_dt) in enumerate(windows):
+        evaluation = _evaluate_window(rows, start_dt, end_dt)
+        night = {
+            "label": "Tonight" if index == 0 else start_dt.strftime("%a %b %d"),
+            "start": start_dt.isoformat(),
+            "end": end_dt.isoformat(),
+            "duration_minutes": int((end_dt - start_dt).total_seconds() // 60),
+            "hourly": _hourly_grid(rows, start_dt, end_dt),
+            **evaluation,
+        }
+        nights.append(night)
+
+    return {
+        "thresholds": {
+            "cloud": list(_cloud_thresholds()),
+            "rh": list(_humidity_thresholds()),
+            "precip": list(_precip_thresholds()),
+        },
+        "tonight": nights[0] if nights else None,
+        "upcoming": nights[1:] if len(nights) > 1 else [],
+    }
 
 
 def get_forecast_aggregate():
@@ -318,6 +520,8 @@ def get_forecast_aggregate():
             "detail": "No precipitation data available",
         }
 
+    observability = _build_observability(rows)
+
     return {
         "generated_at": datetime.now(tz=timezone.utc).isoformat(),
         "providers": providers,
@@ -328,5 +532,6 @@ def get_forecast_aggregate():
             "cloud": cloud_state,
             "rain": rain_state,
         },
+        "observability": observability,
         "series_groups": build_series_groups(rows),
     }

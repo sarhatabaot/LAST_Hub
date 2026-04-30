@@ -1,8 +1,304 @@
+/* ============== verdict colors ============== */
+:root {
+  --verdict-go-bg: rgba(34, 153, 84, 0.12);
+  --verdict-go-fg: #1c7a3d;
+  --verdict-go-border: rgba(34, 153, 84, 0.45);
+
+  --verdict-marginal-bg: rgba(220, 142, 25, 0.14);
+  --verdict-marginal-fg: #9a6300;
+  --verdict-marginal-border: rgba(220, 142, 25, 0.5);
+
+  --verdict-nogo-bg: rgba(200, 50, 50, 0.14);
+  --verdict-nogo-fg: #a52a2a;
+  --verdict-nogo-border: rgba(200, 50, 50, 0.5);
+
+  --verdict-unknown-bg: var(--hub-surface-muted);
+  --verdict-unknown-fg: var(--hub-text-muted);
+  --verdict-unknown-border: var(--hub-border);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --verdict-go-bg: rgba(58, 200, 120, 0.18);
+    --verdict-go-fg: #6fdc94;
+    --verdict-go-border: rgba(58, 200, 120, 0.45);
+
+    --verdict-marginal-bg: rgba(245, 175, 60, 0.18);
+    --verdict-marginal-fg: #f5b863;
+    --verdict-marginal-border: rgba(245, 175, 60, 0.5);
+
+    --verdict-nogo-bg: rgba(245, 95, 95, 0.18);
+    --verdict-nogo-fg: #ff8a8a;
+    --verdict-nogo-border: rgba(245, 95, 95, 0.5);
+  }
+}
+
+/* ============== shared section styles ============== */
+.section-title {
+  margin: 1.5rem 0 0.75rem;
+  color: var(--hub-text-strong);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+/* ============== tonight card ============== */
+.tonight-card {
+  margin-top: 0.5rem;
+  padding: 1.25rem 1.4rem;
+  border-radius: 1rem;
+  background: var(--hub-surface);
+  border: 1px solid var(--hub-border);
+  box-shadow: var(--hub-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.15s ease;
+}
+
+.tonight-card:hover { transform: translateY(-1px); }
+.tonight-card:focus-visible { outline: 2px solid var(--hub-text-strong); outline-offset: 2px; }
+.tonight-card.is-active { outline: 2px solid var(--hub-text-strong); outline-offset: 2px; }
+
+.tonight-card.verdict-go     { border-color: var(--verdict-go-border); }
+.tonight-card.verdict-marginal { border-color: var(--verdict-marginal-border); }
+.tonight-card.verdict-nogo   { border-color: var(--verdict-nogo-border); }
+
+.tonight-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.tonight-head .card-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--hub-text-muted);
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.verdict-badge {
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.verdict-badge.verdict-go {
+  background: var(--verdict-go-bg);
+  color: var(--verdict-go-fg);
+  border-color: var(--verdict-go-border);
+}
+
+.verdict-badge.verdict-marginal {
+  background: var(--verdict-marginal-bg);
+  color: var(--verdict-marginal-fg);
+  border-color: var(--verdict-marginal-border);
+}
+
+.verdict-badge.verdict-nogo {
+  background: var(--verdict-nogo-bg);
+  color: var(--verdict-nogo-fg);
+  border-color: var(--verdict-nogo-border);
+}
+
+.verdict-badge.verdict-unknown {
+  background: var(--verdict-unknown-bg);
+  color: var(--verdict-unknown-fg);
+  border-color: var(--verdict-unknown-border);
+}
+
+.tonight-metrics {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.6rem;
+}
+
+.tonight-metrics li {
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--hub-border);
+  background: var(--hub-surface-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.tonight-metrics li.verdict-go {
+  background: var(--verdict-go-bg);
+  border-color: var(--verdict-go-border);
+}
+
+.tonight-metrics li.verdict-marginal {
+  background: var(--verdict-marginal-bg);
+  border-color: var(--verdict-marginal-border);
+}
+
+.tonight-metrics li.verdict-nogo {
+  background: var(--verdict-nogo-bg);
+  border-color: var(--verdict-nogo-border);
+}
+
+.metric-label {
+  color: var(--hub-text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  color: var(--hub-text-strong);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* ============== hourly grid ============== */
+.hourly-grid {
+  margin-top: 0.5rem;
+}
+
+.hourly-scroll {
+  overflow-x: auto;
+  border-radius: 0.9rem;
+  border: 1px solid var(--hub-border);
+  background: var(--hub-surface);
+  box-shadow: var(--hub-shadow);
+}
+
+.hourly-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.hourly-table th,
+.hourly-table td {
+  padding: 0.45rem 0.55rem;
+  text-align: center;
+  border-bottom: 1px solid var(--hub-border);
+  white-space: nowrap;
+}
+
+.hourly-table thead th {
+  background: var(--hub-surface-muted);
+  color: var(--hub-text-muted);
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+.hourly-table .row-label {
+  text-align: left;
+  color: var(--hub-text);
+  font-weight: 600;
+  background: var(--hub-surface);
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+
+.hourly-table tr.row-sub .row-label {
+  font-weight: 400;
+  color: var(--hub-text-muted);
+  padding-left: 1.2rem;
+}
+
+.hourly-table td.verdict-go { background: var(--verdict-go-bg); color: var(--verdict-go-fg); }
+.hourly-table td.verdict-marginal { background: var(--verdict-marginal-bg); color: var(--verdict-marginal-fg); }
+.hourly-table td.verdict-nogo { background: var(--verdict-nogo-bg); color: var(--verdict-nogo-fg); }
+
+/* ============== outlook strip ============== */
+.outlook-strip {
+  margin-top: 0.5rem;
+}
+
+.outlook-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.outlook-card {
+  padding: 0.9rem 1rem;
+  border-radius: 0.85rem;
+  background: var(--hub-surface);
+  border: 1px solid var(--hub-border);
+  box-shadow: var(--hub-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.15s ease;
+}
+
+.outlook-card:hover { transform: translateY(-1px); }
+.outlook-card:focus-visible { outline: 2px solid var(--hub-text-strong); outline-offset: 2px; }
+.outlook-card.is-active { outline: 2px solid var(--hub-text-strong); outline-offset: 2px; }
+
+.outlook-card.verdict-go     { border-color: var(--verdict-go-border); }
+.outlook-card.verdict-marginal { border-color: var(--verdict-marginal-border); }
+.outlook-card.verdict-nogo   { border-color: var(--verdict-nogo-border); }
+
+.outlook-card .card-kicker {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  color: var(--hub-text-muted);
+}
+
+.outlook-verdict {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.outlook-verdict.verdict-go { color: var(--verdict-go-fg); }
+.outlook-verdict.verdict-marginal { color: var(--verdict-marginal-fg); }
+.outlook-verdict.verdict-nogo { color: var(--verdict-nogo-fg); }
+.outlook-verdict.verdict-unknown { color: var(--verdict-unknown-fg); }
+
+.outlook-metrics {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.85rem;
+  color: var(--hub-text-muted);
+}
+
+/* ============== trends (existing) ============== */
+.trends-details {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--hub-border);
+  padding-top: 1rem;
+}
+
+.trends-details > summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--hub-text-strong);
+  padding: 0.4rem 0;
+}
+
 .chart-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1rem;
   align-items: start;
+  margin-top: 0.75rem;
 }
 
 .chart-card {
@@ -36,6 +332,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
+  margin-top: 0.75rem;
 }
 
 .provider-card,
@@ -53,20 +350,16 @@
   color: var(--hub-text-strong);
 }
 
-.provider-ok {
-  color: #12715b;
-}
-
-.provider-error {
-  color: #b83b33;
-}
-
-.provider-disabled {
-  color: var(--hub-text-muted);
-}
+.provider-ok { color: #12715b; }
+.provider-error { color: #b83b33; }
+.provider-disabled, .provider-missing { color: var(--hub-text-muted); }
 
 @media (max-width: 899px) {
   .chart-frame {
     block-size: clamp(16rem, 42vh, 20rem);
+  }
+  .tonight-head {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
