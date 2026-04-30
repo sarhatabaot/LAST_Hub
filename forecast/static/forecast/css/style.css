@@ -17,20 +17,18 @@
   --verdict-unknown-border: var(--hub-border);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --verdict-go-bg: rgba(58, 200, 120, 0.18);
-    --verdict-go-fg: #6fdc94;
-    --verdict-go-border: rgba(58, 200, 120, 0.45);
+:root[data-theme="dark"] {
+  --verdict-go-bg: rgba(58, 200, 120, 0.18);
+  --verdict-go-fg: #6fdc94;
+  --verdict-go-border: rgba(58, 200, 120, 0.45);
 
-    --verdict-marginal-bg: rgba(245, 175, 60, 0.18);
-    --verdict-marginal-fg: #f5b863;
-    --verdict-marginal-border: rgba(245, 175, 60, 0.5);
+  --verdict-marginal-bg: rgba(245, 175, 60, 0.18);
+  --verdict-marginal-fg: #f5b863;
+  --verdict-marginal-border: rgba(245, 175, 60, 0.5);
 
-    --verdict-nogo-bg: rgba(245, 95, 95, 0.18);
-    --verdict-nogo-fg: #ff8a8a;
-    --verdict-nogo-border: rgba(245, 95, 95, 0.5);
-  }
+  --verdict-nogo-bg: rgba(245, 95, 95, 0.18);
+  --verdict-nogo-fg: #ff8a8a;
+  --verdict-nogo-border: rgba(245, 95, 95, 0.5);
 }
 
 /* ============== shared section styles ============== */

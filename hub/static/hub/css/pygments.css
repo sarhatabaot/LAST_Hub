@@ -11,19 +11,17 @@
   --code-error-text: #b31d28;
 }
 
-@media (prefers-color-scheme: dark) {
-  .manual-content {
-    --code-bg: #101a28;
-    --code-text: #d7e3f0;
-    --code-comment: #8ea2b8;
-    --code-keyword: #ff8ea3;
-    --code-string: #8fc7ff;
-    --code-name: #c8a7ff;
-    --code-number: #75b8ff;
-    --code-base: #d7e3f0;
-    --code-error-bg: #412226;
-    --code-error-text: #ffb3bd;
-  }
+[data-theme="dark"] .manual-content {
+  --code-bg: #101a28;
+  --code-text: #d7e3f0;
+  --code-comment: #8ea2b8;
+  --code-keyword: #ff8ea3;
+  --code-string: #8fc7ff;
+  --code-name: #c8a7ff;
+  --code-number: #75b8ff;
+  --code-base: #d7e3f0;
+  --code-error-bg: #412226;
+  --code-error-text: #ffb3bd;
 }
 
 .manual-content pre {

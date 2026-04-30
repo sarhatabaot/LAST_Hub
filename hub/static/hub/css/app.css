@@ -1,7 +1,7 @@
 :root {
   --hub-sidebar-width: 12.75rem;
   --hub-header-height: 3.65rem;
-  color-scheme: light dark;
+  color-scheme: light;
   --hub-bg: #edf3f9;
   --hub-bg-accent: rgba(110, 152, 214, 0.18);
   --hub-surface: rgba(255, 255, 255, 0.97);
@@ -20,25 +20,24 @@
   --hub-sidebar-shadow: 8px 0 30px rgba(31, 53, 79, 0.04);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --hub-bg: #0f1722;
-    --hub-bg-accent: rgba(95, 139, 201, 0.18);
-    --hub-surface: rgba(18, 28, 40, 0.96);
-    --hub-surface-muted: #152233;
-    --hub-text: #dde8f6;
-    --hub-text-strong: #f7fbff;
-    --hub-text-muted: #98acc3;
-    --hub-border: rgba(166, 191, 219, 0.16);
-    --hub-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
-    --hub-link: #8cbcff;
-    --hub-link-hover: #b7d3ff;
-    --hub-accent-soft: rgba(72, 107, 152, 0.3);
-    --hub-accent-strong: #8cbcff;
-    --hub-header-bg: rgba(12, 20, 31, 0.92);
-    --hub-sidebar-bg: linear-gradient(180deg, rgba(14, 23, 35, 0.98) 0%, rgba(17, 28, 42, 0.94) 100%);
-    --hub-sidebar-shadow: 8px 0 30px rgba(0, 0, 0, 0.18);
-  }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --hub-bg: #0f1722;
+  --hub-bg-accent: rgba(95, 139, 201, 0.18);
+  --hub-surface: rgba(18, 28, 40, 0.96);
+  --hub-surface-muted: #152233;
+  --hub-text: #dde8f6;
+  --hub-text-strong: #f7fbff;
+  --hub-text-muted: #98acc3;
+  --hub-border: rgba(166, 191, 219, 0.16);
+  --hub-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+  --hub-link: #8cbcff;
+  --hub-link-hover: #b7d3ff;
+  --hub-accent-soft: rgba(72, 107, 152, 0.3);
+  --hub-accent-strong: #8cbcff;
+  --hub-header-bg: rgba(12, 20, 31, 0.92);
+  --hub-sidebar-bg: linear-gradient(180deg, rgba(14, 23, 35, 0.98) 0%, rgba(17, 28, 42, 0.94) 100%);
+  --hub-sidebar-shadow: 8px 0 30px rgba(0, 0, 0, 0.18);
 }
 
 html {
@@ -286,12 +285,47 @@ h6,
   color: #143a68;
 }
 
-@media (prefers-color-scheme: dark) {
-  .status-pill-open {
-    background: #183252;
-    border-color: #2b4c74;
-    color: #dcecff;
-  }
+[data-theme="dark"] .status-pill-open {
+  background: #183252;
+  border-color: #2b4c74;
+  color: #dcecff;
+}
+
+.hub-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: var(--hub-text-muted);
+  cursor: pointer;
+  line-height: 0;
+  transition: color 120ms ease;
+}
+
+.hub-theme-toggle:hover,
+.hub-theme-toggle:focus-visible {
+  color: var(--hub-text-strong);
+  outline: none;
+}
+
+.hub-theme-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Show the icon for the theme you'd switch *to*: moon in light mode, sun in
+   dark mode. Hide the inactive one rather than swap in JS. */
+:root[data-theme="dark"] .hub-theme-icon-moon,
+:root:not([data-theme="dark"]) .hub-theme-icon-sun {
+  display: none;
 }
 
 .hub-user-menu {
@@ -432,12 +466,10 @@ h6,
   font-weight: 700;
 }
 
-@media (prefers-color-scheme: dark) {
-  .overview-snippet-chip-unsafe {
-    background: rgba(184, 59, 51, 0.18);
-    border-color: rgba(255, 143, 132, 0.22);
-    color: #ffb1a8;
-  }
+[data-theme="dark"] .overview-snippet-chip-unsafe {
+  background: rgba(184, 59, 51, 0.18);
+  border-color: rgba(255, 143, 132, 0.22);
+  color: #ffb1a8;
 }
 
 .card-header-inline,
@@ -459,11 +491,11 @@ h6,
   display: block;
   padding: 0.7rem 0.8rem;
   border-radius: 0.7rem;
-  background: linear-gradient(180deg, #eef5fe 0%, #e4eefb 100%);
+  background: var(--hub-accent-soft);
   color: var(--hub-text-strong);
   font-weight: 600;
   text-decoration: none;
-  border: 1px solid rgba(23, 74, 133, 0.1);
+  border: 1px solid var(--hub-border);
 }
 
 .resource-groups {
@@ -531,7 +563,7 @@ h6,
   padding: 0.7rem 0.8rem;
   border-radius: 0.8rem;
   background: var(--hub-surface-muted);
-  border: 1px solid rgba(23, 74, 133, 0.08);
+  border: 1px solid var(--hub-border);
 }
 
 .checklist-toggle {
@@ -579,9 +611,9 @@ h6,
 .embedded-iframe {
   width: 100%;
   min-height: 80vh;
-  border: 1px solid rgba(44, 62, 80, 0.12);
+  border: 1px solid var(--hub-border);
   border-radius: 0.75rem;
-  background-color: #fff;
+  background-color: var(--hub-surface);
 }
 
 .manual-content {
@@ -618,9 +650,9 @@ h6,
   font-size: 0.65rem;
   padding: 0.2rem 0.45rem;
   border-radius: 0.35rem;
-  border: 1px solid var(--pico-muted-border-color);
-  background: #b8b8b8;
-  color: #ffffff;
+  border: 1px solid var(--hub-border);
+  background: var(--hub-surface);
+  color: var(--hub-text-muted);
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -636,8 +668,8 @@ h6,
 
 .manual-copy-button:hover,
 .manual-copy-button.is-copied {
-  color: #ffffff;
-  border-color: #ffffff;
+  color: var(--hub-text-strong);
+  border-color: var(--hub-accent-strong);
 }
 
 .manual-lightbox {
@@ -705,20 +737,18 @@ h6,
   margin: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  .safety-card-safe {
-    background: linear-gradient(180deg, #1b7c63 0%, #135b49 100%);
-    border-color: #1f7f66;
-  }
+[data-theme="dark"] .safety-card-safe {
+  background: linear-gradient(180deg, #1b7c63 0%, #135b49 100%);
+  border-color: #1f7f66;
+}
 
-  .safety-card-unsafe {
-    background: linear-gradient(180deg, #b84f46 0%, #8f352f 100%);
-    border-color: #aa4942;
-  }
+[data-theme="dark"] .safety-card-unsafe {
+  background: linear-gradient(180deg, #b84f46 0%, #8f352f 100%);
+  border-color: #aa4942;
+}
 
-  .safety-card-unknown {
-    background: var(--hub-surface);
-  }
+[data-theme="dark"] .safety-card-unknown {
+  background: var(--hub-surface);
 }
 
 @media (max-width: 1100px) {
@@ -741,8 +771,8 @@ h6,
     position: static;
     width: 100%;
     border-right: none;
-  border-bottom: 1px solid rgba(44, 62, 80, 0.08);
-}
+    border-bottom: 1px solid var(--hub-border);
+  }
 
   .content {
     margin-left: 0;

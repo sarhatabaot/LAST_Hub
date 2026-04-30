@@ -29,6 +29,21 @@
   </div>
 
   <div class="hub-header-right">
+    <button
+      type="button"
+      class="hub-theme-toggle"
+      data-theme-toggle
+      aria-label="Toggle dark mode"
+      title="Toggle dark mode"
+    >
+      <svg class="hub-theme-icon hub-theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12" />
+      </svg>
+      <svg class="hub-theme-icon hub-theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" />
+      </svg>
+    </button>
     <div class="hub-auth">
       {% if request.user.is_authenticated %}
         {% if request.user.is_staff %}
