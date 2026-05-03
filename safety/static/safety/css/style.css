@@ -303,3 +303,536 @@
   .safety-status-title { font-size: 2rem; }
   .safety-metric-value { font-size: 1.5rem; }
 }
+
+/* Source filter */
+.safety-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.safety-filter:empty {
+  display: none;
+}
+
+.safety-filter-chip {
+  padding: 0.28rem 0.7rem;
+  margin: 0;
+  border: 1px solid var(--hub-border);
+  border-radius: 999px;
+  background: var(--hub-surface);
+  color: var(--hub-text);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.safety-filter-chip:hover {
+  background: var(--hub-surface-muted);
+}
+
+.safety-filter-chip.is-active {
+  background: var(--hub-text);
+  color: var(--hub-surface);
+  border-color: var(--hub-text);
+}
+
+/* Per-source wind card — same square footprint as other metric tiles */
+.safety-metric-wind-card {
+  grid-template-rows: var(--safety-metric-head-height) 1fr;
+}
+
+.safety-metric-wind-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 0;
+}
+
+.safety-metric-wind-compass {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 0;
+}
+
+.safety-metric-wind-compass .safety-compass-svg {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.safety-metric-wind-compass {
+  position: relative;
+}
+
+.safety-metric-wind-dir {
+  display: block;
+  margin-top: 0.15rem;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--safety-metric-fg-muted);
+}
+
+.safety-wind-stats-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.safety-wind-stat-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+}
+
+.safety-wind-stat-row.is-failed {
+  color: var(--safety-metric-failed-pill, #b83b33);
+  font-weight: 600;
+}
+
+.safety-wind-stat-label {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--safety-metric-fg-muted);
+}
+
+.safety-wind-stat-value {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.safety-wind-stat-unit {
+  margin-left: 0.18rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--safety-metric-fg-muted);
+}
+
+.safety-wind-stat-empty {
+  font-size: 0.72rem;
+  color: var(--safety-metric-fg-muted);
+}
+
+/* History */
+.safety-history {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  --safety-history-pass: #16a34a;
+  --safety-history-fail: #dc2626;
+  --safety-history-edge: #d97706;
+}
+
+[data-theme="dark"] .safety-history {
+  --safety-history-pass: #4ade80;
+  --safety-history-fail: #f87171;
+  --safety-history-edge: #fbbf24;
+}
+
+.safety-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.safety-history-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.safety-history-tag {
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 0.3rem;
+  background: var(--hub-surface-muted);
+  color: var(--hub-text-muted);
+  vertical-align: 2px;
+}
+
+.safety-history-range {
+  display: inline-flex;
+  border: 1px solid var(--hub-border);
+  border-radius: 0.4rem;
+  overflow: hidden;
+  background: var(--hub-surface);
+  font-size: 0.78rem;
+}
+
+.safety-range-chip {
+  padding: 0.32rem 0.7rem;
+  margin: 0;
+  border: none;
+  background: transparent;
+  color: var(--hub-text);
+  font-weight: 500;
+  cursor: pointer;
+  border-right: 1px solid var(--hub-border);
+  transition: background 0.12s ease;
+}
+
+.safety-range-chip:last-child {
+  border-right: none;
+}
+
+.safety-range-chip:hover {
+  background: var(--hub-surface-muted);
+}
+
+.safety-range-chip.is-active {
+  background: var(--hub-text);
+  color: var(--hub-surface);
+}
+
+.safety-history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.5rem;
+}
+
+.safety-history-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--hub-border);
+  border-radius: 0.5rem;
+  background: var(--hub-surface);
+  color: var(--hub-text);
+}
+
+.safety-history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.76rem;
+}
+
+.safety-history-label {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.safety-history-source {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--hub-text-muted);
+}
+
+.safety-history-chart {
+  width: 100%;
+  height: 80px;
+  display: block;
+}
+
+.safety-history-axis {
+  font-family: var(--pico-font-family-monospace, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 7px;
+  fill: var(--hub-text-muted);
+  pointer-events: none;
+}
+
+.safety-history-cursor {
+  pointer-events: none;
+}
+
+.safety-history-cursor-dot {
+  pointer-events: none;
+}
+
+.safety-history-target {
+  cursor: crosshair;
+}
+
+/* Floating tooltip — appended to document.body */
+.safety-history-tooltip {
+  position: fixed;
+  z-index: 100;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.4rem;
+  background: rgba(11, 28, 47, 0.92);
+  color: rgba(248, 250, 252, 0.95);
+  font-size: 0.74rem;
+  line-height: 1.3;
+  box-shadow: 0 8px 24px rgba(11, 28, 47, 0.3);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.safety-history-tooltip-time {
+  color: rgba(248, 250, 252, 0.7);
+  font-size: 0.7rem;
+}
+
+.safety-history-tooltip-value {
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.safety-history-tooltip-value.is-failed {
+  color: #fca5a5;
+}
+
+.safety-history-tooltip-value.is-passed {
+  color: #86efac;
+}
+
+.safety-history-tooltip-state {
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(248, 250, 252, 0.65);
+}
+
+/* Time range controls (chips + datetime inputs) */
+.safety-history-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.safety-history-custom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--hub-text-muted);
+}
+
+.safety-history-custom-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0;
+}
+
+.safety-history-custom-field span {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.safety-history-custom-field input {
+  margin: 0;
+  padding: 0.22rem 0.45rem;
+  font-size: 0.78rem;
+  border: 1px solid var(--hub-border);
+  border-radius: 0.3rem;
+  background: var(--hub-surface);
+  color: var(--hub-text);
+}
+
+/* All metric tiles are clickable */
+.safety-metric {
+  cursor: pointer;
+}
+
+/* Detail dialog */
+.safety-metric-dialog {
+  border: none;
+  padding: 0;
+  background: transparent;
+  border-radius: 0.85rem;
+  box-shadow: 0 25px 60px rgba(11, 28, 47, 0.25);
+  max-width: min(640px, 92vw);
+  width: 100%;
+}
+
+.safety-metric-dialog::backdrop {
+  background: rgba(11, 28, 47, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+.safety-metric-dialog-card {
+  background: var(--hub-surface);
+  color: var(--hub-text);
+  border: 1px solid var(--hub-border);
+  border-radius: 0.85rem;
+  padding: 1.1rem 1.4rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.safety-metric-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.safety-metric-dialog-head h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.safety-metric-dialog-close {
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0.2rem 0.55rem;
+  margin: 0;
+  border: 1px solid var(--hub-border);
+  border-radius: 0.3rem;
+  background: var(--hub-surface);
+  color: var(--hub-text);
+  cursor: pointer;
+}
+
+.safety-metric-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.safety-metric-dialog-body h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hub-text-muted);
+}
+
+.safety-dialog-state {
+  display: inline-block;
+  padding: 0.12rem 0.5rem;
+  border-radius: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.safety-dialog-state-passed {
+  background: rgba(22, 163, 74, 0.18);
+  color: #166534;
+}
+
+.safety-dialog-state-failed {
+  background: rgba(220, 38, 38, 0.18);
+  color: #991b1b;
+}
+
+.safety-dialog-state-stale {
+  background: rgba(107, 114, 128, 0.18);
+  color: #374151;
+}
+
+[data-theme="dark"] .safety-dialog-state-passed { color: #4ade80; }
+[data-theme="dark"] .safety-dialog-state-failed { color: #f87171; }
+[data-theme="dark"] .safety-dialog-state-stale { color: #cbd5e1; }
+
+.safety-dialog-live {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.safety-dialog-value {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.safety-dialog-meta {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--hub-text-muted);
+}
+
+.safety-dialog-history .safety-history-chart {
+  width: 100%;
+  height: 180px;
+}
+
+.safety-dialog-settings {
+  margin: 0;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 0.85rem;
+  row-gap: 0.3rem;
+  font-size: 0.85rem;
+}
+
+.safety-dialog-settings dt {
+  font-weight: 600;
+  color: var(--hub-text-muted);
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+}
+
+.safety-dialog-settings dd {
+  margin: 0;
+}
+
+.safety-dialog-wind-direction {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--hub-border);
+  border-radius: 0.55rem;
+  background: var(--hub-surface-muted);
+}
+
+.safety-dialog-wind-direction .safety-metric-wind-compass {
+  height: 5rem;
+}
+
+.safety-dialog-wind-source {
+  border: 1px solid var(--hub-border);
+  border-radius: 0.55rem;
+  padding: 0.7rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.safety-dialog-wind-source > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.safety-dialog-wind-source > header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--hub-text);
+}

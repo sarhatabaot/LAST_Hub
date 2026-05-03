@@ -16,12 +16,51 @@
 
   <p id="safetyError" class="operations-note" hidden></p>
 
+  <div id="safetySourceFilter" class="safety-filter" aria-label="Filter by source"></div>
+
   <section
     id="safetyMetricsGrid"
     class="safety-metrics-grid"
     aria-label="Safety metrics"
   ></section>
+
+  <section id="safetyHistorySection" class="safety-history" aria-label="Sensor history">
+    <header class="safety-history-header">
+      <h2 class="safety-history-title">History <span class="safety-history-tag">sample</span></h2>
+      <div class="safety-history-controls">
+        <div class="safety-history-range" role="tablist">
+          <button type="button" class="safety-range-chip is-active" data-range="1h">1h</button>
+          <button type="button" class="safety-range-chip" data-range="6h">6h</button>
+          <button type="button" class="safety-range-chip" data-range="24h">24h</button>
+          <button type="button" class="safety-range-chip" data-range="3d">3d</button>
+          <button type="button" class="safety-range-chip" data-range="1w">1w</button>
+          <button type="button" class="safety-range-chip" data-range="1m">1m</button>
+        </div>
+        <div class="safety-history-custom">
+          <label class="safety-history-custom-field">
+            <span>From</span>
+            <input type="datetime-local" data-range-from>
+          </label>
+          <label class="safety-history-custom-field">
+            <span>To</span>
+            <input type="datetime-local" data-range-to>
+          </label>
+        </div>
+      </div>
+    </header>
+    <div class="safety-history-grid"></div>
+  </section>
 </section>
+
+<dialog id="safetyMetricDialog" class="safety-metric-dialog">
+  <article class="safety-metric-dialog-card">
+    <header class="safety-metric-dialog-head">
+      <h2 data-dialog-title>Sensor</h2>
+      <button type="button" class="safety-metric-dialog-close" data-dialog-close aria-label="Close">×</button>
+    </header>
+    <div data-dialog-body class="safety-metric-dialog-body"></div>
+  </article>
+</dialog>
 
 {{ safety_data|json_script:"safety-data" }}
 <script type="module" src="{% static 'safety/js/main.js' %}"></script>

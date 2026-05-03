@@ -1,0 +1,337 @@
+:root {
+  --cam-viewport-bg: #0a0e14;
+  --cam-frame-border: rgba(255, 255, 255, 0.08);
+  --cam-led-idle: #6b7280;
+  --cam-led-starting: #f59e0b;
+  --cam-led-live: #22c55e;
+  --cam-led-error: #ef4444;
+  --cam-badge-bg: rgba(15, 23, 42, 0.78);
+  --cam-badge-fg: rgba(248, 250, 252, 0.85);
+  --cam-overlay-bg: rgba(0, 0, 0, 0.6);
+  --cam-overlay-fg: rgba(248, 250, 252, 0.92);
+  --cam-mono-font: var(--pico-font-family-monospace, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+}
+
+/* Toolbar (tabs + summary) */
+.cam-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.cam-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.2rem;
+  font-size: 0.78rem;
+  color: var(--hub-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.cam-stat strong {
+  font-weight: 600;
+}
+
+.cam-stat-divider,
+.cam-stat-muted {
+  color: var(--hub-text-muted);
+}
+
+.cam-stop-all {
+  padding: 0.32rem 0.7rem;
+  margin: 0 0 0 0.4rem;
+  font-size: 0.76rem;
+  font-weight: 500;
+  border: 1px solid var(--hub-border);
+  border-radius: 0.3rem;
+  background: var(--hub-surface);
+  color: var(--hub-text);
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.cam-stop-all:not(:disabled):hover {
+  background: var(--hub-surface-muted);
+  border-color: var(--hub-text-muted);
+}
+
+.cam-stop-all:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Tabs as a segmented control */
+.camera-tabs {
+  display: inline-flex;
+  border: 1px solid var(--hub-border);
+  border-radius: 0.4rem;
+  overflow: hidden;
+  background: var(--hub-surface);
+  font-size: 0.8rem;
+}
+
+.camera-tab {
+  padding: 0.42rem 0.85rem;
+  color: var(--hub-text);
+  text-decoration: none;
+  font-weight: 500;
+  border-right: 1px solid var(--hub-border);
+  transition: background 0.12s ease;
+}
+
+.camera-tab:last-child {
+  border-right: none;
+}
+
+.camera-tab:hover {
+  background: var(--hub-surface-muted);
+}
+
+.camera-tab.is-active {
+  background: var(--hub-text);
+  color: var(--hub-surface);
+}
+
+/* Sections */
+.camera-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.camera-group-title {
+  margin: 0.25rem 0 0;
+  padding-bottom: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hub-text-muted);
+  border-bottom: 1px solid var(--hub-border);
+}
+
+/* Grid */
+.security-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(26rem, 1fr));
+  gap: 0.4rem;
+}
+
+/* Card */
+.cam-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--hub-border);
+  border-radius: 0.4rem;
+  background: var(--hub-surface);
+  overflow: hidden;
+  transition: border-color 0.12s ease, transform 0.12s ease;
+}
+
+.cam-card:hover {
+  border-color: var(--hub-text-muted);
+}
+
+.cam-card.is-streaming {
+  border-color: var(--cam-led-live);
+}
+
+.cam-viewport {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: var(--cam-viewport-bg);
+  overflow: hidden;
+}
+
+/* Top-left technical badge */
+.cam-badge {
+  position: absolute;
+  top: 0.4rem;
+  left: 0.4rem;
+  z-index: 2;
+  padding: 0.18rem 0.45rem;
+  border-radius: 0.2rem;
+  background: var(--cam-badge-bg);
+  color: var(--cam-badge-fg);
+  font-family: var(--cam-mono-font);
+  font-size: 0.7rem;
+  pointer-events: none;
+}
+
+/* Top-right LED status dot */
+.cam-led {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  z-index: 3;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--cam-led-idle);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.cam-led[data-state="starting"] {
+  background: var(--cam-led-starting);
+}
+
+.cam-led[data-state="streaming"] {
+  background: var(--cam-led-live);
+  animation: cam-pulse 1.6s ease-in-out infinite;
+}
+
+.cam-led[data-state="error"],
+.cam-led[data-state^="hls"],
+.cam-led[data-state^="mixed"] {
+  background: var(--cam-led-error);
+}
+
+@keyframes cam-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* LIVE tag (top-right, left of LED) */
+.cam-live-tag {
+  position: absolute;
+  top: 0.4rem;
+  right: 1.25rem;
+  z-index: 2;
+  padding: 0.12rem 0.4rem;
+  border-radius: 0.2rem;
+  background: var(--cam-overlay-bg);
+  color: var(--cam-overlay-fg);
+  font-family: var(--cam-mono-font);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  pointer-events: none;
+}
+
+/* Idle play button — fills the viewport, centered icon */
+.cam-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: rgba(248, 250, 252, 0.5);
+  cursor: pointer;
+  transition: color 0.12s ease, background 0.12s ease;
+}
+
+.cam-placeholder:hover,
+.cam-placeholder:focus-visible {
+  color: rgba(248, 250, 252, 0.95);
+  background: rgba(255, 255, 255, 0.04);
+  outline: none;
+}
+
+.cam-placeholder svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+/* Live media */
+.cam-video,
+.cam-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--cam-viewport-bg);
+}
+
+/* Countdown — bottom-left */
+.cam-countdown {
+  position: absolute;
+  bottom: 0.4rem;
+  left: 0.4rem;
+  z-index: 2;
+  padding: 0.16rem 0.4rem;
+  border-radius: 0.2rem;
+  background: var(--cam-overlay-bg);
+  color: var(--cam-overlay-fg);
+  font-family: var(--cam-mono-font);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+/* Hover-revealed controls — bottom-right */
+.cam-controls {
+  position: absolute;
+  bottom: 0.4rem;
+  right: 0.4rem;
+  z-index: 3;
+  display: flex;
+  gap: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.cam-card.is-streaming:hover .cam-controls,
+.cam-card.is-streaming:focus-within .cam-controls {
+  opacity: 1;
+}
+
+.cam-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 0.25rem;
+  background: rgba(0, 0, 0, 0.62);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.cam-button:hover {
+  background: rgba(0, 0, 0, 0.88);
+}
+
+.cam-button svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+/* Footer label strip */
+.cam-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.32rem 0.55rem;
+  font-size: 0.74rem;
+  color: var(--hub-text-muted);
+  background: var(--hub-surface-muted);
+  border-top: 1px solid var(--hub-border);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.cam-footer-label {
+  flex: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* Empty / error row */
+.stream-card-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--hub-text-muted);
+  border: 1px dashed var(--hub-border);
+  border-radius: 0.4rem;
+}

@@ -179,6 +179,9 @@ CONTROLLER_API_BASE_URL = os.environ.get(
 CONTROLLER_BACKEND = os.environ.get("CONTROLLER_BACKEND", "mock")
 CONTROLLER_MOCK_UNITS = int(os.environ.get("CONTROLLER_MOCK_UNITS", "4"))
 
+MEDIAMTX_USERNAME = os.environ.get("MEDIAMTX_USERNAME", "")
+MEDIAMTX_PASSWORD = os.environ.get("MEDIAMTX_PASSWORD", "")
+
 UMAMI_SCRIPT_URL = os.environ.get("UMAMI_SCRIPT_URL", "")
 UMAMI_WEBSITE_ID = os.environ.get("UMAMI_WEBSITE_ID", "")
 

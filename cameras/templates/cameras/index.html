@@ -1,6 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Cameras{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'cameras/css/security-grid.css' %}">
+{% endblock %}
 
 {% block content %}
 <section class="page-shell">
@@ -8,8 +13,42 @@
     <div>
       <p class="eyebrow">Cameras</p>
       <h1>Cameras</h1>
-      <p class="page-copy">This page is a placeholder — camera tools and views will land here.</p>
     </div>
   </header>
+
+  {% if presets %}
+    <div class="cam-toolbar">
+      <nav class="camera-tabs" aria-label="Camera presets">
+        {% for preset in presets %}
+          <a
+            href="?preset={{ preset.key }}"
+            class="camera-tab {% if preset.key == selected_key %}is-active{% endif %}"
+          >{{ preset.name }}</a>
+        {% endfor %}
+      </nav>
+
+      <div class="cam-summary">
+        <span class="cam-stat"><strong>{{ camera_count }}</strong> cameras</span>
+        <span class="cam-stat-divider">·</span>
+        <span class="cam-stat"><strong data-cam-live-count>0</strong> live</span>
+        <span class="cam-stat-divider">·</span>
+        <span class="cam-stat cam-stat-muted">auto-stop {{ auto_stop_label }}</span>
+        <button type="button" class="cam-stop-all" data-cam-stop-all disabled>Stop all</button>
+      </div>
+    </div>
+
+    <div id="securityGrid" class="security-grid"></div>
+  {% else %}
+    <p class="operations-note">No camera presets configured.</p>
+  {% endif %}
 </section>
+
+{% if camera_config %}
+  {{ camera_config|json_script:"camera-config" }}
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17"></script>
+<script src="{% static 'cameras/js/security-grid.js' %}"></script>
 {% endblock %}
