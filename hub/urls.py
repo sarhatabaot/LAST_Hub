@@ -10,8 +10,9 @@ urlpatterns = [
     path("docs/", include(("docs.urls", "docs"), namespace="docs")),
     path("observations/allsky/", views.allsky_view, name="allsky"),
     path("observations/zorg/", views.zorg_view, name="zorg"),
-    path("operations/", views.operations_redirect, name="operations"),
+    path("operations/", views.mission_control_view, name="hub_operations"),
     path("controller/", views.controller_view, name="hub_controller"),
+    path("cameras/", include(("cameras.urls", "cameras"), namespace="cameras")),
     path("accounts/request/", views.account_request, name="account_request"),
     path("accounts/", include("django.contrib.auth.urls")),
 ]

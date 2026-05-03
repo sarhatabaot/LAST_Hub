@@ -54,12 +54,57 @@
             {{ request.user.get_username }}
           </summary>
           <div class="hub-user-menu-panel">
-            <a href="{% url 'logout' %}" class="secondary">Log out</a>
+            <form method="post" action="{% url 'logout' %}" class="hub-logout-form">
+              {% csrf_token %}
+              <button type="submit" class="secondary">Log out</button>
+            </form>
           </div>
         </details>
       {% else %}
-        <a href="{% url 'login' %}" class="secondary compact-button">Log in</a>
+        <button
+          type="button"
+          class="secondary compact-button"
+          data-login-open
+        >
+          Log in
+        </button>
       {% endif %}
     </div>
   </div>
 </header>
+
+{% if not request.user.is_authenticated %}
+<dialog id="loginDialog" class="hub-login-dialog">
+  <article class="hub-login-card">
+    <header class="hub-login-head">
+      <h2>Sign in</h2>
+      <button
+        type="button"
+        class="secondary outline compact-button"
+        data-login-close
+        aria-label="Close"
+      >×</button>
+    </header>
+
+    <p id="loginError" class="operations-note hub-login-error" hidden></p>
+
+    <form id="loginForm" method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+      <label>
+        Username
+        <input type="text" name="username" autocomplete="username" required>
+      </label>
+      <label>
+        Password
+        <input type="password" name="password" autocomplete="current-password" required>
+      </label>
+      <button type="submit">Log in</button>
+    </form>
+
+    <p class="operations-note">
+      Need an account? <a href="{% url 'account_request' %}">Request access</a>.
+    </p>
+  </article>
+</dialog>
+{% endif %}

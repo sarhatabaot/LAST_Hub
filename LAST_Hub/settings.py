@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'checklist',
     'docs',
     'controller',
+    'cameras',
 ]
 
 MIDDLEWARE = [

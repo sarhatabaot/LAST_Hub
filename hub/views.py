@@ -7,6 +7,7 @@ from django.db import IntegrityError
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_http_methods
 
+from checklist.services import build_page_context as build_checklist_page_context
 from checklist.services import get_dashboard_summary
 from controller import client as controller_client
 from controller.commands import COMMAND_CATALOG, is_allowed
@@ -130,9 +131,14 @@ def account_request(request):
     return render(request, "accounts/request_access.html", {"form": form})
 
 
-def operations_redirect(request):
-    messages.info(request, "Operations has moved to Checklist.")
-    return redirect("checklist:index")
+def mission_control_view(request):
+    context = {
+        "safety_data": fetch_safety_status(timeout=2),
+        "forecast_data": get_forecast_aggregate(),
+        "controller_configured": bool(settings.CONTROLLER_API_BASE_URL),
+    }
+    context.update(build_checklist_page_context())
+    return render(request, "hub/operations.html", context)
 
 
 @require_http_methods(["GET", "POST"])

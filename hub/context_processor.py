@@ -25,6 +25,16 @@ def primary_navigation(request):
                 "is_active": current_url_name == "hub_overview",
             },
             {
+                "label": "Operations",
+                "url": reverse("hub_operations"),
+                "is_active": current_url_name == "hub_operations",
+                "badge": {
+                    "text": "new",
+                    "tooltip": "Mission Control: sensors, checklist, commands, and forecast in one view.",
+                    "variant": "new",
+                },
+            },
+            {
                 "label": "Forecast",
                 "url": reverse("forecast:index"),
                 "is_active": current_namespace == "forecast",
@@ -54,7 +64,7 @@ def primary_navigation(request):
             {
                 "label": "Checklist",
                 "url": reverse("checklist:index"),
-                "is_active": current_namespace == "checklist" or current_url_name == "operations",
+                "is_active": current_namespace == "checklist",
                 "badge": {
                     "text": "WIP",
                     "tooltip": "Work in progress — open/close don't drive real hardware yet.",
@@ -68,6 +78,16 @@ def primary_navigation(request):
                 "badge": {
                     "text": "WIP",
                     "tooltip": "Work in progress — backed by a mock; commands don't reach hardware yet.",
+                    "variant": "wip",
+                },
+            },
+            {
+                "label": "Cameras",
+                "url": reverse("cameras:index"),
+                "is_active": current_namespace == "cameras",
+                "badge": {
+                    "text": "WIP",
+                    "tooltip": "Placeholder — camera tools land here.",
                     "variant": "wip",
                 },
             },

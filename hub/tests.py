@@ -20,11 +20,11 @@ class HubRoutesTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Resources and legacy links")
 
-    def test_operations_redirects_to_checklist(self):
-        response = self.client.get(reverse("operations"))
+    def test_operations_renders(self):
+        response = self.client.get(reverse("hub_operations"))
 
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse("checklist:index"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Mission Control")
 
     def test_zorg_redirects_to_external_page(self):
         response = self.client.get(reverse("zorg"))

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mission Control{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'safety/css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'forecast/css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="page-shell">
+  {% if messages %}
+    <div class="message-stack">
+      {% for message in messages %}
+        <article class="surface-card compact-message">{{ message }}</article>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="mission-grid">
+    <section class="safety-shell">
+      <article id="safetyStatusCard" class="safety-card safety-card-unknown">
+        <h2 id="safetyStatusTitle" class="safety-status-title">Loading…</h2>
+        <p id="safetyEvaluatedAt" class="safety-evaluated-at"></p>
+      </article>
+      <p id="safetyError" class="operations-note" hidden></p>
+      <section
+        id="safetyMetricsGrid"
+        class="safety-metrics-grid"
+        aria-label="Safety metrics"
+      ></section>
+    </section>
+
+    <section class="forecast-shell">
+      <section id="hourlyGrid" class="hourly-grid" hidden></section>
+    </section>
+
+    <section>
+      <div id="checklist-dynamic">
+        {% include "checklist/_panel.html" %}
+      </div>
+    </section>
+  </div>
+</section>
+
+{{ safety_data|json_script:"safety-data" }}
+{{ forecast_data|json_script:"forecast-data" }}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/luxon@3.7.2/build/global/luxon.min.js"></script>
+<script type="module" src="{% static 'safety/js/main.js' %}"></script>
+<script type="module" src="{% static 'forecast/js/main.js' %}"></script>
+{% endblock %}

@@ -1,7 +1,6 @@
-<section class="dashboard-grid dashboard-grid-compact">
-  <article class="surface-card">
-    <p class="card-kicker">Status</p>
-    <h2>{{ completed_items }}/{{ total_items }}</h2>
+<article class="surface-card checklist-card">
+  <div class="checklist-card-head">
+    <h2>Status ({{ completed_items }}/{{ total_items }})</h2>
     <p class="card-copy">Observatory state: {{ state_label }}</p>
     {% if state.last_action %}
       <p class="meta-line">
@@ -13,49 +12,39 @@
     {% if state.last_action_message %}
       <p class="meta-line">{{ state.last_action_message }}</p>
     {% endif %}
-  </article>
+  </div>
 
-  <article class="surface-card">
-    <p class="card-kicker">Actions</p>
-    <div class="operations-actions">
-      {% if request.user.is_authenticated %}
-        <form method="post" action="{% url 'checklist:open' %}" hx-post="{% url 'checklist:open' %}" hx-target="#checklist-dynamic" hx-swap="innerHTML">
-          {% csrf_token %}
-          <button type="submit" {% if not all_checked %}disabled{% endif %}>Open observatory</button>
-        </form>
-        <form method="post" action="{% url 'checklist:close' %}" hx-post="{% url 'checklist:close' %}" hx-target="#checklist-dynamic" hx-swap="innerHTML">
-          {% csrf_token %}
-          <button type="submit" class="secondary">Close observatory</button>
-        </form>
-      {% else %}
-        <button type="button" disabled>Open observatory</button>
-        <button type="button" class="secondary" disabled>Close observatory</button>
-      {% endif %}
-    </div>
-    <div class="note-stack">
-      {% if not request.user.is_authenticated %}
-        <p class="operations-note">Sign in to update the checklist or trigger observatory actions.</p>
-      {% endif %}
-      {% if not all_checked %}
-        <p class="operations-note">Complete every item to enable opening.</p>
-      {% endif %}
-      {% if not controller_configured %}
-        <p class="operations-note">Controller API is not configured. Actions are recorded locally only.</p>
-      {% endif %}
-    </div>
-  </article>
-</section>
+  <div class="operations-actions">
+    {% if request.user.is_authenticated %}
+      <form method="post" action="{% url 'checklist:open' %}" hx-post="{% url 'checklist:open' %}" hx-target="#checklist-dynamic" hx-swap="innerHTML">
+        {% csrf_token %}
+        <button type="submit" {% if not all_checked %}disabled{% endif %}>Open observatory</button>
+      </form>
+      <form method="post" action="{% url 'checklist:close' %}" hx-post="{% url 'checklist:close' %}" hx-target="#checklist-dynamic" hx-swap="innerHTML">
+        {% csrf_token %}
+        <button type="submit" class="secondary">Close observatory</button>
+      </form>
+    {% else %}
+      <button type="button" disabled>Open observatory</button>
+      <button type="button" class="secondary" disabled>Close observatory</button>
+    {% endif %}
+  </div>
 
-<section class="checklist-groups">
+  <div class="note-stack">
+    {% if not request.user.is_authenticated %}
+      <p class="operations-note">Sign in to update the checklist or trigger observatory actions.</p>
+    {% endif %}
+    {% if not all_checked %}
+      <p class="operations-note">Complete every item to enable opening.</p>
+    {% endif %}
+    {% if not controller_configured %}
+      <p class="operations-note">Controller API is not configured. Actions are recorded locally only.</p>
+    {% endif %}
+  </div>
+
   {% for group in checklist_groups %}
-    <article class="surface-card">
-      <div class="card-header-inline">
-        <div>
-          <p class="card-kicker">{{ group.title }}</p>
-          <h2>{{ group.complete_count }}/{{ group.total_count }}</h2>
-        </div>
-      </div>
-
+    <section class="checklist-group">
+      <h3 class="checklist-group-title">{{ group.title }} ({{ group.complete_count }}/{{ group.total_count }})</h3>
       <div class="checklist-list">
         {% for item in group.items %}
           {% if request.user.is_authenticated %}
@@ -87,6 +76,6 @@
           {% endif %}
         {% endfor %}
       </div>
-    </article>
+    </section>
   {% endfor %}
-</section>
+</article>
