@@ -121,6 +121,30 @@ function inferSource(metric) {
   return "davis";
 }
 
+// Display-order grouping for the metrics grid. Wind cards come first, then
+// the categories below; anything unrecognised falls into "other" and trails.
+const CATEGORY_ORDER = [
+  "wind",
+  "humidity",
+  "pressure",
+  "sun",
+  "temperature",
+  "rain",
+  "home_front",
+  "other",
+];
+
+function metricCategory(metric) {
+  const text = `${metric.key || ""} ${metric.label || ""}`.toLowerCase();
+  if (/hfc|home_?front|red_?alert/.test(text)) return "home_front";
+  if (/sun|solar|daylight|altitude/.test(text)) return "sun";
+  if (/humid|\brh\b/.test(text)) return "humidity";
+  if (/press|baro/.test(text)) return "pressure";
+  if (/rain/.test(text)) return "rain";
+  if (/temp/.test(text)) return "temperature";
+  return "other";
+}
+
 function presetRange(preset) {
   const to = new Date();
   let hours;
@@ -344,12 +368,14 @@ function renderMetrics(payload) {
 
   grid.innerHTML = "";
 
-  for (const entry of windBySource.values()) {
-    grid.appendChild(renderWindCard(entry));
-  }
-
   if (!remaining.length && !windBySource.size) {
     return;
+  }
+
+  const items = [];
+
+  for (const entry of windBySource.values()) {
+    items.push({ category: "wind", node: renderWindCard(entry) });
   }
 
   for (const metric of remaining) {
@@ -388,8 +414,12 @@ function renderMetrics(payload) {
       ${barHtml}
       <p class="safety-metric-limit">${limitLine}</p>
     `;
-    grid.appendChild(card);
+    items.push({ category: metricCategory(metric), node: card });
   }
+
+  items.sort((a, b) => CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category));
+
+  for (const item of items) grid.appendChild(item.node);
 }
 
 function renderWindCard(entry) {
