@@ -63,35 +63,34 @@
   cursor: not-allowed;
 }
 
-/* Tabs as a segmented control */
+/* Preset filter button group */
 .camera-tabs {
   display: inline-flex;
-  border: 1px solid var(--hub-border);
-  border-radius: 0.4rem;
-  overflow: hidden;
-  background: var(--hub-surface);
+  gap: 0.3rem;
   font-size: 0.8rem;
 }
 
 .camera-tab {
-  padding: 0.42rem 0.85rem;
+  padding: 0.32rem 0.7rem;
   color: var(--hub-text);
   text-decoration: none;
+  font: inherit;
   font-weight: 500;
-  border-right: 1px solid var(--hub-border);
-  transition: background 0.12s ease;
-}
-
-.camera-tab:last-child {
-  border-right: none;
+  background: var(--hub-surface);
+  border: 1px solid var(--hub-border);
+  border-radius: 0.3rem;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
 }
 
 .camera-tab:hover {
   background: var(--hub-surface-muted);
+  border-color: var(--hub-text-muted);
 }
 
 .camera-tab.is-active {
   background: var(--hub-text);
+  border-color: var(--hub-text);
   color: var(--hub-surface);
 }
 

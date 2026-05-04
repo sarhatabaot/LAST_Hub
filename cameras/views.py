@@ -29,21 +29,32 @@ def index(request):
 
     proxy_base = reverse("cameras:index") + "stream/"
     stream_timeout_ms = 3 * 60 * 1000
-    groups_payload = []
-    camera_count = 0
-    for group in selected["groups"]:
-        cameras = []
-        for cam in group["cameras"]:
-            if cam["kind"] == "webcam":
-                src = reverse(
-                    "cameras:webcam_proxy",
-                    args=[cam["host"], cam["port"], cam["suffix"]],
-                )
-                cameras.append({**cam, "src": src})
-            else:
-                cameras.append(cam)
-            camera_count += 1
-        groups_payload.append({"name": group["name"], "cameras": cameras})
+
+    presets_payload = []
+    for preset in presets:
+        groups_payload = []
+        camera_count = 0
+        for group in preset["groups"]:
+            cameras = []
+            for cam in group["cameras"]:
+                if cam["kind"] == "webcam":
+                    src = reverse(
+                        "cameras:webcam_proxy",
+                        args=[cam["host"], cam["port"], cam["suffix"]],
+                    )
+                    cameras.append({**cam, "src": src})
+                else:
+                    cameras.append(cam)
+                camera_count += 1
+            groups_payload.append({"name": group["name"], "cameras": cameras})
+        presets_payload.append({
+            "key": preset["key"],
+            "name": preset["name"],
+            "camera_count": camera_count,
+            "groups": groups_payload,
+        })
+
+    selected_payload = next(p for p in presets_payload if p["key"] == selected["key"])
 
     return render(
         request,
@@ -52,12 +63,12 @@ def index(request):
             "camera_config": {
                 "proxy_base": proxy_base,
                 "selected_key": selected["key"],
-                "groups": groups_payload,
+                "presets": presets_payload,
                 "stream_timeout_ms": stream_timeout_ms,
             },
             "presets": [{"key": p["key"], "name": p["name"]} for p in presets],
             "selected_key": selected["key"],
-            "camera_count": camera_count,
+            "camera_count": selected_payload["camera_count"],
             "auto_stop_label": "3 min",
         },
     )
@@ -81,10 +92,10 @@ def webcam_proxy(request, host, port, suffix):
     if ".." in suffix.split("/") or suffix.startswith("/"):
         return HttpResponseBadRequest("Invalid stream path")
 
-    if host not in services.get_webcam_hosts():
-        return HttpResponseBadRequest("Unknown webcam host")
+    upstream_url = services.get_webcam_upstream(host, port, suffix)
+    if upstream_url is None:
+        return HttpResponseBadRequest("Unknown webcam")
 
-    upstream_url = f"http://{host}:{port}/{suffix}"
     return _stream_upstream(upstream_url)
 
 

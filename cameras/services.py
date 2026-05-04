@@ -15,6 +15,7 @@ _DEFAULT_ORIGIN = "http://10.23.1.25/mediamtx"
 logger = logging.getLogger(__name__)
 
 _origin = _DEFAULT_ORIGIN
+_webcam_origin = None
 _registry = {}
 _presets = []
 
@@ -75,13 +76,23 @@ def _load_webcams():
     parsed = _read_json(_WEBCAMS_PATH)
     if parsed is None:
         logger.warning("Cameras webcams config missing: %s", _WEBCAMS_PATH)
-        return []
+        return [], None
 
-    if not isinstance(parsed, list):
-        raise ImproperlyConfigured('cameras: webcams.json must be a list')
+    if isinstance(parsed, list):
+        entries = parsed
+        origin = None
+    elif isinstance(parsed, dict):
+        entries = parsed.get("webcams")
+        origin = parsed.get("origin")
+        if not isinstance(entries, list):
+            raise ImproperlyConfigured('cameras: webcams.json "webcams" must be a list')
+        if origin is not None and (not isinstance(origin, str) or not origin):
+            raise ImproperlyConfigured('cameras: webcams.json "origin" must be a non-empty string when set')
+    else:
+        raise ImproperlyConfigured('cameras: webcams.json must be a list or object')
 
     webcams = []
-    for idx, entry in enumerate(parsed):
+    for idx, entry in enumerate(entries):
         if not isinstance(entry, dict):
             raise ImproperlyConfigured(f"cameras: webcam {idx} must be an object")
         host = entry.get("host")
@@ -105,11 +116,20 @@ def _load_webcams():
             "suffix": suffix,
             "label": description,
         })
-    return webcams
+    return webcams, (origin.rstrip("/") if origin else None)
 
 
 def get_webcam_hosts():
     return {cam["host"] for cam in _registry.values() if cam["kind"] == "webcam"}
+
+
+def get_webcam_upstream(host, port, suffix):
+    cam = _registry.get(_webcam_id(host, suffix))
+    if cam is None or cam["kind"] != "webcam" or cam["port"] != port:
+        return None
+    if _webcam_origin:
+        return f"{_webcam_origin}/{host}/{port}/{suffix}"
+    return f"http://{host}:{port}/{suffix}"
 
 
 def _load_presets(registry):
@@ -179,10 +199,10 @@ def _resolve_camera_ids(preset_key, ids, registry):
 
 def load_all():
     """Load streams + webcams + presets and validate cross-references."""
-    global _origin, _registry, _presets
+    global _origin, _webcam_origin, _registry, _presets
 
     origin, security = _load_security_streams()
-    webcams = _load_webcams()
+    webcams, webcam_origin = _load_webcams()
 
     registry = {}
     for cam in security + webcams:
@@ -191,6 +211,7 @@ def load_all():
     presets = _load_presets(registry)
 
     _origin = origin.rstrip("/")
+    _webcam_origin = webcam_origin
     _registry = registry
     _presets = presets
 

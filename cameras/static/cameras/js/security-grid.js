@@ -452,6 +452,16 @@
     container.appendChild(grid);
   }
 
+  function renderPreset(host, preset) {
+    for (const card of Array.from(state.keys())) stopAny(card);
+    host.replaceChildren();
+    preset.groups.forEach((group) => renderGroup(group, host));
+    const counter = document.querySelector("[data-cam-camera-count]");
+    if (counter && typeof preset.camera_count === "number") {
+      counter.textContent = String(preset.camera_count);
+    }
+  }
+
   function init() {
     const root = document.getElementById("securityGrid");
     const configNode = document.getElementById("camera-config");
@@ -466,7 +476,7 @@
       return;
     }
 
-    if (!payload || !Array.isArray(payload.groups) || !payload.groups.length) {
+    if (!payload || !Array.isArray(payload.presets) || !payload.presets.length) {
       root.appendChild(buildErrorRow("No cameras configured"));
       return;
     }
@@ -480,11 +490,29 @@
       STREAM_TIMEOUT_MS = payload.stream_timeout_ms;
     }
 
+    const presetsByKey = new Map(payload.presets.map((p) => [p.key, p]));
+    const initialPreset =
+      presetsByKey.get(payload.selected_key) || payload.presets[0];
+
     const host = document.createElement("div");
     host.className = "camera-sections";
     root.replaceWith(host);
 
-    payload.groups.forEach((group) => renderGroup(group, host));
+    renderPreset(host, initialPreset);
+
+    const tabButtons = document.querySelectorAll("[data-cam-preset]");
+    tabButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.camPreset;
+        const preset = presetsByKey.get(key);
+        if (!preset || btn.classList.contains("is-active")) return;
+        tabButtons.forEach((b) => b.classList.toggle("is-active", b === btn));
+        renderPreset(host, preset);
+        const url = new URL(window.location.href);
+        url.searchParams.set("preset", key);
+        window.history.replaceState({}, "", url);
+      });
+    });
 
     const stopAllBtn = document.querySelector("[data-cam-stop-all]");
     if (stopAllBtn) {

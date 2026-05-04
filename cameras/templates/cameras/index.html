@@ -20,15 +20,16 @@
     <div class="cam-toolbar">
       <nav class="camera-tabs" aria-label="Camera presets">
         {% for preset in presets %}
-          <a
-            href="?preset={{ preset.key }}"
+          <button
+            type="button"
+            data-cam-preset="{{ preset.key }}"
             class="camera-tab {% if preset.key == selected_key %}is-active{% endif %}"
-          >{{ preset.name }}</a>
+          >{{ preset.name }}</button>
         {% endfor %}
       </nav>
 
       <div class="cam-summary">
-        <span class="cam-stat"><strong>{{ camera_count }}</strong> cameras</span>
+        <span class="cam-stat"><strong data-cam-camera-count>{{ camera_count }}</strong> cameras</span>
         <span class="cam-stat-divider">·</span>
         <span class="cam-stat"><strong data-cam-live-count>0</strong> live</span>
         <span class="cam-stat-divider">·</span>
