@@ -1,12 +1,18 @@
 x-app: &app
-  build: .
-  image: last-hub
+  build:
+    context: .
+    args:
+      HTTP_PROXY: ${HTTP_PROXY:-}
+      HTTPS_PROXY: ${HTTPS_PROXY:-}
+      NO_PROXY: ${NO_PROXY:-}
+  image: last-hub:0.2.0
+  pull_policy: never
   environment:
     HTTP_PROXY:
     HTTPS_PROXY:
     NO_PROXY:
     DB_PATH: /app/data/db.sqlite3
-    ALLOWED_HOSTS: localhost,127.0.0.1,archimedes
+    ALLOWED_HOSTS: localhost,127.0.0.1,10.23.1.25
     IMS_USERNAME:
     IMS_PASSWORD:
     IMS_BASE_URL: https://data.israel-meteo-service.org
@@ -15,8 +21,8 @@ x-app: &app
     IMS_VERIFY_SSL: "false"
     FORECAST_CACHE_PATH: /app/data/forecast.json
     FORECAST_RETENTION_DAYS: "2"
-    MEDIAMTX_USERNAME:
-    MEDIAMTX_PASSWORD:
+    MEDIAMTX_USERNAME: ocs
+    MEDIAMTX_PASSWORD: physics
 
   volumes:
     - db-data:/app/data
@@ -56,7 +62,7 @@ services:
   web:
     <<: *app
     ports:
-      - "3002:8000"
+      - "8085:8000"
     labels:
       ofelia.enabled: "true"
       ofelia.job-exec.fetch-forecast.schedule: "@every 1h"

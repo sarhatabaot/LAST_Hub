@@ -7,3 +7,4 @@ staticfiles
 db.sqlite3
 data/
 .env
+!cameras/data/

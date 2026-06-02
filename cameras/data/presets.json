@@ -1,0 +1,80 @@
+[
+  {
+    "key": "by-device",
+    "name": "By device",
+    "groups": [
+      {
+        "name": "Security",
+        "cameras": [
+          "security:w_fast",
+          "security:last_north_west",
+          "security:gate_fast",
+          "security:gate",
+          "security:last_fast",
+          "security:mast_concrete"
+        ]
+      },
+      {
+        "name": "Webcams",
+        "cameras": [
+          "webcam:last0:1", "webcam:last0:2",
+          "webcam:last01e:1", "webcam:last01e:2",
+          "webcam:last01w:1",
+          "webcam:last05e:1", "webcam:last05w:1",
+          "webcam:last06w:1", "webcam:last08e:1"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "all",
+    "name": "All",
+    "cameras": [
+      "security:w_fast", "security:last_north_west", "security:gate_fast",
+      "security:gate", "security:last_fast", "security:mast_concrete",
+      "webcam:last0:1", "webcam:last0:2",
+      "webcam:last01e:1", "webcam:last01e:2",
+      "webcam:last01w:1",
+      "webcam:last05e:1", "webcam:last05w:1",
+      "webcam:last06w:1", "webcam:last08e:1"
+    ]
+  },
+  {
+    "key": "security",
+    "name": "Security",
+    "cameras": [
+      "security:w_fast", "security:last_north_west", "security:gate_fast",
+      "security:gate", "security:last_fast", "security:mast_concrete"
+    ]
+  },
+  {
+    "key": "webcams",
+    "name": "Webcams",
+    "cameras": [
+      "webcam:last0:1", "webcam:last0:2",
+      "webcam:last01e:1", "webcam:last01e:2",
+      "webcam:last01w:1",
+      "webcam:last05e:1", "webcam:last05w:1",
+      "webcam:last06w:1", "webcam:last08e:1"
+    ]
+  },
+  {
+    "key": "outside",
+    "name": "Outside",
+    "cameras": [
+      "security:gate", "security:gate_fast", "security:mast_concrete",
+      "security:last_north_west", "security:w_fast", "security:last_fast",
+      "webcam:last0:2", "webcam:last01w:1"
+    ]
+  },
+  {
+    "key": "inside",
+    "name": "Inside",
+    "cameras": [
+      "webcam:last0:1",
+      "webcam:last01e:1", "webcam:last01e:2",
+      "webcam:last05e:1", "webcam:last05w:1",
+      "webcam:last06w:1", "webcam:last08e:1"
+    ]
+  }
+]

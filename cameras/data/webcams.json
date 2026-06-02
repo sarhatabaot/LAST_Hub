@@ -1,0 +1,14 @@
+{
+  "origin": "http://10.23.1.25/stream",
+  "webcams": [
+    {"host": "last0", "port": 8080, "suffix": "1", "description": "LAST interior, W --> E"},
+    {"host": "last0", "port": 8080, "suffix": "2", "description": "LAST exterior, N side --> E"},
+    {"host": "last01e", "port": 8080, "suffix": "1", "description": "LAST interior, M3-4, --> W"},
+    {"host": "last01e", "port": 8080, "suffix": "2", "description": "LAST interior, East wall"},
+    {"host": "last01w", "port": 8080, "suffix": "1", "description": "LAST exterior, NW corner"},
+    {"host": "last05e", "port": 8080, "suffix": "1", "description": "LAST interior, M2,M4 --> SE"},
+    {"host": "last05w", "port": 8080, "suffix": "1", "description": "LAST interior, M1,M3 --> E"},
+    {"host": "last06w", "port": 8080, "suffix": "1", "description": "LAST interior, M2,4,6 --> E"},
+    {"host": "last08e", "port": 8080, "suffix": "1", "description": "LAST interior, M8,10 --> NW"}
+  ]
+}
